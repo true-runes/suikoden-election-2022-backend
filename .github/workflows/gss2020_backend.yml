@@ -1,0 +1,64 @@
+name: 幻水総選挙2022 バックエンド
+
+on:
+  push:
+    branches:
+      - main
+      - development
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gss2022_backend:
+    name: 継続的インテグレーション
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["18.x"]
+        ruby-version: ["3.1"]
+    steps:
+    - name: MySQL のセットアップを行う
+      # https://github.com/mirromutth/mysql-action
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        host port: 3306
+        container port: 3306
+        character set server: utf8mb4
+        collation server: utf8mb4_unicode_ci
+        mysql version: '8.0'
+        # mysql database: some_test
+        mysql root password: root
+        # mysql user: 'developer'
+        # mysql password: ${{ secrets.DatabasePassword }}
+    - name: MySQL の疎通を待つ
+      run: |
+        while ! mysqladmin ping --host=127.0.0.1 --password=root --silent; do
+          sleep 1
+        done
+    - name: MySQL の文字コードおよびバージョンを確認する
+      run: |
+        mysql -h 127.0.0.1 --port 3306 -uroot -proot -e "show variables like 'chara%'"
+        mysql -h 127.0.0.1 --port 3306 -uroot -proot -e "select version()"
+    - name: コードをチェックアウトする
+      uses: actions/checkout@v3
+    - name: Ruby のセットアップを行う
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    # - name: Node.js のセットアップを行う
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: ${{ matrix.node-version }}
+    #     cache: "yarn"
+    - name: db:create db:migrate する
+      run: |
+        bin/rails db:create db:migrate
+      env:
+        RAILS_ENV: test
+        DATABASE_HOST: 127.0.0.1
+    - name: RSpec を実行する
+      run: |
+        bundle exec rspec
+      env:
+        DATABASE_HOST: 127.0.0.1
