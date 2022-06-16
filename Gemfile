@@ -4,6 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.1.2'
 
 gem 'bootsnap', require: false
+gem 'dotenv-rails'
 gem 'google-api-client'
 gem 'puma'
 gem 'rails'
