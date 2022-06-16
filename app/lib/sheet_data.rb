@@ -1,5 +1,5 @@
 class SheetData
-  def self.rows(sheet_id:, range:)
+  def self.get_rows(sheet_id:, range:)
     service = SheetService.new.service
     response = service.get_spreadsheet_values(sheet_id, range)
 
@@ -8,7 +8,7 @@ class SheetData
     response.values
   end
 
-  def self.target_range(sheet_id:, range:)
+  def self.get_rows_target_range(sheet_id:, range:)
     service = SheetService.new.service
     response = service.get_spreadsheet_values(sheet_id, range)
 
