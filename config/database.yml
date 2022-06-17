@@ -1,25 +1,37 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
-#
 default: &default
-  adapter: sqlite3
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
-
-development:
-  <<: *default
-  database: db/development.sqlite3
-
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-test:
-  <<: *default
-  database: db/test.sqlite3
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV['RAILS_MAX_THREADS'] || Rails.application.credentials[:rails_max_threads] || 5 %>
 
 production:
   <<: *default
-  database: db/production.sqlite3
+  database: suikoden_election_2022_production
+  host: <%= ENV['POSTGRES_HOST_PRODUCTION'] || 'localhost' %>
+  port: <%= ENV['POSTGRES_PORT_PRODUCTION'] || 5432 %>
+  username: <%= ENV['POSTGRES_USERNAME_PRODUCTION'] %>
+  password: <%= ENV['POSTGRES_PASSWORD_PRODUCTION'] %>
+
+development:
+  <<: *default
+  database: suikoden_election_2022_development
+  host: <%= ENV['POSTGRES_HOST_TEST'] || 'localhost' %>
+  port: <%= ENV['POSTGRES_PORT_DEVELOPMENT'] || 5432 %>
+  username: <%= ENV['POSTGRES_USERNAME_DEVELOPMENT'] || 'root' %>
+  password: <%= ENV['POSTGRES_PASSWORD_DEVELOPMENT'] || 'postgres' %>
+
+test:
+  <<: *default
+  database: suikoden_election_2022_test
+  host: <%= ENV['POSTGRES_HOST_TEST'] || 'localhost' %>
+  port: <%= ENV['POSTGRES_PORT_TEST'] || 5432 %>
+  username: <%= ENV['POSTGRES_USERNAME_TEST'] || 'root' %>
+  password: <%= ENV['POSTGRES_PASSWORD_TEST'] || 'postgres' %>
+
+# 外部のデータベース
+tweet_storage:
+  <<: *default
+  database: <%= ENV['TWEET_STORAGE_DATABASE'] %>
+  host: <%= ENV['TWEET_STORAGE_HOST'] %>
+  port: <%= ENV['TWEET_STORAGE_PORT'] %>
+  username: <%= ENV['TWEET_STORAGE_USERNAME'] %>
+  password: <%= ENV['TWEET_STORAGE_PASSWORD'] %>
