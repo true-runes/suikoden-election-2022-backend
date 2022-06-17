@@ -12,27 +12,34 @@ jobs:
       matrix:
         node-version: ["18.x"]
         ruby-version: ["3.1"]
-    services:
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: suikoden_election_2022_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
       RAILS_ENV: test
-      POSTGRES_HOST_TEST: 127.0.0.1
+      POSTGRES_HOST_TEST: localhost
       POSTGRES_PORT_TEST: 5432
       POSTGRES_USERNAME_TEST: postgres
-      POSTGRES_PASSWORD_TEST: postgres
+      POSTGRES_PASSWORD_TEST: hello_world
+    # services:
+    #   postgres:
+    #     image: postgres
+    #     ports:
+    #       - 5432:5432
+    #     env:
+    #       POSTGRES_USER: postgres
+    #       POSTGRES_PASSWORD: postgres
+    #       POSTGRES_DB: suikoden_election_2022_test
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
     steps:
+    # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md
+    - name: PostgreSQL を開始する
+      # バージョン番号が埋め込みになっているのが良くない
+      run: |
+        sudo bash -c "echo \"local all all md5\" >> /etc/postgresql/14/main/pg_hba.conf"
+        sudo bash -c "echo \"host all all 127.0.0.1/32 md5\" >> /etc/postgresql/14/main/pg_hba.conf"
+        sudo systemctl start postgresql.service
     - name: コードをチェックアウトする
       uses: actions/checkout@v3
     - name: Ruby のセットアップを行う
@@ -40,16 +47,66 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
-    - name: （予定地）Node.js のセットアップを行う
+    # - name: （予定地）Node.js のセットアップを行う
+    #   run: |
+    #     echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
+    #   # uses: actions/setup-node@v3
+    #   # with:
+    #   #   node-version: ${{ matrix.node-version }}
+    #   #   cache: "yarn"
+
+    # select current_database();
+        # sudo su postgres -c 'psql postgres -c "create table atodekesu (id integer, name varchar(255));"'
+        # sudo su postgres -c "psql postgres -c 'create role hello_user with login password \"hello_world\";'"
+        # select * from tweets where full_text like '%あ%' limit 1;
+    # sudo su postgres -c "psql postgres -c 'select * from postgres;'"
+    # sudo su postgres -c "psql tweet_storage_development -c 'select * from tweets where full_text like '%あ%' limit 1;"
+
+        # sudo su postgres -c "psql postgres -c 'create role hello_user';"
+        # sudo su postgres -c "psql postgres -c 'alter role hello_user with password '\''hello_world'\';'"
+
+        # sudo su postgres -c "psql postgres -c \"alter role hello_user with password $PS;""
+    - name: debug
       run: |
-        echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
-      # uses: actions/setup-node@v3
-      # with:
-      #   node-version: ${{ matrix.node-version }}
-      #   cache: "yarn"
+        whoami
+        sudo su postgres -c 'psql postgres -c "create database runner;"'
+        sudo su postgres -c "psql postgres -c 'create role hello_user;'"
+        sudo su postgres -c "psql postgres -c \"create role hello2_user2;\""
+        sudo su postgres -c "psql postgres -c \"alter role hello_user with login  password '$PS';\""
+        sudo su postgres -c "psql postgres -c \"alter role hello_user with superuser\""
+        sudo su postgres -c "psql postgres -c \"alter role postgres with login password '$PS';\""
+        sudo su postgres -c "psql postgres -c 'create role runner;'"
+        sudo su postgres -c "psql postgres -c \"alter role runner with password '$PS';\""
+        sudo su postgres -c "psql postgres -c \"alter role runner with login  superuser\""
+      env:
+        PS: hello_world
+    # - name: ローカル pg 確認
+    #   run: |
+    #     sudo -su postgres
+    #     psql -U postgres --host localhost -d postgres -c "create table atodekesu (id integer, name varchar(255));"
+    #   env:
+    #     PGPASSWORD: postgres
+    #   run: |
+    #     PGPASSWORD=postgres psql --username postgres --host localhost -d postgres -c "create table atodekesu (id integer, name varchar(255));"
     - name: db:create db:migrate する
       run: |
         bin/rails db:create db:migrate
+    - name: DB接続確認
+      run: |
+        bundle exec rails runner "puts Asset.new"
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      timeout-minutes: 15
+      with:
+        sudo: true
+        limit-access-to-actor: true
     - name: RSpec を実行する
       run: |
         bundle exec rspec
+      env:
+        RAILS_ENV: test
+        POSTGRES_HOST_TEST: localhost
+        POSTGRES_PORT_TEST: 5432
+        POSTGRES_USERNAME_TEST: postgres
+        POSTGRES_PASSWORD_TEST: hello_world
