@@ -1,3 +1,7 @@
+config/google_api_credentials.json
+config/google_api_token.yml
+config/google_natural_language_api_credentials.json
+
 vendor/
 .vscode/
 .history/

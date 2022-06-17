@@ -1,0 +1,5 @@
+module NaturalLanguage
+  class HogeService
+    # Do something...
+  end
+end
