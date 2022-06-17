@@ -7,7 +7,7 @@ class SheetService
   APPLICATION_NAME = '幻水総選挙2022 バックエンド'.freeze
   CREDENTIALS_PATH = 'config/google_api_credentials.json'.freeze
   TOKEN_PATH = 'config/google_api_token.yml'.freeze
-  SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY
+  SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS
 
   attr_reader :service
 
