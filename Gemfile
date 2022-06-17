@@ -6,9 +6,10 @@ ruby '3.1.2'
 gem 'bootsnap', require: false
 gem 'dotenv-rails'
 gem 'google-api-client'
+gem 'pg'
 gem 'puma'
 gem 'rails'
-gem 'sqlite3'
+gem 'twitter'
 
 group :development, :test do
   gem 'debug', platforms: %i[mri mingw x64_mingw]
