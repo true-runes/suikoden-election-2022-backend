@@ -102,7 +102,10 @@ jobs:
       - name: create record save!
         run: |
           bundle exec rails runner "Character.new({name: 'ああ', name_en: 'aa'}).save!"
-          bundle exec rails runner "puts Character.first"
+      - name: puts record!
+          bundle exec rails runner "puts Character.count"
+          bundle exec rails runner "puts Character.first.name"
+          bundle exec rails runner "puts Character.first.name_en"
       - name: RSpec を実行する 1
         continue-on-error: true
         run: |
