@@ -73,22 +73,22 @@ jobs:
         # POSTGRES_PORT: 5432
         # POSTGRES_USERNAME_TEST: postgres
         # POSTGRES_PASSWORD_TEST: postgres
-    - name: Wait for PostgreSQL to be ready
-      run: |
-        until : > /dev/tcp/localhost/5432; do
-          echo -n .
-          sleep 1
-        done
+    # - name: Wait for PostgreSQL to be ready
+    #   run: |
+    #     until : > /dev/tcp/localhost/5432; do
+    #       echo -n .
+    #       sleep 1
+    #     done
 
-        echo Success
+    #     echo Success
     - name: RSpec を実行する
       run: |
-        RAILS_ENV=test POSTGRES_USERNAME_TEST=username POSTGRES_PASSWORD_TEST=password bundle exec rspec spec/models/user_spec.rb
+        bundle exec rspec spec/models/user_spec.rb
       env:
         # RAILS_ENV: test
         # POSTGRES_HOST_TEST: 127.0.0.1
-        POSTGRES_USERNAME_TEST: username
-        POSTGRES_PASSWORD_TEST: password
+        # POSTGRES_USERNAME_TEST: username
+        # POSTGRES_PASSWORD_TEST: password
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
         # POSTGRES_HOST: localhost
