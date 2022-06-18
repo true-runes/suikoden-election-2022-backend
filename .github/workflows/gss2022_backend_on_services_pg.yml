@@ -49,12 +49,14 @@ jobs:
       env:
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
+        RAILS_ENV: test
         POSTGRES_USERNAME_TEST: username
         POSTGRES_PASSWORD_TEST: password
     - name: DB接続確認
       run: |
         bundle exec rails runner "puts Asset.new"
       env:
+        RAILS_ENV: test
         POSTGRES_USERNAME_TEST: username
         POSTGRES_PASSWORD_TEST: password
         # POSTGRES_HOST_TEST: postgres #=> 接続失敗する
@@ -66,6 +68,7 @@ jobs:
       run: |
         bundle exec rspec spec/models/user_spec.rb
       env:
+        RAILS_ENV: test
         POSTGRES_HOST_TEST: 127.0.0.1
         POSTGRES_USERNAME_TEST: username
         POSTGRES_PASSWORD_TEST: password
