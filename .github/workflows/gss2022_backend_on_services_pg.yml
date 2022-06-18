@@ -117,6 +117,12 @@ jobs:
         continue-on-error: true
         run: |
           bundle exec rspec spec/models/user_spec.rb
+        env:
+          RAILS_ENV: test
+          POSTGRES_HOST: localhost
+          POSTGRES_HOST_TEST: localhost
+          POSTGRES_USERNAME_TEST: postgres
+          POSTGRES_PASSWORD_TEST: postgres
         # env:
           # POSTGRES_HOST_TEST: localhost
           # POSTGRES_PORT_TEST: 5432
