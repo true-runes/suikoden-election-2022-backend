@@ -1,0 +1,63 @@
+name: 幻水総選挙2022 バックエンド
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  gss2022_backend:
+    name: (PG on services) 継続的インテグレーション
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["18.x"]
+        ruby-version: ["3.1"]
+    env:
+      RAILS_ENV: test
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: suikoden_election_2022_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - name: コードをチェックアウトする
+      uses: actions/checkout@v3
+    - name: Ruby のセットアップを行う
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    - name: （予定地）Node.js のセットアップを行う
+      run: |
+        echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
+      # uses: actions/setup-node@v3
+      # with:
+      #   node-version: ${{ matrix.node-version }}
+      #   cache: "yarn"
+    - name: db:create db:migrate する
+      run: |
+        bin/rails db:create db:migrate
+      env:
+        POSTGRES_USERNAME_TEST: postgres
+        POSTGRES_PASSWORD_TEST: postgres
+    - name: DB接続確認
+      run: |
+        bundle exec rails runner "puts Asset.new"
+      env:
+        # POSTGRES_HOST_TEST: postgres #=> 接続失敗する
+        POSTGRES_USERNAME_TEST: postgres
+        POSTGRES_PASSWORD_TEST: postgres
+    # - name: RSpec を実行する
+    #   run: |
+    #     bundle exec rspec
+    #   env:
+    #     POSTGRES_HOST: 127.0.0.1
