@@ -61,3 +61,5 @@ jobs:
         bundle exec rspec
       env:
         POSTGRES_HOST: 127.0.0.1
+        POSTGRES_USERNAME_TEST: postgres
+        POSTGRES_PASSWORD_TEST: postgres
