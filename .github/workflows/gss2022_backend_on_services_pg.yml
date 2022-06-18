@@ -103,6 +103,7 @@ jobs:
         run: |
           bundle exec rails runner "Character.new({name: 'ああ', name_en: 'aa'}).save!"
       - name: puts record!
+        run: |
           bundle exec rails runner "puts Character.count"
           bundle exec rails runner "puts Character.first.name"
           bundle exec rails runner "puts Character.first.name_en"
