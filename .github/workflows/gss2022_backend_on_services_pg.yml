@@ -15,21 +15,23 @@ jobs:
     env:
       RAILS_ENV: test
       CI: true
-    # services:
-      # postgres:
-      #   image: postgres:14.3
-      #   ports:
-      #     - 5432:5432
-      #   env:
-      #     # POSTGRES_HOST_AUTH_METHOD: trust
-      #     POSTGRES_USER: postgres
-      #     POSTGRES_PASSWORD: postgres
-      #     POSTGRES_DB: suikoden_election_2022_test
-      #   options: >-
-      #     --health-cmd pg_isready
-      #     --health-interval 10s
-      #     --health-timeout 5s
-      #     --health-retries 5
+      POSTGRES_USERNAME_TEST: postgres
+      POSTGRES_PASSWORD_TEST: postgres
+    services:
+      postgres:
+        image: postgres:14.3
+        ports:
+          - 5432:5432
+        env:
+          # POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          # POSTGRES_DB: suikoden_election_2022_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: コードをチェックアウトする
         uses: actions/checkout@v3
@@ -38,12 +40,12 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-      - name: Set up PostgreSQL
-        uses: Harmon758/postgresql-action@v1
-        with:
-          postgresql user: test
-          postgresql password: password
-          postgresql version: 14.3
+      # - name: Set up PostgreSQL
+      #   uses: Harmon758/postgresql-action@v1
+      #   with:
+      #     postgresql user: test
+      #     postgresql password: password
+      #     postgresql version: 14.3
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
@@ -67,13 +69,13 @@ jobs:
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           bundle exec rails db:prepare RAILS_ENV=test
-        env:
-          DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
+        # env:
+        #   DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
       - name: db setup
         run: |
           bundle exec rails db:prepare RAILS_ENV=test
-        env:
-          DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
+        # env:
+        #   DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
       # - name: db:setup (db:create db:schema:load db:migrate) or db:migrate する
       #   run: |
       #     bin/rails db:prepare
@@ -133,8 +135,8 @@ jobs:
         continue-on-error: true
         run: |
           bundle exec rspec
-        env:
-          DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
+        # env:
+        #   DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
         # env:
         #   RAILS_ENV: test
         #   # POSTGRES_HOST: postgres
