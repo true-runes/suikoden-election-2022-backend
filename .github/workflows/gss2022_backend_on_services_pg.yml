@@ -54,7 +54,7 @@ jobs:
         POSTGRES_PASSWORD_TEST: password
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
-      if: ${{ github.event_name == 'workflow_dispatch' }}
+      if: ${{ github.ref_name == 'feat/add_github-actions_on_services-pg' }}
       timeout-minutes: 15
       with:
         sudo: true
