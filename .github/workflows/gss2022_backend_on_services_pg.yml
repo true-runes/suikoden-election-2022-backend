@@ -54,9 +54,9 @@ jobs:
       env:
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
-        RAILS_ENV: test
-        POSTGRES_USERNAME_TEST: postgres
-        POSTGRES_PASSWORD_TEST: password
+        # RAILS_ENV: test
+        # POSTGRES_USERNAME_TEST: postgres
+        # POSTGRES_PASSWORD_TEST: password
     # - name: Setup tmate session
     #   uses: mxschmitt/action-tmate@v3
     #   if: ${{ github.ref_name == 'feat/add_github-actions_on_services-pg' }}
@@ -68,9 +68,9 @@ jobs:
       run: |
         bundle exec rails runner "puts Asset.new"
       env:
-        RAILS_ENV: test
-        POSTGRES_USERNAME_TEST: postgres
-        POSTGRES_PASSWORD_TEST: password
+        # RAILS_ENV: test
+        # POSTGRES_USERNAME_TEST: postgres
+        # POSTGRES_PASSWORD_TEST: password
         # POSTGRES_HOST_TEST: postgres #=> 接続失敗する
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
@@ -89,17 +89,17 @@ jobs:
       run: |
         bundle exec rspec spec/models/user_spec.rb
       env:
-        POSTGRES_HOST: localhost
-        POSTGRES_PORT: 5432
-        POSTGRES_USERNAME_TEST: postgres
+        # POSTGRES_HOST: localhost
+        # POSTGRES_PORT: 5432
+        # POSTGRES_USERNAME_TEST: postgres
     - name: RSpec を実行する 2
       continue-on-error: true
       run: |
         bundle exec rspec spec/models/user_spec.rb
       env:
-        POSTGRES_HOST_TEST: localhost
-        POSTGRES_PORT_TEST: 5432
-        POSTGRES_USERNAME_TEST: postgres
+        # POSTGRES_HOST_TEST: localhost
+        # POSTGRES_PORT_TEST: 5432
+        # POSTGRES_USERNAME_TEST: postgres
 
         # RAILS_ENV: test
         # POSTGRES_HOST_TEST: 127.0.0.1
