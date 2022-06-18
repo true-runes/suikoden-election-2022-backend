@@ -43,9 +43,9 @@ jobs:
       # with:
       #   node-version: ${{ matrix.node-version }}
       #   cache: "yarn"
-    - name: db:create db:migrate する (db:setup)
+    - name: db:create db:schema:load db:migrate する (db:setup)
       run: |
-        bin/rails db:create db:migrate
+        bin/rails db:setup
       env:
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
@@ -64,6 +64,14 @@ jobs:
         # POSTGRES_PORT: 5432
         # POSTGRES_USERNAME_TEST: postgres
         # POSTGRES_PASSWORD_TEST: postgres
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until : > /dev/tcp/localhost/5432; do
+          echo -n .
+          sleep 1
+        done
+
+        echo Success
     - name: RSpec を実行する
       run: |
         bundle exec rspec spec/models/user_spec.rb
