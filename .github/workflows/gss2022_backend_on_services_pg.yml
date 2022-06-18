@@ -64,7 +64,7 @@ jobs:
         # POSTGRES_PASSWORD_TEST: postgres
     - name: RSpec を実行する
       run: |
-        bundle exec rspec
+        bundle exec rspec spec/models/user_spec.rb
       env:
         POSTGRES_HOST_TEST: 127.0.0.1
         POSTGRES_USERNAME_TEST: username
