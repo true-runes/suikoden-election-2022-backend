@@ -54,7 +54,9 @@ jobs:
     - name: DB接続確認
       run: |
         bundle exec rails runner "puts Asset.new"
-      # env:
+      env:
+        POSTGRES_USERNAME_TEST: username
+        POSTGRES_PASSWORD_TEST: password
         # POSTGRES_HOST_TEST: postgres #=> 接続失敗する
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
