@@ -83,7 +83,7 @@ jobs:
     - name: Set env
       run: |
         echo "RAILS_ENV=test" >> $GITHUB_ENV
-        echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
+        echo "DATABASE_URL=postgres://postgres:password@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
     - name: RSpec を実行する 1
       continue-on-error: true
       run: |
