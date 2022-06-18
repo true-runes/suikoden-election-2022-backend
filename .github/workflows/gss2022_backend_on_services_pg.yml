@@ -47,11 +47,13 @@ jobs:
       - name: Set env
         run: |
           echo "RAILS_ENV=test" >> $GITHUB_ENV
-          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
-      - name: db:create db:schema:load db:migrate する (db:setup)
+          echo "DATABASE_URL=postgres://postgres:postgres@postgres:5432/suikoden_election_2022_test" >> $GITHUB_ENV
+      - name: bundle install
         run: |
           gem install bundler
           bundle install --path vendor/bundle --without production
+      - name: db:create db:schema:load db:migrate する (db:setup)
+        run: |
           bin/rails db:setup
         # env:
           # POSTGRES_HOST: localhost
@@ -86,9 +88,9 @@ jobs:
       #     done
 
       #     echo Success
-      - name: db調整
-        run: |
-          echo "DATABASE_URL=postgres://postgres:postgres@postgres:5432/suikoden_election_2022_test" >> $GITHUB_ENV
+      # - name: db調整
+      #   run: |
+      #     echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
       - name: RSpec を実行する 1
         continue-on-error: true
         run: |
