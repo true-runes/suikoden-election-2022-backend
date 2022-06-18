@@ -16,13 +16,13 @@ jobs:
       RAILS_ENV: test
     services:
       postgres:
-        image: postgres
+        image: postgres:14.3
         ports:
           - 5432:5432
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: suikoden_election_2022_test
+          POSTGRES_DB: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
