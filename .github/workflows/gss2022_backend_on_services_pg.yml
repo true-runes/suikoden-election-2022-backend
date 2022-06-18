@@ -6,7 +6,7 @@ on:
 
 jobs:
   gss2022_backend:
-    name: (PG on services) 継続的インテグレーション
+    name: （PG services版）継続的インテグレーション
     runs-on: ubuntu-latest
     strategy:
       matrix:
