@@ -1,5 +1,5 @@
 class UserOnTweetStorage < ApplicationRecord
-  establish_connection :tweet_storage unless Raile.env.test?
+  establish_connection :tweet_storage unless Rails.env.test?
 
   self.table_name = :users
 
