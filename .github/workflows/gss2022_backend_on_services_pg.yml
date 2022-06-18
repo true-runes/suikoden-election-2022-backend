@@ -56,8 +56,8 @@ jobs:
         # POSTGRES_HOST_TEST: postgres #=> 接続失敗する
         POSTGRES_USERNAME_TEST: postgres
         POSTGRES_PASSWORD_TEST: postgres
-    # - name: RSpec を実行する
-    #   run: |
-    #     bundle exec rspec
-    #   env:
-    #     POSTGRES_HOST: 127.0.0.1
+    - name: RSpec を実行する
+      run: |
+        bundle exec rspec
+      env:
+        POSTGRES_HOST: 127.0.0.1
