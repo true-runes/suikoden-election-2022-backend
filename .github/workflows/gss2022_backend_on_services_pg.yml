@@ -105,8 +105,8 @@ jobs:
           bundle exec rspec spec/models/user_spec.rb
         env:
           RAILS_ENV: test
-          POSTGRES_HOST: postgres
-          POSTGRES_HOST_TEST: postgres
+          # POSTGRES_HOST: postgres
+          # POSTGRES_HOST_TEST: postgres
           POSTGRES_USERNAME_TEST: postgres
           POSTGRES_PASSWORD_TEST: postgres
         # env:
@@ -119,8 +119,8 @@ jobs:
           bundle exec rspec spec/models/user_spec.rb
         env:
           RAILS_ENV: test
-          POSTGRES_HOST: localhost
-          POSTGRES_HOST_TEST: localhost
+          # POSTGRES_HOST: localhost
+          # POSTGRES_HOST_TEST: localhost
           POSTGRES_USERNAME_TEST: postgres
           POSTGRES_PASSWORD_TEST: postgres
         # env:
