@@ -50,6 +50,8 @@ jobs:
           echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
       - name: db:create db:schema:load db:migrate する (db:setup)
         run: |
+          gem install bundler
+          bundle install --path vendor/bundle --without production
           bin/rails db:setup
         # env:
           # POSTGRES_HOST: localhost
