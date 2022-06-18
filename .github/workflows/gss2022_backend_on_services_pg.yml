@@ -55,6 +55,7 @@ jobs:
     - name: DB接続確認
       run: |
         bundle exec rails runner "puts Asset.new"
+        bundle exec rspec
       env:
         RAILS_ENV: test
         POSTGRES_USERNAME_TEST: username
