@@ -99,6 +99,9 @@ jobs:
         run: |
           echo "POSTGRES_USERNAME_TEST=postgres" >> $GITHUB_ENV
           echo "POSTGRES_PASSWORD_TEST=postgres" >> $GITHUB_ENV
+      - name: create record save!
+        run: |
+          bundle exec rails runner "Character.new({name: 'ああ', name_en: 'aa'}).save!"
       - name: RSpec を実行する 1
         continue-on-error: true
         run: |
