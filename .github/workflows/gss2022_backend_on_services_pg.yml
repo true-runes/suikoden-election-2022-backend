@@ -20,9 +20,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: suikoden_election_2022_test
+          POSTGRES_USER: username
+          POSTGRES_PASSWORD: password
+          # POSTGRES_DB: suikoden_election_2022_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -49,8 +49,8 @@ jobs:
       # env:
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
-        # POSTGRES_USERNAME_TEST: postgres
-        # POSTGRES_PASSWORD_TEST: postgres
+        POSTGRES_USERNAME_TEST: username
+        POSTGRES_PASSWORD_TEST: password
     - name: DB接続確認
       run: |
         bundle exec rails runner "puts Asset.new"
