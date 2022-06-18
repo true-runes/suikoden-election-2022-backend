@@ -87,6 +87,7 @@ jobs:
       env:
         POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
+        POSTGRES_USERNAME_TEST: username
     - name: RSpec を実行する 2
       continue-on-error: true
       run: |
@@ -94,6 +95,7 @@ jobs:
       env:
         POSTGRES_HOST_TEST: localhost
         POSTGRES_PORT_TEST: 5432
+        POSTGRES_USERNAME_TEST: username
 
         # RAILS_ENV: test
         # POSTGRES_HOST_TEST: 127.0.0.1
