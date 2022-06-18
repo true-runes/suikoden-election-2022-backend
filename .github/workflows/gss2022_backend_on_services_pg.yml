@@ -21,7 +21,7 @@ jobs:
           - 5432:5432
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_USER: username
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
           # POSTGRES_DB: suikoden_election_2022_test
         options: >-
@@ -51,7 +51,7 @@ jobs:
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
         RAILS_ENV: test
-        POSTGRES_USERNAME_TEST: username
+        POSTGRES_USERNAME_TEST: postgres
         POSTGRES_PASSWORD_TEST: password
     # - name: Setup tmate session
     #   uses: mxschmitt/action-tmate@v3
@@ -65,7 +65,7 @@ jobs:
         bundle exec rails runner "puts Asset.new"
       env:
         RAILS_ENV: test
-        POSTGRES_USERNAME_TEST: username
+        POSTGRES_USERNAME_TEST: postgres
         POSTGRES_PASSWORD_TEST: password
         # POSTGRES_HOST_TEST: postgres #=> 接続失敗する
         # POSTGRES_HOST: localhost
@@ -87,7 +87,7 @@ jobs:
       env:
         POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
-        POSTGRES_USERNAME_TEST: username
+        POSTGRES_USERNAME_TEST: postgres
     - name: RSpec を実行する 2
       continue-on-error: true
       run: |
@@ -95,7 +95,7 @@ jobs:
       env:
         POSTGRES_HOST_TEST: localhost
         POSTGRES_PORT_TEST: 5432
-        POSTGRES_USERNAME_TEST: username
+        POSTGRES_USERNAME_TEST: postgres
 
         # RAILS_ENV: test
         # POSTGRES_HOST_TEST: 127.0.0.1
