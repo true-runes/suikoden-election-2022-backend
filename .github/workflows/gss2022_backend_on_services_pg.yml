@@ -102,6 +102,7 @@ jobs:
         env:
           RAILS_ENV: test
           POSTGRES_HOST: postgres
+          POSTGRES_HOST_TEST: postgres
           POSTGRES_USERNAME_TEST: postgres
           POSTGRES_PASSWORD_TEST: postgres
         # env:
