@@ -38,7 +38,7 @@ jobs:
         sudo bash -c "echo \"local all all md5\" >> /etc/postgresql/14/main/pg_hba.conf"
 
         sudo su postgres -c "psql postgres -c 'create role $username;'"
-        sudo su postgres -c "psql postgres -c \"alter role $username with login  password '$password';\""
+        sudo su postgres -c "psql postgres -c \"alter role $username with login password '$password';\""
         sudo su postgres -c "psql postgres -c \"alter role $username with superuser\""
       env:
         username: postgres_user
