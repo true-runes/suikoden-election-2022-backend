@@ -23,10 +23,10 @@ test:
   <<: *default
   url: <%= ENV['DATABASE_URL'].presence %>
   database: suikoden_election_2022_test
-  host: <%= ENV['POSTGRES_HOST_TEST'] || 'localhost' %>
-  port: <%= ENV['POSTGRES_PORT_TEST'] || 5432 %>
-  username: <%= ENV['POSTGRES_USERNAME_TEST'] || 'root' %>
-  password: <%= ENV['POSTGRES_PASSWORD_TEST'] || 'postgres' %>
+  # host: <%= ENV['POSTGRES_HOST_TEST'] || 'localhost' %>
+  # port: <%= ENV['POSTGRES_PORT_TEST'] || 5432 %>
+  # username: <%= ENV['POSTGRES_USERNAME_TEST'] || 'root' %>
+  # password: <%= ENV['POSTGRES_PASSWORD_TEST'] || 'postgres' %>
 
 # 外部のデータベース
 tweet_storage:
