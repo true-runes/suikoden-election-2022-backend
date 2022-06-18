@@ -15,20 +15,20 @@ jobs:
     env:
       RAILS_ENV: test
     services:
-      postgres:
-        image: postgres:13
-        ports:
-          - 5432:5432
-        env:
-          # POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: suikoden_election_2022_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+      # postgres:
+      #   image: postgres:14.3
+      #   ports:
+      #     - 5432:5432
+      #   env:
+      #     # POSTGRES_HOST_AUTH_METHOD: trust
+      #     POSTGRES_USER: postgres
+      #     POSTGRES_PASSWORD: postgres
+      #     POSTGRES_DB: suikoden_election_2022_test
+      #   options: >-
+      #     --health-cmd pg_isready
+      #     --health-interval 10s
+      #     --health-timeout 5s
+      #     --health-retries 5
     steps:
       - name: コードをチェックアウトする
         uses: actions/checkout@v3
@@ -37,6 +37,18 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
+      - name: Set up PostgreSQL
+        uses: Harmon758/postgresql-action@v1
+        with:
+          postgresql user: test
+          postgresql password: password
+          postgresql version: 14.3
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
       - name: （予定地）Node.js のセットアップを行う
         run: |
           echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
@@ -44,22 +56,26 @@ jobs:
       # with:
       #   node-version: ${{ matrix.node-version }}
       #   cache: "yarn"
-      - name: Set env
-          # echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
-        run: |
-          echo "RAILS_ENV=test" >> $GITHUB_ENV
+      # - name: Set env
+      #     # echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
+      #   run: |
+      #     echo "RAILS_ENV=test" >> $GITHUB_ENV
       - name: bundle install
         run: |
           gem install bundler
-          bundle install --path vendor/bundle --without production
-      - name: db:create db:schema:load db:migrate する (db:setup)
-        run: |
-          bin/rails db:setup
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:prepare RAILS_ENV=test
         env:
-          RAILS_ENV: test
-          POSTGRES_HOST: postgres
-          POSTGRES_USERNAME_TEST: postgres
-          POSTGRES_PASSWORD_TEST: postgres
+          DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
+      # - name: db:setup (db:create db:schema:load db:migrate) or db:migrate する
+      #   run: |
+      #     bin/rails db:prepare
+      #   env:
+      #     RAILS_ENV: test
+      #     POSTGRES_HOST: postgres
+      #     POSTGRES_USERNAME_TEST: postgres
+      #     POSTGRES_PASSWORD_TEST: postgres
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
       #   if: ${{ github.ref_name == 'feat/add_github-actions_on_services-pg' }}
@@ -67,14 +83,14 @@ jobs:
       #   with:
       #     sudo: true
       #     limit-access-to-actor: true
-      - name: DB接続確認 rails runner
-        run: |
-          bundle exec rails runner "puts Asset.new"
-        env:
-          RAILS_ENV: test
-          POSTGRES_HOST: postgres
-          POSTGRES_USERNAME_TEST: postgres
-          POSTGRES_PASSWORD_TEST: postgres
+      # - name: DB接続確認 rails runner
+      #   run: |
+      #     bundle exec rails runner "puts Asset.new"
+      #   env:
+      #     RAILS_ENV: test
+      #     POSTGRES_HOST: postgres
+      #     POSTGRES_USERNAME_TEST: postgres
+      #     POSTGRES_PASSWORD_TEST: postgres
         # env:
           # RAILS_ENV: test
           # POSTGRES_USERNAME_TEST: postgres
@@ -95,42 +111,44 @@ jobs:
       # - name: db調整
       #   run: |
       #     echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
-      - name: Set env
-        run: |
-          echo "POSTGRES_USERNAME_TEST=postgres" >> $GITHUB_ENV
-          echo "POSTGRES_PASSWORD_TEST=postgres" >> $GITHUB_ENV
-      - name: create record save!
-        run: |
-          bundle exec rails runner "Character.new({name: 'ああ', name_en: 'aa'}).save!"
-      - name: puts record!
-        run: |
-          bundle exec rails runner "puts Character.count"
-          bundle exec rails runner "puts Character.first.name"
-          bundle exec rails runner "puts Character.first.name_en"
+      # - name: Set env
+      #   run: |
+      #     echo "POSTGRES_USERNAME_TEST=postgres" >> $GITHUB_ENV
+      #     echo "POSTGRES_PASSWORD_TEST=postgres" >> $GITHUB_ENV
+      # - name: create record save!
+      #   run: |
+      #     bundle exec rails runner "Character.new({name: 'ああ', name_en: 'aa'}).save!"
+      # - name: puts record!
+      #   run: |
+      #     bundle exec rails runner "puts Character.count"
+      #     bundle exec rails runner "puts Character.first.name"
+      #     bundle exec rails runner "puts Character.first.name_en"
       - name: RSpec を実行する 1
         continue-on-error: true
         run: |
-          bundle exec rspec spec/models/user_spec.rb
+          bundle exec rspec
         env:
-          RAILS_ENV: test
-          # POSTGRES_HOST: postgres
-          # POSTGRES_HOST_TEST: postgres
-          POSTGRES_USERNAME_TEST: postgres
-          POSTGRES_PASSWORD_TEST: postgres
+          DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
+        # env:
+        #   RAILS_ENV: test
+        #   # POSTGRES_HOST: postgres
+        #   # POSTGRES_HOST_TEST: postgres
+        #   POSTGRES_USERNAME_TEST: postgres
+        #   POSTGRES_PASSWORD_TEST: postgres
         # env:
           # POSTGRES_HOST: localhost
           # POSTGRES_PORT: 5432
           # POSTGRES_USERNAME_TEST: postgres
-      - name: RSpec を実行する 2
-        continue-on-error: true
-        run: |
-          bundle exec rspec spec/models/user_spec.rb
-        env:
-          RAILS_ENV: test
-          # POSTGRES_HOST: localhost
-          # POSTGRES_HOST_TEST: localhost
-          POSTGRES_USERNAME_TEST: postgres
-          POSTGRES_PASSWORD_TEST: postgres
+      # - name: RSpec を実行する 2
+      #   continue-on-error: true
+      #   run: |
+      #     bundle exec rspec spec/models/user_spec.rb
+      #   env:
+      #     RAILS_ENV: test
+      #     # POSTGRES_HOST: localhost
+      #     # POSTGRES_HOST_TEST: localhost
+      #     POSTGRES_USERNAME_TEST: postgres
+      #     POSTGRES_PASSWORD_TEST: postgres
         # env:
           # POSTGRES_HOST_TEST: localhost
           # POSTGRES_PORT_TEST: 5432
