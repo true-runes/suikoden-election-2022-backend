@@ -36,7 +36,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: false # 検証が終わったら true へ戻す
+          bundler-cache: true
       - name: （予定地）Node.js のセットアップを行う
         run: |
           echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
@@ -67,9 +67,14 @@ jobs:
       #   with:
       #     sudo: true
       #     limit-access-to-actor: true
-      - name: DB接続確認
+      - name: DB接続確認 rails runner
         run: |
           bundle exec rails runner "puts Asset.new"
+        env:
+          RAILS_ENV: test
+          POSTGRES_HOST: postgres
+          POSTGRES_USERNAME_TEST: postgres
+          POSTGRES_PASSWORD_TEST: postgres
         # env:
           # RAILS_ENV: test
           # POSTGRES_USERNAME_TEST: postgres
