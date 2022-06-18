@@ -45,9 +45,9 @@ jobs:
       #   node-version: ${{ matrix.node-version }}
       #   cache: "yarn"
       - name: Set env
+          # echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
         run: |
           echo "RAILS_ENV=test" >> $GITHUB_ENV
-          echo "DATABASE_URL=postgres://postgres:postgres@postgres:5432/suikoden_election_2022_test" >> $GITHUB_ENV
       - name: bundle install
         run: |
           gem install bundler
@@ -55,12 +55,11 @@ jobs:
       - name: db:create db:schema:load db:migrate する (db:setup)
         run: |
           bin/rails db:setup
-        # env:
-          # POSTGRES_HOST: localhost
-          # POSTGRES_PORT: 5432
-          # RAILS_ENV: test
-          # POSTGRES_USERNAME_TEST: postgres
-          # POSTGRES_PASSWORD_TEST: password
+        env:
+          RAILS_ENV: test
+          POSTGRES_HOST: postgres
+          POSTGRES_USERNAME_TEST: postgres
+          POSTGRES_PASSWORD_TEST: postgres
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
       #   if: ${{ github.ref_name == 'feat/add_github-actions_on_services-pg' }}
