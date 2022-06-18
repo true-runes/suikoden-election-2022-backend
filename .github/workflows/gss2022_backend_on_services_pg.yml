@@ -61,8 +61,8 @@ jobs:
         bundle exec rspec
       env:
         # POSTGRES_HOST: localhost
-        # POSTGRES_HOST_TEST: postgres
-        POSTGRES_HOST_TEST: localhost
+        POSTGRES_HOST_TEST: postgres
+        # POSTGRES_HOST_TEST: localhost
         POSTGRES_PORT_TEST: 5432
         POSTGRES_USERNAME_TEST: postgres
         POSTGRES_PASSWORD_TEST: postgres
