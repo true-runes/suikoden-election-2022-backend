@@ -95,6 +95,10 @@ jobs:
       # - name: db調整
       #   run: |
       #     echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/suikoden_election_2022_test" >> $GITHUB_ENV
+      - name: Set env
+        run: |
+          echo "POSTGRES_USERNAME_TEST=postgres" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD_TEST=postgres" >> $GITHUB_ENV
       - name: RSpec を実行する 1
         continue-on-error: true
         run: |
