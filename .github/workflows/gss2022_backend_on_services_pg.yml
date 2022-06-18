@@ -73,7 +73,7 @@ jobs:
         # POSTGRES_HOST_TEST: localhost
         # POSTGRES_PORT_TEST: 5432
         POSTGRES_USERNAME_TEST: postgres
-        # POSTGRES_PASSWORD_TEST: postgres
+        POSTGRES_PASSWORD_TEST: postgres
 
         # const pgclient = new Client({
         #     host: process.env.POSTGRES_HOST,
