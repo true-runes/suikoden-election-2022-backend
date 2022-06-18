@@ -20,6 +20,7 @@ jobs:
         ports:
           - 5432:5432
         env:
+          POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_USER: username
           POSTGRES_PASSWORD: password
           # POSTGRES_DB: suikoden_election_2022_test
@@ -52,13 +53,13 @@ jobs:
         RAILS_ENV: test
         POSTGRES_USERNAME_TEST: username
         POSTGRES_PASSWORD_TEST: password
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      if: ${{ github.ref_name == 'feat/add_github-actions_on_services-pg' }}
-      timeout-minutes: 15
-      with:
-        sudo: true
-        limit-access-to-actor: true
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
+    #   if: ${{ github.ref_name == 'feat/add_github-actions_on_services-pg' }}
+    #   timeout-minutes: 15
+    #   with:
+    #     sudo: true
+    #     limit-access-to-actor: true
     - name: DB接続確認
       run: |
         bundle exec rails runner "puts Asset.new"
