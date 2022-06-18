@@ -14,7 +14,7 @@ jobs:
         ruby-version: ["3.1"]
     env:
       RAILS_ENV: test
-      CI: "true"
+      CI: true
     # services:
       # postgres:
       #   image: postgres:14.3
