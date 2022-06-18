@@ -68,6 +68,11 @@ jobs:
           bundle exec rails db:prepare RAILS_ENV=test
         env:
           DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
+      - name: db setup
+        run: |
+          bundle exec rails db:prepare RAILS_ENV=test
+        env:
+          DATABASE_URL: 'postgres://test:password@localhost/suikoden_election_2022_test'
       # - name: db:setup (db:create db:schema:load db:migrate) or db:migrate する
       #   run: |
       #     bin/rails db:prepare
