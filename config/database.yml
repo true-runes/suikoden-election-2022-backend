@@ -29,10 +29,10 @@ test:
   password: <%= ENV['POSTGRES_PASSWORD_TEST'] || 'postgres' %>
 
 # 外部のデータベース
-# tweet_storage:
-#   <<: *default
-#   database: <%= ENV['TWEET_STORAGE_DATABASE'] %>
-#   host: <%= ENV['TWEET_STORAGE_HOST'] %>
-#   port: <%= ENV['TWEET_STORAGE_PORT'] %>
-#   username: <%= ENV['TWEET_STORAGE_USERNAME'] %>
-#   password: <%= ENV['TWEET_STORAGE_PASSWORD'] %>
+tweet_storage:
+  <<: *default
+  database: <%= ENV['TWEET_STORAGE_DATABASE'] %>
+  host: <%= ENV['TWEET_STORAGE_HOST'] %>
+  port: <%= ENV['TWEET_STORAGE_PORT'] %>
+  username: <%= ENV['TWEET_STORAGE_USERNAME'] %>
+  password: <%= ENV['TWEET_STORAGE_PASSWORD'] %>
