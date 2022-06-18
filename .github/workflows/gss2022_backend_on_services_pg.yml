@@ -46,7 +46,7 @@ jobs:
     - name: db:create db:migrate する
       run: |
         bin/rails db:create db:migrate
-      env:
+      # env:
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
         # POSTGRES_USERNAME_TEST: postgres
@@ -54,7 +54,7 @@ jobs:
     - name: DB接続確認
       run: |
         bundle exec rails runner "puts Asset.new"
-      env:
+      # env:
         # POSTGRES_HOST_TEST: postgres #=> 接続失敗する
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
@@ -63,7 +63,7 @@ jobs:
     - name: RSpec を実行する
       run: |
         bundle exec rspec
-      env:
+      # env:
         # POSTGRES_HOST: localhost
         # POSTGRES_PORT: 5432
         # POSTGRES_HOST: localhost
