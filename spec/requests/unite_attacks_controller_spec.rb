@@ -49,8 +49,31 @@ RSpec.describe UniteAttacksController, type: :request do
 
         res = JSON.parse(response.body)
 
-        expect(res.class).to eq Array
-        expect(res.size).to eq 80
+        expect(res.class).to eq Hash
+        expect(res.keys).to eq [
+          '幻想水滸伝',
+          '幻想水滸伝II',
+          '幻想水滸伝III',
+          '幻想水滸伝IV',
+          'ラプソディア',
+          '幻想水滸伝V',
+          '幻想水滸伝ティアクライス',
+          '幻想水滸伝 紡がれし百年の時',
+        ]
+
+        record = res['幻想水滸伝'].first
+
+        expect(record.keys).to eq [
+          'id',
+          'name',
+          'name_en',
+          'character_names',
+          'page_annotation',
+        ]
+        expect(record['name']).to eq 'ダブルリーダー攻撃'
+        expect(record['name_en']).to eq 'Double Leader Attack'
+        expect(record['character_names']).to eq '主人公＆1主人公'
+        expect(record['page_annotation']).to eq nil
       end
     end
   end
