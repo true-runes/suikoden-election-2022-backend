@@ -9,11 +9,12 @@ gem 'dotenv-rails'
 gem 'faraday', '1.10.0' # 'google-cloud-language' が使えるように
 gem 'google-api-client'
 gem 'google-cloud-language'
+gem 'jbuilder'
 gem 'paper_trail'
 gem 'pg'
 gem 'puma'
-gem 'rails'
 gem 'rack-cors'
+gem 'rails'
 gem 'twitter'
 
 group :development, :test do
