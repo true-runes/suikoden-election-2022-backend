@@ -1,5 +1,5 @@
 class TweetOnTweetStorage < ApplicationRecord
-  establish_connection :tweet_storage
+  establish_connection :tweet_storage unless ENV['CI'] == 'true'
 
   self.table_name = :tweets
 

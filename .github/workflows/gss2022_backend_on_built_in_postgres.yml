@@ -1,0 +1,73 @@
+name: 幻水総選挙2022 バックエンド
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  gss2022_backend:
+    name: (pg on built-in) 継続的インテグレーション
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["18.x"]
+        ruby-version: ["3.1"]
+    env:
+      CI: true
+      RAILS_ENV: test
+      POSTGRES_HOST_TEST: localhost
+      POSTGRES_PORT_TEST: 5432
+      POSTGRES_USERNAME_TEST: postgres_user
+      POSTGRES_PASSWORD_TEST: postgres_password
+    steps:
+    # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md
+    - name: PostgreSQL を起動する
+      run: |
+        sudo systemctl start postgresql.service
+    - name: PostgreSQL の起動待ち（ヘルスチェック）をする
+      run: |
+        until : > /dev/tcp/localhost/5432; do
+          echo -n .
+          sleep 1
+        done
+
+        echo 'PostgreSQL の起動が確認できました'
+    - name: PostgreSQL のユーザー（ロール）のセットアップを行う
+      # NOTE: バージョン番号が埋め込みになっているのが良くない
+      run: |
+        sudo bash -c "echo \"local all all md5\" >> /etc/postgresql/$major_version_number/main/pg_hba.conf"
+
+        sudo su postgres -c "psql postgres -c 'create role $username;'"
+        sudo su postgres -c "psql postgres -c \"alter role $username with login password '$password';\""
+        sudo su postgres -c "psql postgres -c \"alter role $username with superuser\""
+      env:
+        major_version_number: 14
+        username: postgres_user
+        password: postgres_password
+    - name: コードをチェックアウトする
+      uses: actions/checkout@v3
+    - name: Ruby のセットアップを行う
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    - name: $ bundle install を行う
+      uses: actions/cache@v3
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gem-
+    - name: （予定地）Node.js のセットアップを行う
+      run: |
+        echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
+        echo 'uses: actions/setup-node@v3'
+        echo 'with:'
+        echo 'node-version: ${{ matrix.node-version }}'
+        echo 'cache: "yarn"'
+    - name: データベースをセットアップする
+      run: |
+        bin/rails db:prepare
+    - name: RSpec を実行する
+      run: |
+        bundle exec rspec
