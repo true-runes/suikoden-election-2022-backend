@@ -1,0 +1,33 @@
+-
+  sheet_header: 協力攻撃名
+  column_name: name
+-
+  sheet_header: よみがな
+  column_name: kana
+-
+  sheet_header: 英語表記
+  column_name: name_en
+-
+  sheet_header: キャラ1
+  column_name: chara_1
+-
+  sheet_header: キャラ2
+  column_name: chara_2
+-
+  sheet_header: キャラ3
+  column_name: chara_3
+-
+  sheet_header: キャラ4
+  column_name: chara_4
+-
+  sheet_header: キャラ5
+  column_name: chara_5
+-
+  sheet_header: キャラ6
+  column_name: chara_6
+-
+  sheet_header: ページ表示用注釈
+  column_name: page_annotation
+-
+  sheet_header: 備考
+  column_name: memo
