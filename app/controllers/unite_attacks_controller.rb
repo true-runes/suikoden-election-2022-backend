@@ -14,7 +14,7 @@ class UniteAttacksController < ApplicationController
 
     attacks = OnRawSheetUniteAttack.where(sheet_name: convert_title_param_to_sheet_name)
 
-    attacks = attacks.order(kana: :asc) if params[:order] == "kana"
+    attacks = attacks.order(kana: :asc) if params[:order] == 'kana'
 
     return_array = []
     attacks.each do |attack|
@@ -29,12 +29,27 @@ class UniteAttacksController < ApplicationController
         chara_4: attack.chara_4,
         chara_5: attack.chara_5,
         chara_6: attack.chara_6,
-        page_annotation: attack.page_annotation
+        page_annotation: attack.page_annotation,
+        character_names: character_names(attack)
       }
 
       return_array.push(return_hash)
     end
 
     render json: return_array.to_json
+  end
+
+  private
+
+  # いったん愚直に
+  def character_names(attack)
+    character_names = attack.chara_1
+    character_names = "#{character_names}＆#{attack.chara_2}" if attack.chara_2.present?
+    character_names = "#{character_names}＆#{attack.chara_3}" if attack.chara_3.present?
+    character_names = "#{character_names}＆#{attack.chara_4}" if attack.chara_4.present?
+    character_names = "#{character_names}＆#{attack.chara_5}" if attack.chara_5.present?
+    character_names = "#{character_names}＆#{attack.chara_6}" if attack.chara_6.present?
+
+    character_names
   end
 end
