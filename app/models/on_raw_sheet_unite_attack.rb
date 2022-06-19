@@ -1,0 +1,2 @@
+class OnRawSheetUniteAttack < ApplicationRecord
+end
