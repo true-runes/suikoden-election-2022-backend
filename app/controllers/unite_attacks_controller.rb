@@ -1,15 +1,17 @@
 class UniteAttacksController < ApplicationController
   def index
+    return render json: all_unite_attacks.to_json if params[:title] == 'all'
+
     # TODO: 設定ファイル的なものから持ってきたい
     convert_title_param_to_sheet_name = {
-      "s1" => "幻水I",
-      "s2" => "幻水II",
-      "s3" => "幻水III",
-      "s4" => "幻水IV",
-      "tactics" => "Rhapsodia",
-      "s5" => "幻水V",
-      "tk" => "TK",
-      "woven" => "紡時"
+      's1' => '幻水I',
+      's2' => '幻水II',
+      's3' => '幻水III',
+      's4' => '幻水IV',
+      'tactics' => 'Rhapsodia',
+      's5' => '幻水V',
+      'tk' => 'TK',
+      'woven' => '紡時'
     }[params[:title]]
 
     attacks = OnRawSheetUniteAttack.where(sheet_name: convert_title_param_to_sheet_name)
@@ -51,5 +53,45 @@ class UniteAttacksController < ApplicationController
     character_names = "#{character_names}＆#{attack.chara_6}" if attack.chara_6.present?
 
     character_names
+  end
+
+  def all_unite_attacks
+    return_array = []
+    sheet_names = [
+      "幻水I",
+      "幻水II",
+      "幻水III",
+      "幻水IV",
+      "Rhapsodia",
+      "幻水V",
+      "TK",
+      "紡時",
+    ]
+
+    sheet_names.each do |sheet_name|
+      attacks = OnRawSheetUniteAttack.where(sheet_name: sheet_name).order(kana: :asc)
+
+      attacks.each do |attack|
+        return_hash = {
+          id: attack.id,
+          title: sheet_name,
+          name: attack.name,
+          kana: attack.kana,
+          name_en: attack.name_en,
+          chara_1: attack.chara_1,
+          chara_2: attack.chara_2,
+          chara_3: attack.chara_3,
+          chara_4: attack.chara_4,
+          chara_5: attack.chara_5,
+          chara_6: attack.chara_6,
+          page_annotation: attack.page_annotation,
+          character_names: character_names(attack)
+        }
+
+        return_array.push(return_hash)
+      end
+    end
+
+    return_array
   end
 end

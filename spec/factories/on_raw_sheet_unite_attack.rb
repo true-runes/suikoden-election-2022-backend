@@ -13,4 +13,32 @@ FactoryBot.define do
     page_annotation { nil }
     memo { nil }
   end
+
+  trait :s1 do
+    sheet_name { '幻水I' }
+  end
+
+  trait :s3 do
+    sheet_name { '幻水III' }
+  end
+
+  trait :s4 do
+    sheet_name { '幻水IV' }
+  end
+
+  trait :tactics do
+    sheet_name { 'Rhapsodia' }
+  end
+
+  trait :s5 do
+    sheet_name { '幻水V' }
+  end
+
+  trait :tk do
+    sheet_name { 'TK' }
+  end
+
+  trait :woven do
+    sheet_name { '紡時' }
+  end
 end
