@@ -35,12 +35,13 @@ jobs:
     - name: PostgreSQL のユーザー（ロール）のセットアップを行う
       # NOTE: バージョン番号が埋め込みになっているのが良くない
       run: |
-        sudo bash -c "echo \"local all all md5\" >> /etc/postgresql/14/main/pg_hba.conf"
+        sudo bash -c "echo \"local all all md5\" >> /etc/postgresql/$major_version_number/main/pg_hba.conf"
 
         sudo su postgres -c "psql postgres -c 'create role $username;'"
         sudo su postgres -c "psql postgres -c \"alter role $username with login password '$password';\""
         sudo su postgres -c "psql postgres -c \"alter role $username with superuser\""
       env:
+        major_version_number: 14
         username: postgres_user
         password: postgres_password
     - name: コードをチェックアウトする
@@ -60,10 +61,10 @@ jobs:
     - name: （予定地）Node.js のセットアップを行う
       run: |
         echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
-      # uses: actions/setup-node@v3
-      # with:
-      #   node-version: ${{ matrix.node-version }}
-      #   cache: "yarn"
+        echo 'uses: actions/setup-node@v3'
+        echo 'with:'
+        echo 'node-version: ${{ matrix.node-version }}'
+        echo 'cache: "yarn"'
     - name: データベースをセットアップする
       run: |
         bin/rails db:prepare
