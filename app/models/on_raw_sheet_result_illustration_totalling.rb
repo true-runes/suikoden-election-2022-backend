@@ -1,0 +1,3 @@
+class OnRawSheetResultIllustrationTotalling < ApplicationRecord
+  # on_raw_sheet_result_illustration_totalling
+end

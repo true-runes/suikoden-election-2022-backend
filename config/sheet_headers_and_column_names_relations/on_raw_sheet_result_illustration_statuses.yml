@@ -1,0 +1,18 @@
+- # UNIQUE
+  sheet_header: 番号
+  column_name: id_on_sheet
+-
+  sheet_header: キャラ
+  column_name: character_name
+-
+  sheet_header: お名前 # name
+  column_name: name
+-
+  sheet_header: ID # アットマーク付きのスクリーンネーム
+  column_name: screen_name
+-
+  sheet_header: 本参加 # ◯ とか ✕ とか ？
+  column_name: join_sosenkyo_book
+-
+  sheet_header: 備考
+  column_name: memo
