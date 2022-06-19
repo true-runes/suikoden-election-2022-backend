@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_19_145000) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_19_224500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -109,6 +109,28 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_19_145000) do
     t.string "name_en"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "on_raw_sheet_result_illustration_statuses", force: :cascade do |t|
+    t.integer "id_on_sheet", null: false
+    t.string "character_name", null: false
+    t.string "name", null: false
+    t.string "screen_name", null: false
+    t.string "join_sosenkyo_book"
+    t.string "memo"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["id_on_sheet"], name: "id_on_sheet_index", unique: true
+  end
+
+  create_table "on_raw_sheet_result_illustration_totallings", force: :cascade do |t|
+    t.string "character_name_by_sheet_totalling"
+    t.integer "number_of_applications"
+    t.string "character_name_for_public"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_name_by_sheet_totalling"], name: "c_name_by_sheet_totalling_index", unique: true
+    t.index ["character_name_for_public"], name: "c_name_for_public_index", unique: true
   end
 
   create_table "on_raw_sheet_unite_attacks", force: :cascade do |t|
