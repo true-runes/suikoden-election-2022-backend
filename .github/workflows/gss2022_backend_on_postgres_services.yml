@@ -50,10 +50,10 @@ jobs:
     - name: （予定地）Node.js のセットアップを行う
       run: |
         echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
-      # uses: actions/setup-node@v3
-      # with:
-      #   node-version: ${{ matrix.node-version }}
-      #   cache: "yarn"
+        echo 'uses: actions/setup-node@v3'
+        echo 'with:'
+        echo 'node-version: ${{ matrix.node-version }}'
+        echo 'cache: "yarn"'
     - name: データベースをセットアップする
       run: |
         bin/rails db:prepare
