@@ -56,42 +56,39 @@ class UniteAttacksController < ApplicationController
   end
 
   def all_unite_attacks
-    return_array = []
-    sheet_names = [
-      "幻水I",
-      "幻水II",
-      "幻水III",
-      "幻水IV",
-      "Rhapsodia",
-      "幻水V",
-      "TK",
-      "紡時",
-    ]
+    return_hash = {}
 
-    sheet_names.each do |sheet_name|
+    sheet_names_vs_title_names = {
+      '幻水I': '幻想水滸伝',
+      '幻水II': '幻想水滸伝II',
+      '幻水III': '幻想水滸伝III',
+      '幻水IV': '幻想水滸伝IV',
+      Rhapsodia: 'ラプソディア',
+      '幻水V': '幻想水滸伝V',
+      TK: '幻想水滸伝ティアクライス',
+      '紡時': '幻想水滸伝 紡がれし百年の時'
+    }
+
+    sheet_names_vs_title_names.each do |sheet_name, title_name|
       attacks = OnRawSheetUniteAttack.where(sheet_name: sheet_name).order(kana: :asc)
 
+      array_for_value = []
+
       attacks.each do |attack|
-        return_hash = {
+        attack_hash = {
           id: attack.id,
-          title: sheet_name,
           name: attack.name,
-          kana: attack.kana,
           name_en: attack.name_en,
-          chara_1: attack.chara_1,
-          chara_2: attack.chara_2,
-          chara_3: attack.chara_3,
-          chara_4: attack.chara_4,
-          chara_5: attack.chara_5,
-          chara_6: attack.chara_6,
-          page_annotation: attack.page_annotation,
-          character_names: character_names(attack)
+          character_names: character_names(attack),
+          page_annotation: attack.page_annotation
         }
 
-        return_array.push(return_hash)
+        array_for_value.push(attack_hash)
       end
+
+      return_hash[title_name] = array_for_value
     end
 
-    return_array
+    return_hash
   end
 end
