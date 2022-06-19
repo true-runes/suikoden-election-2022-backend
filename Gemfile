@@ -13,6 +13,7 @@ gem 'paper_trail'
 gem 'pg'
 gem 'puma'
 gem 'rails'
+gem 'rack-cors'
 gem 'twitter'
 
 group :development, :test do
