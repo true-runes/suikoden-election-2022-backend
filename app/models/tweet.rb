@@ -21,10 +21,10 @@ class Tweet < ApplicationRecord
     where(tweeted_at: from..to)
   end
 
-  def self.gensosenkyo_2021_votes
+  def self.gensosenkyo_2022_votes
     valid_term_votes
       .not_retweet
-      .contains_hashtag('幻水総選挙2021')
+      .contains_hashtag('幻水総選挙2022')
       .not_by_gensosenkyo_main
       .order(tweeted_at: :asc)
       .order(id_number: :asc)
