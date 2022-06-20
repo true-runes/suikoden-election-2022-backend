@@ -10,5 +10,5 @@ json.array! @attacks do |attack|
   json.chara_5 attack.chara_5
   json.chara_6 attack.chara_6
   json.page_annotation attack.page_annotation
-  json.characters Presenter::UniteAttacks.character_names(attack)
+  json.character_names Presenter::UniteAttacks.character_names(attack)
 end
