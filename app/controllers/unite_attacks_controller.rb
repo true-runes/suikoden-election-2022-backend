@@ -1,6 +1,10 @@
 class UniteAttacksController < ApplicationController
   def index
-    return render json: all_unite_attacks.to_json if params[:title] == 'all'
+    if params[:title] == 'all'
+      @attacks = all_unite_attacks
+
+      return render 'index_all'
+    end
 
     # TODO: 設定ファイル的なものから持ってきたい
     convert_title_param_to_sheet_name = {
@@ -35,6 +39,7 @@ class UniteAttacksController < ApplicationController
       '紡時': '幻想水滸伝 紡がれし百年の時'
     }
 
+    # クエリが8回発行される
     sheet_names_vs_title_names.each do |sheet_name, title_name|
       attacks = OnRawSheetUniteAttack.where(sheet_name: sheet_name).order(kana: :asc)
 
