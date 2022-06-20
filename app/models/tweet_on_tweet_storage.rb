@@ -58,6 +58,7 @@ class TweetOnTweetStorage < ApplicationRecord
   }
 
   # @gensosenkyo: 1471724029
+  # @sub_gensosenkyo:1388758231825018881
   # id_number 以外で User を指定すると一意性が保証されないので注意する
   scope :remove_specific_user_with_id_number, lambda { |user_id_number|
     # tweet_id_number が同一でも、取得時刻が異なるツイートは別々にヒットしている
