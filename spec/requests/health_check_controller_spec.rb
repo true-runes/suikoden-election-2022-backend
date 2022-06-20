@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe HealthCheckController, type: :request do
-  describe '#index' do
+  describe '#index（環境変数設定済み）' do
     before do
       ENV['X_GENSOSENKYO_KEY'] = 'true_runes'
     end
@@ -34,6 +34,26 @@ RSpec.describe HealthCheckController, type: :request do
 
         expect(response).to have_http_status :ok
         expect(response.body).to eq '{"status":"Great!"}'
+      end
+    end
+  end
+
+  describe '#index（環境変数未設定）' do
+    context 'X-Gensosenkyo-Key がリクエストヘッダに存在しないとき' do
+      it '期待通りのレスポンスが返ってくること' do
+        get health_check_path
+
+        expect(response).to have_http_status :ok
+        expect(response.body).to eq '{"status":"Ok!"}'
+      end
+    end
+
+    context 'X-Gensosenkyo-Key がリクエストヘッダに存在するとき' do
+      it '期待通りのレスポンスが返ってくること' do
+        get health_check_path, headers: { 'X-Gensosenkyo-Key' => 'true_runes' }
+
+        expect(response).to have_http_status :ok
+        expect(response.body).to eq '{"status":"Ok!"}'
       end
     end
   end
