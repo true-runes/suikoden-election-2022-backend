@@ -29,6 +29,35 @@ RSpec.describe UniteAttacksController, type: :request do
 
         expect(res.class).to eq Array
         expect(res.size).to eq 10
+
+        attack = res.first
+
+        expect(attack.keys).to eq [
+          'id',
+          'name',
+          'kana',
+          'name_en',
+          'chara_1',
+          'chara_2',
+          'chara_3',
+          'chara_4',
+          'chara_5',
+          'chara_6',
+          'page_annotation',
+          'character_names',
+        ]
+        expect(attack['name']).to eq 'ダブルリーダー攻撃'
+        expect(attack['kana']).to eq 'だぶるりーだー'
+        expect(attack['name_en']).to eq 'Double Leader Attack'
+        expect(attack['chara_1']).to eq '主人公'
+        expect(attack['chara_2']).to eq '1主人公'
+        expect(attack['chara_3']).to eq nil
+        expect(attack['chara_4']).to eq nil
+        expect(attack['chara_5']).to eq nil
+        expect(attack['chara_6']).to eq nil
+        expect(attack['chara_6']).to eq nil
+        expect(attack['page_annotation']).to eq nil
+        expect(attack['character_names']).to eq '主人公＆1主人公'
       end
 
       it 'title=tk のときに期待通りのレスポンスが返ってくること' do
