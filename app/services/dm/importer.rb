@@ -6,7 +6,7 @@
 
 module Dm
   class Importer
-    INTERVAL_SECONDS = 1
+    INTERVAL_SECONDS = 10
 
     # 最新のものから過去のものに向かって取得していき、取得できなくなったら抜ける
     def self.exec(twitter_client: nil, number_of_getters: 1)
@@ -43,7 +43,7 @@ module Dm
         break if next_cursor.nil?
         break if loop_counter >= number_of_getters
 
-        sleep INTERVAL_SECONDS * 10
+        sleep INTERVAL_SECONDS * 5
       end
     end
 
