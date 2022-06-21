@@ -12,4 +12,24 @@ module Presenter
       character_names
     end
   end
+
+  class Common
+    def self.japanese_date_strftime(time, with_day_of_the_week: false)
+      days_of_the_week = ['日', '月', '火', '水', '木', '金', '土']
+
+      this_day_of_the_week_with_brackets = if with_day_of_the_week
+                                             "（#{days_of_the_week[time.wday]}）"
+                                           else
+                                             ""
+                                           end
+
+      time.strftime("%Y年%m月%d日#{this_day_of_the_week_with_brackets}")
+    end
+
+    def self.japanese_clock_time_strftime(time, with_seconds: true)
+      str = with_seconds ? "%H時%M分%S秒" : "%H時%M分"
+
+      time.strftime(str)
+    end
+  end
 end
