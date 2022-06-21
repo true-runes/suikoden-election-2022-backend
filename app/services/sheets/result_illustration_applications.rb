@@ -14,14 +14,11 @@ module Sheets
         range: "開票イラスト!A1:P"
       )
 
-      # TODO: ここは切り出しできそう
-      # シート と DBカラム の対応表を自作しておく
       sheet_headers_and_column_names = YAML.load_file(
         Rails.root.join("config/sheet_headers_and_column_names_relations/on_raw_sheet_result_illustration_statuses.yml")
       )
       cloumn_names_and_sheet_index_number = {}
 
-      # TODO: ここは切り出しできそう
       # 実際のシートのヘッダーを取得し、自作の対応表からインデックス番号を算出する
       source_sheet_headers = rows[0]
       source_sheet_headers.each_with_index do |header, i|
@@ -32,10 +29,8 @@ module Sheets
         end
       end
 
-      # TODO: バルクインサートする
       ActiveRecord::Base.transaction do
         rows.each_with_index do |row, i|
-          # TODO: このスキップ条件は切り出せそう
           next if i == 0 || row[cloumn_names_and_sheet_index_number['id_on_sheet']].blank? || row[cloumn_names_and_sheet_index_number['character_name']].blank?
 
           next if OnRawSheetResultIllustrationStatus.where(
@@ -63,17 +58,13 @@ module Sheets
         range: "開票イラスト!A1:P"
       )
 
-      # TODO: ここは切り出しできそう
-      # シート と DBカラム の対応表を自作しておく
       sheet_headers_and_column_names = YAML.load_file(
         Rails.root.join("config/sheet_headers_and_column_names_relations/on_raw_sheet_result_illustration_totallings.yml")
       )
       cloumn_names_and_sheet_index_number = {}
-
-      # TODO: ここは切り出しできそう
-      # 実際のシートのヘッダーを取得し、自作の対応表からインデックス番号を算出する
       source_sheet_headers = rows[0]
 
+      # 実際のシートのヘッダーを取得し、自作の対応表からインデックス番号を算出する
       source_sheet_headers.each_with_index do |header, i|
         sheet_headers_and_column_names.find { |e| e['sheet_header'] == header }.tap do |e|
           next if e.nil?
@@ -82,18 +73,22 @@ module Sheets
         end
       end
 
-      # binding.irb
-      # {"character_name_for_sheet_totalling"=>7,
-      #   "number_of_applications"=>8,
-      #   "character_name_for_public"=>10}
+      # シートから持ってきたレコードのうち、無効なレコードを除外する
+      valid_rows = []
+      rows.each_with_index do |row, i|
+        next if i == 0 || row[cloumn_names_and_sheet_index_number['character_name_for_sheet_totalling']].blank? || row[cloumn_names_and_sheet_index_number['character_name_for_public']].blank?
 
-      # TODO: バルクインサートする
+        valid_rows << row
+      end
+
+      # 更新がなければメソッドを抜ける
+      return 'Not Modified.' if valid_rows.count == OnRawSheetResultIllustrationTotalling.count
+
       ActiveRecord::Base.transaction do
         # 主キーがないから問答無用で全削除して入れ直す
         OnRawSheetResultIllustrationTotalling.destroy_all
 
         rows.each_with_index do |row, i|
-          # TODO: このスキップ条件は切り出せそう
           next if i == 0 || row[cloumn_names_and_sheet_index_number['character_name_for_sheet_totalling']].blank? || row[cloumn_names_and_sheet_index_number['character_name_for_public']].blank?
 
           obj = OnRawSheetResultIllustrationTotalling.new(
