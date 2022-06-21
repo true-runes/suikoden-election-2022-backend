@@ -6,6 +6,9 @@ vendor/
 .vscode/
 .history/
 .env
+node_modules
+.clasp.json
+.clasprc.json
 
 /.bundle
 
