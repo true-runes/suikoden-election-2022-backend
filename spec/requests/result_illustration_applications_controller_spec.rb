@@ -20,12 +20,27 @@ RSpec.describe ResultIllustrationApplicationsController, type: :request do
 
         res = JSON.parse(response.body)
 
-        expect(res.class).to eq Array
-        expect(res.size).to eq 3
+        expect(res.class).to eq Hash
+        expect(res.keys.size).to eq 2
+        expect(res.keys).to eq (
+          [
+            'last_updated_at',
+            'character_names',
+          ]
+        )
+
+        last_created_at = record_01.created_at
+        last_updated_at_date = Presenter::Common.japanese_date_strftime(last_created_at, with_day_of_the_week: true)
+        last_updated_at_time = Presenter::Common.japanese_clock_time_strftime(last_created_at, with_seconds: false)
+        expect(res["last_updated_at"]).to eq "#{last_updated_at_date}#{last_updated_at_time}"
+
+        character_names = res["character_names"]
+        expect(character_names.size).to eq 3
+
         # ソートされていることを確かめる
-        expect(res[0]).to eq 'アップル'
-        expect(res[1]).to eq 'コルセリア'
-        expect(res[2]).to eq 'ワカバ'
+        expect(character_names[0]).to eq 'アップル'
+        expect(character_names[1]).to eq 'コルセリア'
+        expect(character_names[2]).to eq 'ワカバ'
       end
     end
   end
