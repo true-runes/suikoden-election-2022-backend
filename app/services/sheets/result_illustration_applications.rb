@@ -7,6 +7,7 @@ module Sheets
       )
     end
 
+    # 「生ログ」なので、急いで必要になることはない
     def self.import_statuses_data_to_database
       rows = SheetData.get_rows(
         sheet_id: ENV.fetch('RESULTS_ILLUSTRATIONS_APPLICATION_STATUS_SHEET_ID'),
@@ -55,10 +56,8 @@ module Sheets
       end
     end
 
+    # API のレスポンスの元となるデータ
     def self.import_totallings_data_to_database
-      # ここ主キーがないから問答無用で全削除開始でもいいかもしれない
-      OnRawSheetResultIllustrationTotalling.destroy_all
-
       rows = SheetData.get_rows(
         sheet_id: ENV.fetch('RESULTS_ILLUSTRATIONS_APPLICATION_STATUS_SHEET_ID'),
         range: "開票イラスト!A1:P"
@@ -90,6 +89,9 @@ module Sheets
 
       # TODO: バルクインサートする
       ActiveRecord::Base.transaction do
+        # 主キーがないから問答無用で全削除して入れ直す
+        OnRawSheetResultIllustrationTotalling.destroy_all
+
         rows.each_with_index do |row, i|
           # TODO: このスキップ条件は切り出せそう
           next if i == 0 || row[cloumn_names_and_sheet_index_number['character_name_for_sheet_totalling']].blank? || row[cloumn_names_and_sheet_index_number['character_name_for_public']].blank?
