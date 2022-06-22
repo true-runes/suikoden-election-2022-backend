@@ -59,33 +59,33 @@ class Tweet < ApplicationRecord
   end
 
   def self.valid_term_votes
-    begin_datetime = Time.zone.parse('2021-06-11 21:00:00')
-    end_datetime = Time.zone.parse('2021-06-13 11:59:59')
+    begin_datetime = Time.zone.parse('2022-06-24 21:00:00')
+    end_datetime = Time.zone.parse('2022-06-26 23:59:59')
 
     where(tweeted_at: begin_datetime..end_datetime)
   end
 
-  def self.odai_shosetsu
+  def self.short_stories
     not_retweet
-      .not_by_gensosenkyo_main
+      .not_by_gensosenkyo_family
       .contains_hashtag('幻水総選挙お題小説')
-      .where(tweeted_at: ..Time.zone.parse('2021-06-07 02:20:00'))
+      .where(tweeted_at: ..Time.zone.parse('2022-06-26 23:59:59'))
       .order(tweeted_at: :asc)
       .order(id_number: :asc)
   end
 
-  def self.oshi_serifu
+  def self.fav_quotes
     not_retweet
-      .not_by_gensosenkyo_main
+      .not_by_gensosenkyo_family
       .contains_hashtag('幻水総選挙推し台詞')
-      .where(tweeted_at: ..Time.zone.parse('2021-06-10 23:59:59'))
+      .where(tweeted_at: ..Time.zone.parse('2022-06-26 23:59:59'))
       .order(tweeted_at: :asc)
       .order(id_number: :asc)
   end
 
   def valid_term_vote?
-    begin_datetime = Time.zone.parse('2021-06-11 21:00:00')
-    end_datetime = Time.zone.parse('2021-06-13 11:59:59')
+    begin_datetime = Time.zone.parse('2022-06-24 21:00:00')
+    end_datetime = Time.zone.parse('2022-06-26 23:59:59')
 
     tweeted_at >= begin_datetime && tweeted_at <= end_datetime
   end
