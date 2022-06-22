@@ -49,6 +49,8 @@ module Sheets
           obj.save!
         end
       end
+
+      '[DONE] Sheets::ResultIllustrationApplications.import_statuses_data_to_database'
     end
 
     # API のレスポンスの元となるデータ
@@ -82,7 +84,7 @@ module Sheets
       end
 
       # 更新がなければメソッドを抜ける
-      return 'Not Modified.' if valid_rows.count == OnRawSheetResultIllustrationTotalling.count
+      return '[NOT MODIFIED] Sheets::ResultIllustrationApplications.import_totallings_data_to_database' if valid_rows.count == OnRawSheetResultIllustrationTotalling.count
 
       ActiveRecord::Base.transaction do
         # 主キーがないから問答無用で全削除して入れ直す
@@ -100,6 +102,8 @@ module Sheets
           obj.save!
         end
       end
+
+      '[DONE] Sheets::ResultIllustrationApplications.import_totallings_data_to_database'
     end
   end
 end
