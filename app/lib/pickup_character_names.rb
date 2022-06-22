@@ -1,13 +1,10 @@
 class PickupCharacterNames
-  def self.exec(tweet_or_dm)
-    check_words = tweet_or_dm.analyze_syntax&.check_words
-
-    # Analayze をしてないレコード（アソシエーションとなる AnalyzeSyntax のレコードが存在しないレコード）のときは実行できない
-    return if check_words.nil?
+  def self.exec(analyze_syntax)
+    return if analyze_syntax.nil?
 
     character_candidate_names = []
 
-    check_words.each do |check_word|
+    analyze_syntax.check_words.each do |check_word|
       next if skip_word?(check_word)
 
       # 部分一致の場合
