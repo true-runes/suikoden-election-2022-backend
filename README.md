@@ -7,6 +7,19 @@ On Built-In PostgreSQL
 # 幻水総選挙2022（バックエンド）
 - いつもの
 
+# 取得するハッシュタグ
+- `#幻水総選挙2022`
+- `#幻水総選挙2022協力攻撃`
+- `#幻水総選挙お題小説`
+- `#幻水総選挙推し台詞`
+- `#幻水総選挙運動`
+
+取得方法は次の通り。日時範囲は任意で。
+
+```ruby
+tweets = BySearchWordTweet.where(search_word: "#幻水総選挙運動").where(tweeted_at: Time.zone.parse("2022-05-01").end_of_day..Time.zone.parse("2022-06-26").end_of_day).remove_duplicated.remove_retweet.remove_specific_user_with_id_number(1471724029).remove_specific_user_with_id_number(1388758231825018881).order(tweeted_at: :asc);
+```
+
 # キャラクターデータベースの構築と破壊
 - 5分ぐらいかかる
 - products <-----> characters <-----> nicknames
