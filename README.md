@@ -7,6 +7,24 @@ On Built-In PostgreSQL
 # 幻水総選挙2022（バックエンド）
 - いつもの
 
+# キャラクターデータベースの構築と破壊
+- 5分ぐらいかかる
+- products <-----> characters <-----> nicknames
+  - いずれも 多対多 の関係
+
+#### 構築
+
+```bash
+$ bundle exec rails suikoden_database:import
+$ bundle exec rails suikoden_database:destroy
+```
+
+#### 破壊
+
+```bash
+$ bundle exec rails suikoden_database:destroy
+```
+
 # AnalyzeSyntax まわりの流れ
 - ツイート or DM を指定して、Natural Language に投げる
   - 受け取った戻り値を JSON化 するなどして analyze_syntaxes に保存する
