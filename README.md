@@ -23,6 +23,23 @@ On Built-In PostgreSQL
     - この際、除外条件を継ぎ足し継ぎ足ししていっている
       - 作りは最低なのでリファクタすべき
 
+# AnalyzeSyntax 具体的な流れ
+
+```ruby
+c = CloudLanguage.client
+context = "テッドとルカに。"
+response = NaturalLanguage::Analyzer.analyze_tweet_syntax_by_api(c, context)
+attrs = {
+  language: response.language,
+  sentences: response.sentences.map(&:to_json),
+  tokens: response.tokens.map(&:to_json),
+  tweet_id: nil,
+  direct_message_id: nil,
+}
+as = AnalyzeSyntax.new(attrs)
+PickupCharacterNames.exec(as)
+```
+
 # ドキュメント
 
 ## Google Natural Language
