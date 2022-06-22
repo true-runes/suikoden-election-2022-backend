@@ -23,7 +23,7 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@google/clasp@^2.4.1":
+"@google/clasp@2.4.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@google/clasp/-/clasp-2.4.1.tgz#e2eb9d133a0c8f26fffb3cce96052638e2a572d8"
   integrity sha512-csjufiygKXa845N04Mp8DWxHx2GiGp2RviuKAvvanC/+NoU4Fmxo9aLKATpC7XL5mNSYqy+VhTikFTZEP2u9Kg==
@@ -81,7 +81,7 @@
     "@types/node" "*"
     "@types/responselike" "*"
 
-"@types/google-apps-script@^1.0.48":
+"@types/google-apps-script@1.0.48":
   version "1.0.48"
   resolved "https://registry.yarnpkg.com/@types/google-apps-script/-/google-apps-script-1.0.48.tgz#ee62da0796148397c3d6508e3b7d54e8251c8261"
   integrity sha512-DgM4y8E2LfHHPn+jeb/sXpHMiYwyc6A3wlpFNjB/o5pvqsMNEYVLK2dHKJD0VYOqstbFt/cgCUUC8DB9p1pCAQ==
