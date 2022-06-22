@@ -45,6 +45,8 @@ module Dm
 
         sleep INTERVAL_SECONDS * 5
       end
+
+      "[DONE] Dm::Importer.exec"
     end
 
     def self.create_user_record(dm, twitter_client)
@@ -70,6 +72,8 @@ module Dm
           user.save!
         end
       end
+
+      "[DONE] self.create_user_record (sender_id: #{dm[:sender_id]} / recipient_id: #{dm[:recipient_id]})"
     end
 
     def self.create_direct_message_record(dm, event)
@@ -85,6 +89,8 @@ module Dm
       )
 
       direct_message.save! if DirectMessage.find_by(id_number: dm[:id]).blank?
+
+      "[DONE] self.create_direct_message_record (dm[:id]: #{dm[:id]})"
     end
   end
 end
