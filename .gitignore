@@ -9,7 +9,7 @@ vendor/
 node_modules
 .clasp.json
 .clasprc.json
-clasp/*.js
+clasp/**/*.js
 
 /.bundle
 
