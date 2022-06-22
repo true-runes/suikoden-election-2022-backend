@@ -143,4 +143,9 @@ class Tweet < ApplicationRecord
 
     mentions.any? { |mention| mention.user_id_number.in?(gensosenkyo_admin_user_id_numbers.values) }
   end
+
+  # NaturalLanguage::Analyzer 用
+  def content_text
+    full_text
+  end
 end

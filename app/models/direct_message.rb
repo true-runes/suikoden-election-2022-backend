@@ -32,4 +32,9 @@ class DirectMessage < ApplicationRecord
   def self.to_gensosenkyo
     where(recipient_id_number: 1471724029)
   end
+
+  # NaturalLanguage::Analyzer 用
+  def content_text
+    text
+  end
 end
