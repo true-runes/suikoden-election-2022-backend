@@ -69,3 +69,4 @@ function myFooFunction() {
 ```
 
 そして `$ clasp push` し、Webコンソールにおいて正しく push されているかを確認する。
+サブディレクトリで push する際には、カレントディレクトリに空っぽ `{}` の `package.json` を作っておくこと。
