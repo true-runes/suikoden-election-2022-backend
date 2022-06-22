@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_19_224500) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_21_233304) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -130,7 +130,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_19_224500) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["character_name_by_sheet_totalling"], name: "c_name_by_sheet_totalling_index", unique: true
-    t.index ["character_name_for_public"], name: "c_name_for_public_index", unique: true
+    t.index ["character_name_for_public"], name: "c_name_for_public_index"
   end
 
   create_table "on_raw_sheet_unite_attacks", force: :cascade do |t|
