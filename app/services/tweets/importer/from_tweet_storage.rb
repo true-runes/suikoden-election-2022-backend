@@ -31,7 +31,7 @@ module Tweets
             born_at: tweet.user.created_at
           }
 
-          # User はプロフ関連の情報や鍵情報の更新があり得るが、ここでは新規のみ扱う
+          # User はプロフ関連の情報や鍵情報の「更新」があり得るが、更新作業は行わない
           existing_user = User.find_by(id_number: user_attrs[:id_number])
 
           if existing_user.blank?
@@ -64,8 +64,7 @@ module Tweets
 
             @imported_tweet.save!
           else
-            @imported_tweet = false
-            # @imported_tweet = existing_tweet
+            @imported_tweet = existing_tweet
           end
         end
 
