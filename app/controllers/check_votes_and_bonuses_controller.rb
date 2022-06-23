@@ -3,8 +3,14 @@ class CheckVotesAndBonusesController < ApplicationController
     screen_name = Presenter::Common.normalized_screen_name(params[:screen_name])
     user = User.find_by(screen_name: screen_name)
 
-    # TODO: エラーハンドリング
-    return render json: {} if user.blank?
+    error_response = {
+      gss2022: [],
+      unite_attacks: [],
+      short_stories: [],
+      fav_quotes: [],
+      sosenkyo_campaigns: []
+    }
+    return render json: error_response if user.blank?
 
     gss2022_tweets = user.tweets.gensosenkyo_2022_votes_for_api
     unite_attacks_tweets = user.tweets.unite_attacks_votes_for_api
