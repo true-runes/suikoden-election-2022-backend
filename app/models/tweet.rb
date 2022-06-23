@@ -108,6 +108,19 @@ class Tweet < ApplicationRecord
       .order(id_number: :asc)
   end
 
+  # API では "is_public" と 期間 に注意する
+  def self.short_stories_for_api
+    where(is_public: true)
+      .not_retweet
+      .contains_hashtag('幻水総選挙お題小説')
+      .not_by_gensosenkyo_family
+      .where(
+        tweeted_at: Time.zone.parse('2022-05-01 12:00:00')..Time.zone.parse('2022-07-31 23:59:59')
+      )
+      .order(tweeted_at: :asc)
+      .order(id_number: :asc)
+  end
+
   # スプレッドシートに書き込むことを前提としているので、制限は緩い
   def self.fav_quotes
     not_retweet
@@ -120,9 +133,35 @@ class Tweet < ApplicationRecord
       .order(id_number: :asc)
   end
 
+  # API では "is_public" と 期間 に注意する
+  def self.fav_quotes_for_api
+    where(is_public: true)
+      .not_retweet
+      .contains_hashtag('幻水総選挙推し台詞')
+      .not_by_gensosenkyo_family
+      .where(
+        tweeted_at: Time.zone.parse('2022-05-01 12:00:00')..Time.zone.parse('2022-07-31 23:59:59')
+      )
+      .order(tweeted_at: :asc)
+      .order(id_number: :asc)
+  end
+
   # スプレッドシートに書き込むことを前提としているので、制限は緩い
   def self.sosenkyo_campaigns
     not_retweet
+      .contains_hashtag('幻水総選挙運動')
+      .not_by_gensosenkyo_family
+      .where(
+        tweeted_at: Time.zone.parse('2022-05-01 12:00:00')..Time.zone.parse('2022-07-31 23:59:59')
+      )
+      .order(tweeted_at: :asc)
+      .order(id_number: :asc)
+  end
+
+  # API では "is_public" と 期間 に注意する
+  def self.sosenkyo_campaigns_for_api
+    where(is_public: true)
+      .not_retweet
       .contains_hashtag('幻水総選挙運動')
       .not_by_gensosenkyo_family
       .where(
