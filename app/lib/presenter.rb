@@ -33,6 +33,8 @@ module Presenter
     end
 
     def self.normalized_screen_name(screen_name)
+      return '' if screen_name.blank?
+
       screen_name.gsub!(' ', '')
       screen_name.gsub('@', '')
     end

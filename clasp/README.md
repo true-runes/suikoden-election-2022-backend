@@ -2,6 +2,7 @@
 - https://github.com/google/clasp/tree/master/docs
 
 # 注意点
+- サブディレクトリ内で閉じるために `$ npx clasp` でコマンドを実行する
 - `.ts` のみ push される
   - ただし pull すると `.js` が降ってくる
 - コマンドの実行はすべてプロジェクトルートで行う

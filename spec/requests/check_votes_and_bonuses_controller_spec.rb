@@ -9,6 +9,7 @@ RSpec.describe CheckVotesAndBonusesController, type: :request do
         expect(response).to have_http_status :ok
         expect(JSON.parse(response.body)).to eq(
           {
+            "screen_name" => "",
             "gss2022" => [],
             "unite_attacks" => [],
             "short_stories" => [],
@@ -26,6 +27,7 @@ RSpec.describe CheckVotesAndBonusesController, type: :request do
         expect(response).to have_http_status :ok
         expect(JSON.parse(response.body)).to eq(
           {
+            "screen_name" => "test_user",
             "gss2022" => [],
             "unite_attacks" => [],
             "short_stories" => [],
@@ -43,6 +45,7 @@ RSpec.describe CheckVotesAndBonusesController, type: :request do
         expect(response).to have_http_status :ok
         expect(JSON.parse(response.body)).to eq(
           {
+            "screen_name" => "test_screen_name",
             "gss2022" => [],
             "unite_attacks" => [],
             "short_stories" => [],
