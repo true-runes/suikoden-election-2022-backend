@@ -6,8 +6,8 @@ class CheckVotesAndBonusesController < ApplicationController
     @fav_quotes = []
     @sosenkyo_campaigns = []
 
-    screen_name = Presenter::Common.normalized_screen_name(params[:screen_name])
-    user = User.find_by(screen_name: screen_name)
+    @screen_name = Presenter::Common.normalized_screen_name(params[:screen_name])
+    user = User.find_by(screen_name: @screen_name)
 
     if user.present?
       begin
@@ -28,7 +28,7 @@ class CheckVotesAndBonusesController < ApplicationController
       end
     end
 
-    append_omission_tweets(screen_name)
+    append_omission_tweets(@screen_name)
   end
 
   private
