@@ -1,8 +1,5 @@
 class CheckVotesAndBonusesController < ApplicationController
   def index
-    screen_name = Presenter::Common.normalized_screen_name(params[:screen_name])
-    user = User.find_by(screen_name: screen_name)
-
     error_response = {
       gss2022: [],
       unite_attacks: [],
@@ -10,6 +7,11 @@ class CheckVotesAndBonusesController < ApplicationController
       fav_quotes: [],
       sosenkyo_campaigns: []
     }
+    return render json: error_response if params[:screen_name].blank?
+
+    screen_name = Presenter::Common.normalized_screen_name(params[:screen_name])
+    user = User.find_by(screen_name: screen_name)
+
     return render json: error_response if user.blank?
 
     gss2022_tweets = user.tweets.gensosenkyo_2022_votes_for_api
