@@ -1,8 +1,6 @@
 class TwitterRestApi
   # account_key は シンボル で指定する
-  def self.client(account_key: nil)
-    return if account_key.nil?
-
+  def self.client(account_key: :ayy)
     credentials = convert_account_key_to_credentials(account_key)
     return if credentials.nil?
 
