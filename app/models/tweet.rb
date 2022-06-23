@@ -21,15 +21,6 @@ class Tweet < ApplicationRecord
     where(tweeted_at: from..to)
   end
 
-  def self.gensosenkyo_2022_votes
-    valid_term_votes
-      .not_retweet
-      .contains_hashtag('幻水総選挙2022')
-      .not_by_gensosenkyo_main
-      .order(tweeted_at: :asc)
-      .order(id_number: :asc)
-  end
-
   def self.not_by_gensosenkyo_family
     # gensosenkyo: 1471724029,
     # sub_gensosenkyo: 1388758231825018881
@@ -65,20 +56,78 @@ class Tweet < ApplicationRecord
     where(tweeted_at: begin_datetime..end_datetime)
   end
 
-  def self.short_stories
-    not_retweet
+  # スプレッドシートに書き込むことを前提としているので、制限は緩い
+  def self.gensosenkyo_2022_votes
+    not_retweet # 元データに入っていないから、おそらく不要
+      .contains_hashtag('幻水総選挙2022')
+      .not_by_gensosenkyo_family # 元データに入っていないから、おそらく不要
+      .order(tweeted_at: :asc) # id_number で並べているから、おそらく不要
+      .order(id_number: :asc)
+  end
+
+  # API では "is_public" と 期間 に注意する
+  def self.gensosenkyo_2022_votes_for_api
+    where(is_public: true)
+      .valid_term_votes
+      .not_retweet
       .not_by_gensosenkyo_family
-      .contains_hashtag('幻水総選挙お題小説')
-      .where(tweeted_at: ..Time.zone.parse('2022-06-26 23:59:59'))
+      .contains_hashtag('幻水総選挙2022')
       .order(tweeted_at: :asc)
       .order(id_number: :asc)
   end
 
-  def self.fav_quotes
+  # スプレッドシートに書き込むことを前提としているので、制限は緩い
+  def self.unite_attacks_votes
     not_retweet
       .not_by_gensosenkyo_family
+      .contains_hashtag('幻水総選挙2022協力攻撃')
+      .order(tweeted_at: :asc)
+      .order(id_number: :asc)
+  end
+
+  # API では "is_public" と 期間 に注意する
+  def self.unite_attacks_votes_for_api
+    where(is_public: true)
+      .valid_term_votes
+      .not_retweet
+      .not_by_gensosenkyo_family
+      .contains_hashtag('幻水総選挙2022協力攻撃')
+      .order(tweeted_at: :asc)
+      .order(id_number: :asc)
+  end
+
+  # スプレッドシートに書き込むことを前提としているので、制限は緩い
+  def self.short_stories
+    not_retweet
+      .contains_hashtag('幻水総選挙お題小説')
+      .not_by_gensosenkyo_family
+      .where(
+        tweeted_at: Time.zone.parse('2022-05-01 12:00:00')..Time.zone.parse('2022-07-31 23:59:59')
+      )
+      .order(tweeted_at: :asc)
+      .order(id_number: :asc)
+  end
+
+  # スプレッドシートに書き込むことを前提としているので、制限は緩い
+  def self.fav_quotes
+    not_retweet
       .contains_hashtag('幻水総選挙推し台詞')
-      .where(tweeted_at: ..Time.zone.parse('2022-06-26 23:59:59'))
+      .not_by_gensosenkyo_family
+      .where(
+        tweeted_at: Time.zone.parse('2022-05-01 12:00:00')..Time.zone.parse('2022-07-31 23:59:59')
+      )
+      .order(tweeted_at: :asc)
+      .order(id_number: :asc)
+  end
+
+  # スプレッドシートに書き込むことを前提としているので、制限は緩い
+  def self.sosenkyo_campaigns
+    not_retweet
+      .contains_hashtag('幻水総選挙運動')
+      .not_by_gensosenkyo_family
+      .where(
+        tweeted_at: Time.zone.parse('2022-05-01 12:00:00')..Time.zone.parse('2022-07-31 23:59:59')
+      )
       .order(tweeted_at: :asc)
       .order(id_number: :asc)
   end
