@@ -12,10 +12,11 @@ class CheckVotesAndBonusesController < ApplicationController
     fav_quotes = user.tweets.fav_quotes
     sosenkyo_campaigns = user.tweets.sosenkyo_campaigns
 
-    @gss2022_tweets = gss2022_tweets.map(&:id_number)
-    @unite_attacks_tweets = unite_attacks_tweets.map(&:id_number)
-    @short_stories = short_stories.map(&:id_number)
-    @fav_quotes = fav_quotes.map(&:id_number)
-    @sosenkyo_campaigns = sosenkyo_campaigns.map(&:id_number)
+    # react-twitter-embed へ渡すためには文字列のほうが都合がいい
+    @gss2022_tweets = gss2022_tweets.map { |t| t.id_number.to_s }
+    @unite_attacks_tweets = unite_attacks_tweets.map { |t| t.id_number.to_s }
+    @short_stories = short_stories.map { |t| t.id_number.to_s }
+    @fav_quotes = fav_quotes.map { |t| t.id_number.to_s }
+    @sosenkyo_campaigns = sosenkyo_campaigns.map { |t| t.id_number.to_s }
   end
 end
