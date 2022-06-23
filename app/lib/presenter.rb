@@ -31,5 +31,10 @@ module Presenter
 
       time.strftime(str)
     end
+
+    def self.normalized_screen_name(screen_name)
+      screen_name.gsub!(' ', '')
+      screen_name.gsub('@', '')
+    end
   end
 end
