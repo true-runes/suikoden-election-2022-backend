@@ -7,13 +7,15 @@ class EventBasicData
     Time.zone.parse('2022-06-26 23:59:59')
   end
 
-  def used_hashtags
-    [
-      '#幻水総選挙2022',
-      '#幻水総選挙2022協力攻撃',
-      '#幻水総選挙運動',
-      '#幻水総選挙お題小説',
-      '#幻水総選挙推し台詞',
-    ]
+  def self.used_hashtags
+    YAML.load_file(
+      Rails.root.join('config/used_hashtags.yml')
+    )['used_hashtags']
+  end
+
+  def self.sheet_names
+    YAML.load_file(
+      Rails.root.join('config/sheet_names.yml')
+    )['sheet_names']
   end
 end
