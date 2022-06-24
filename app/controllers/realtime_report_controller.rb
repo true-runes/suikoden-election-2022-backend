@@ -2,12 +2,20 @@ class RealtimeReportController < ApplicationController
   def index
     return render json: blank_response if params["request_spec"] == "true"
 
+    all_realtime_reports = RealtimeReport.all
+
+    all_characters = all_realtime_reports.where(target_name: 'all_characters').order(date: :asc, hour: :asc)
+    unite_attacks = all_realtime_reports.where(target_name: 'unite_attacks').order(date: :asc, hour: :asc)
+    fav_quotes = all_realtime_reports.where(target_name: 'fav_quotes').order(date: :asc, hour: :asc)
+    short_stories = all_realtime_reports.where(target_name: 'short_stories').order(date: :asc, hour: :asc)
+    sosenkyo_campaigns = all_realtime_reports.where(target_name: 'sosenkyo_campaigns').order(date: :asc, hour: :asc)
+
     response = {
-      all_characters: response_contents(RealtimeReport.where(target_name: 'all_characters').order(date: :asc, hour: :asc)),
-      unite_attacks: response_contents(RealtimeReport.where(target_name: 'unite_attacks').order(date: :asc, hour: :asc)),
-      fav_quotes: response_contents(RealtimeReport.where(target_name: 'fav_quotes').order(date: :asc, hour: :asc)),
-      short_stories: response_contents(RealtimeReport.where(target_name: 'short_stories').order(date: :asc, hour: :asc)),
-      sosenkyo_campaigns: response_contents(RealtimeReport.where(target_name: 'sosenkyo_campaigns').order(date: :asc, hour: :asc))
+      all_characters: all_characters,
+      unite_attacks: unite_attacks,
+      fav_quotes: fav_quotes,
+      short_stories: short_stories,
+      sosenkyo_campaigns: sosenkyo_campaigns
     }
 
     render json: response
