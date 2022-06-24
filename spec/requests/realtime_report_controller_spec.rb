@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe RealtimeReportController, type: :request do
   describe '#index' do
     it '期待通りのレスポンスが返ってくること' do
-      get realtime_report_path
+      # TODO: パラメータはテスト用の一時的なものなので、きちんと書く
+      get realtime_report_path, params: { request_spec: 'true' }
 
       expect(response).to have_http_status :ok
 
@@ -17,18 +18,11 @@ RSpec.describe RealtimeReportController, type: :request do
         sosenkyo_campaigns
       )
 
-      ['all_characters', 'unite_attacks'].each do |key|
+      ['all_characters', 'unite_attacks', 'fav_quotes', 'short_stories', 'sosenkyo_campaigns'].each do |key|
         expect(hashed_json[key].keys).to match_array %w(
           sum
           votes_per_day
           votes_per_hour
-          votes_per_lang
-        )
-      end
-
-      ['fav_quotes', 'short_stories', 'sosenkyo_campaigns'].each do |key|
-        expect(hashed_json[key].keys).to match_array %w(
-          sum
           votes_per_lang
         )
       end

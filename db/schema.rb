@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_22_003444) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_24_052322) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -157,6 +157,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_003444) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_products_on_name", unique: true
     t.index ["name_en"], name: "index_products_on_name_en", unique: true
+  end
+
+  create_table "realtime_reports", force: :cascade do |t|
+    t.string "target_name", null: false
+    t.string "date"
+    t.string "hour"
+    t.integer "vote_count"
+    t.integer "vote_lang_count_ja"
+    t.integer "vote_lang_count_others"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tweets", force: :cascade do |t|
