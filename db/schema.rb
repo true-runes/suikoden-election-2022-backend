@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_24_052322) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_24_122242) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -168,6 +168,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_052322) do
     t.integer "vote_lang_count_others"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.json "response_json"
   end
 
   create_table "tweets", force: :cascade do |t|
