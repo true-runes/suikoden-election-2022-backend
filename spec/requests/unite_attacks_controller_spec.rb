@@ -57,7 +57,8 @@ RSpec.describe UniteAttacksController, type: :request do
         expect(attack['chara_6']).to eq nil
         expect(attack['chara_6']).to eq nil
         expect(attack['page_annotation']).to eq nil
-        expect(attack['character_names']).to eq '主人公＆1主人公'
+        expect(attack['character_names']).not_to eq '主人公＆1主人公'
+        expect(attack['character_names']).to eq '1主人公＆主人公'
       end
 
       it 'title=tk のときに期待通りのレスポンスが返ってくること' do
@@ -101,7 +102,8 @@ RSpec.describe UniteAttacksController, type: :request do
         ]
         expect(record['name']).to eq 'ダブルリーダー攻撃'
         expect(record['name_en']).to eq 'Double Leader Attack'
-        expect(record['character_names']).to eq '主人公＆1主人公'
+        expect(record['character_names']).not_to eq '主人公＆1主人公'
+        expect(record['character_names']).to eq '1主人公＆主人公'
         expect(record['page_annotation']).to eq nil
       end
     end

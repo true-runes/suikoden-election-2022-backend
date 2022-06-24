@@ -1,0 +1,2 @@
+class RealtimeReport < ApplicationRecord
+end
