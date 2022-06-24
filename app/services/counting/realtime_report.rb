@@ -110,12 +110,12 @@ module Counting
       {
         sum: realtime_reports.map(&:vote_count).sum,
         votes_per_day: {
-          '2020-06-24': votes_per_hours_20220624.sum,
-          '2020-06-25': votes_per_hours_20220625.sum,
-          '2020-06-26': votes_per_hours_20220626.sum
+          '2022-06-24': votes_per_hours_20220624.sum,
+          '2022-06-25': votes_per_hours_20220625.sum,
+          '2022-06-26': votes_per_hours_20220626.sum
         },
         votes_per_hour: {
-          '2020-06-24': {
+          '2022-06-24': {
             '00': votes_per_hours_20220624[0],
             '01': votes_per_hours_20220624[1],
             '02': votes_per_hours_20220624[2],
@@ -141,7 +141,7 @@ module Counting
             '22': votes_per_hours_20220624[22],
             '23': votes_per_hours_20220624[23]
           },
-          '2020-06-25': {
+          '2022-06-25': {
             '00': votes_per_hours_20220625[0],
             '01': votes_per_hours_20220625[1],
             '02': votes_per_hours_20220625[2],
@@ -167,7 +167,7 @@ module Counting
             '22': votes_per_hours_20220625[22],
             '23': votes_per_hours_20220625[23]
           },
-          '2020-06-26': {
+          '2022-06-26': {
             '00': votes_per_hours_20220626[0],
             '01': votes_per_hours_20220626[1],
             '02': votes_per_hours_20220626[2],
