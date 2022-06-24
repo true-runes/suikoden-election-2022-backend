@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   get 'result_illustration_applications', to: 'result_illustration_applications#index', format: 'json'
   get 'check_votes_and_bonuses', to: 'check_votes_and_bonuses#index', format: 'json'
   get 'characters', to: 'characters#index', format: 'json'
+  get 'realtime_report', to: 'realtime_report#index', format: 'json'
 end
