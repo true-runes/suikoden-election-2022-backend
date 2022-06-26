@@ -43,7 +43,7 @@ module Sheets
             name: row[cloumn_names_and_sheet_index_number['name']],
             screen_name: row[cloumn_names_and_sheet_index_number['screen_name']],
             join_sosenkyo_book: row[cloumn_names_and_sheet_index_number['join_sosenkyo_book']],
-            memo: row[cloumn_names_and_sheet_index_number['memo']],
+            memo: row[cloumn_names_and_sheet_index_number['memo']]
           )
 
           obj.save!
@@ -78,7 +78,7 @@ module Sheets
       # シートから持ってきたレコードのうち、無効なレコードを除外する
       valid_rows = []
       rows.each_with_index do |row, i|
-        next if i == 0 || row[cloumn_names_and_sheet_index_number['character_name_for_sheet_totalling']].blank? || row[cloumn_names_and_sheet_index_number['character_name_for_public']].blank?
+        next if i == 0 || row[cloumn_names_and_sheet_index_number['character_name_for_public']].blank?
 
         valid_rows << row
       end
@@ -91,12 +91,17 @@ module Sheets
         OnRawSheetResultIllustrationTotalling.destroy_all
 
         rows.each_with_index do |row, i|
-          next if i == 0 || row[cloumn_names_and_sheet_index_number['character_name_for_sheet_totalling']].blank? || row[cloumn_names_and_sheet_index_number['character_name_for_public']].blank?
+          next if i == 0 || row[cloumn_names_and_sheet_index_number['character_name_for_public']].blank?
+
+          # FIXME: ワークアラウンドなので要修正
+          temporary_inserted_data = "TEMP_#{SecureRandom.uuid}"
+
+          character_name_by_sheet_totalling_data = row[cloumn_names_and_sheet_index_number['character_name_for_sheet_totalling']].presence || temporary_inserted_data
 
           obj = OnRawSheetResultIllustrationTotalling.new(
-            character_name_by_sheet_totalling: row[cloumn_names_and_sheet_index_number['character_name_for_sheet_totalling']],
+            character_name_by_sheet_totalling: character_name_by_sheet_totalling_data,
             number_of_applications: row[cloumn_names_and_sheet_index_number['number_of_applications']],
-            character_name_for_public: row[cloumn_names_and_sheet_index_number['character_name_for_public']],
+            character_name_for_public: row[cloumn_names_and_sheet_index_number['character_name_for_public']]
           )
 
           obj.save!
