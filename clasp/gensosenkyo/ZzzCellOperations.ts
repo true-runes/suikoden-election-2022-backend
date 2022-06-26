@@ -57,8 +57,7 @@ namespace ZzzCellOperations {
     }
   }
 
-  // 102行目 に '@' を番兵として立たせる
-  // 既存データを上書きする破壊的メソッドなので注意する
+  // 102行目 に '@' を番兵として立たせる（既存データを上書きする破壊的メソッド）
   export const setLastRowSymbols = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
     // 列の末尾は 200列目 (GR) とする
     const range = sheet.getRange(102, 1, 1, 200)
@@ -66,7 +65,7 @@ namespace ZzzCellOperations {
     range.setValue('@')
   }
 
-  // 既存データを上書きする破壊的メソッドなので注意する
+  // 既存データを上書きする破壊的メソッド
   export const removeLastRowSymbols = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
     const range = sheet.getRange(102, 1, 1, 200)
 
@@ -88,14 +87,12 @@ namespace ZzzCellOperations {
     range.setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP)
   }
 
-  // 挿入 -> チェックボックス
-  // 既存データを上書きする破壊的メソッドなので注意する
+  // 挿入 -> チェックボックス（既存データを上書きする破壊的メソッド）
   export const createCheckBoxes = (range: GoogleAppsScript.Spreadsheet.Range) => {
     range.insertCheckboxes();
   }
 
-  // チェックボックスを削除する
-  // 既存データを上書きする破壊的メソッドなので注意する
+  // チェックボックスを削除する（既存データを上書きする破壊的メソッド）
   export const removeCheckBoxes = (range: GoogleAppsScript.Spreadsheet.Range) => {
     range.removeCheckboxes();
   }

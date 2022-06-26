@@ -1,8 +1,4 @@
 // 条件付き書式
-// 条件付き書式のカスタム数式の書き方
-// https://gyazo.com/eeb783cc8485d174b1775c6234fe744e
-// https://bamka.info/docs-google-gyo-irokae/
-
 namespace ZzzConditionalFormats {
   export const setColorToRangeInSpecificCondition = (
     range: GoogleAppsScript.Spreadsheet.Range,
@@ -24,23 +20,23 @@ namespace ZzzConditionalFormats {
     sheet.setConditionalFormatRules(rules)
   }
 
-  export const setGrayBackgroundToAllRowCellsInSpecificCondition  = (
+  // 「カスタム数式」における、判定対象セルと適用される範囲の関係は分かりづらいので、以下などを参照
+  // https://bamka.info/docs-google-gyo-irokae/
+  export const getRuleToSetGrayBackgroundToAllRowCellsInSpecificCondition  = (
     rowNumber: number,
     sheet: GoogleAppsScript.Spreadsheet.Sheet,
-    formulaSatisfied: string
+    formulaSatisfied: string,
+    range: GoogleAppsScript.Spreadsheet.Range
   ) => {
     // formulaSatisfied は '=$F$2=FALSE' などのような形の条件文になる
     const newRule = SpreadsheetApp
       .newConditionalFormatRule()
       .whenFormulaSatisfied(formulaSatisfied) // この条件が満たされる時に、
       .setBackground('#a9a9a9') // このメソッドが適用されて、
-      .setRanges([sheet.getRange(rowNumber, 1, 1, 50)]) // 適用範囲は range になる（getRange した値を配列にくるんで渡す）
+      // .setRanges([sheet.getRange(rowNumber, 1, 1, 50)]) // 適用範囲は range になる（getRange した値を配列にくるんで渡す）
+      .setRanges([range]) // 適用範囲は range になる（getRange した値を配列にくるんで渡す）
       .build()
 
-    // 既存のルールに追加する
-    const rules = sheet.getConditionalFormatRules()
-    rules.push(newRule)
-
-    sheet.setConditionalFormatRules(rules)
+    return newRule
   }
 }
