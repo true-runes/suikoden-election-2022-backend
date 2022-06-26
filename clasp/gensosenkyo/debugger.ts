@@ -1,4 +1,3 @@
-const _debugFunction = () => {
-  const sheet = ZzzSheetOperations.changeActiveSheetTo('シート1')
-  sheet.clearConditionalFormatRules();
+const debugFunction = () => {
+  ZzzDebugFunctions.clearConditionalFormatsOnAllSheets()
 }

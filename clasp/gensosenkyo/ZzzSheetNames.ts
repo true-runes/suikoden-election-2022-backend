@@ -45,7 +45,7 @@ namespace ZzzSheetNames {
     '取得漏れ等'
   ]
 
-  export const requiredSettingsSheetNames = ZzzSheetNames.allSheetNames.filter((sheetName) => {
-    return !(['説明', '集計状況', '取得漏れ等'].includes(sheetName))
+  export const forCountingSheetNames = ZzzSheetNames.allSheetNames.filter((sheetName) => {
+    return !(['説明', '集計状況'].includes(sheetName))
   })
 }
