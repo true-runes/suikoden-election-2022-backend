@@ -5,6 +5,11 @@ module NaturalLanguage
 
   class Analyzer
     def self.save_analyze_syntax_record(client, tweet_or_dm)
+      existing_analyze_syntax = tweet_or_dm&.analyze_syntax
+
+      return if existing_analyze_syntax.present?
+
+      # ここで APIアクセス が発生し、料金が発生する
       response = analyze_tweet_syntax_by_api(client, tweet_or_dm.content_text)
 
       ActiveRecord::Base.transaction do
@@ -30,6 +35,7 @@ module NaturalLanguage
       document = { type: :PLAIN_TEXT, content: text }
 
       # analyze_syntax メソッドはライブラリに生えているメソッド
+      # ここで APIアクセス が発生し、料金が発生する
       client.analyze_syntax(document: document)
     end
   end

@@ -16,6 +16,10 @@ class Tweet < ApplicationRecord
   scope :mentioned_user, ->(user) { joins(:mentions).where(mentions: { user_id_number: user.id_number }) }
   scope :is_public, -> { where(is_public: true) }
 
+  def self.latest
+    order(id_number: :asc).last
+  end
+
   # TODO: TweetStorage の方にも書く
   def self.filter_by_tweeted_at(from, to)
     where(tweeted_at: from..to)
