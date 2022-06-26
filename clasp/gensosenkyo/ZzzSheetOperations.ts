@@ -50,4 +50,14 @@ namespace ZzzSheetOperations {
     const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
     spreadSheet.deleteSheet(sheet);
   }
+
+  export const columnNameVsColumnNumber = (columnNames: string[]) => {
+    let columnNameVsColumnNumber = {}
+
+    columnNames.forEach((columnName, index) => {
+      columnNameVsColumnNumber[columnName] = index + 1
+    })
+
+    return columnNameVsColumnNumber
+  }
 }
