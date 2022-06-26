@@ -1,16 +1,50 @@
 const createTweetCountingSheets = () => {
-  // const sheetNames = ZzzSheetNames.allSheetNames
-  // sheetNames.forEach(sheetName => {
-  //   ZzzSheetOperations.removeSheet(sheetName)
-  // })
-  // createInitialSheets()
+  // シートの作成と破壊
+  if (false) {
+    if (false) {
+      const sheetNames = ZzzSheetNames.allSheetNames
+      sheetNames.forEach(sheetName => {
+        ZzzSheetOperations.removeSheet(sheetName)
+      })
+      console.log('シートを削除しました')
+    }
 
-  setColumnNames()
-  setColumnWidths()
-  setBanpeis()
-  setProtectedCells()
+    createInitialSheets()
+    console.log('シートを作成しました')
+  }
+
+  // 列名を入力する
+  // setColumnNames()
+  console.log('[DONE] setColumnNames')
+
+  // 列幅を調整する
+  // setColumnWidths()
+  console.log('[DONE] setColumnWidths')
+
+  // 102行目の各セルに '@' を入れる
+  // setBanpeis()
+  console.log('[DONE] setBanpeis')
+
+  // シートの保護機能を適用する
+  // setProtectedCells()
+  console.log('[DONE] setProtectedCells')
+
+  // チェックボックスを作成する
   createCheckBoxes()
-  setRappings()
+  console.log('[DONE] createCheckBoxes')
+
+  // 折り返しのタイプを設定する
+  // setRappings()
+  console.log('[DONE] setRappings')
+
+  // 「条件付き書式」を設定する
+  setDefaultConditionalFormats()
+  console.log('[DONE] setDefaultConditionalFormats')
+
+  // 実行に凄まじい時間がかかるので別枠でもいい
+  // 特定の条件で行全体を灰色にする
+  // setGrayBackGroundInSpecificCondition()
+  // console.log('[DONE] setGrayBackGroundInSpecificCondition')
 }
 
 const createInitialSheets = () => {
@@ -19,7 +53,7 @@ const createInitialSheets = () => {
   sheetNames.forEach(sheetName => {
     ZzzSheetOperations.createSheet({newSheetName: sheetName})
 
-    // ロールバック（危険）
+    // ロールバック（データ削除が発生し、危険）
     // ZzzSheetOperations.removeSheet(sheetName)
   })
 }
@@ -49,23 +83,23 @@ const setColumnWidths = () => {
   sheetNames.forEach(sheetName => {
     const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
 
-    sheet.setColumnWidth(columNameVsColumnNumber['ID'], 40); // id 要「切り詰める」
-    sheet.setColumnWidth(columNameVsColumnNumber['screen_name'], 30); // screen_name 見えなくていい 要「切り詰める」
-    sheet.setColumnWidth(columNameVsColumnNumber['tweet_id'], 30); // tweet_id 見えなくていい 要「切り詰める」
-    sheet.setColumnWidth(columNameVsColumnNumber['日時'], 30); // tweeted_at 見えなくていい 要「切り詰める」
-    sheet.setColumnWidth(columNameVsColumnNumber['URL'], 30); // url 見えなくていい 要「切り詰める」
-    sheet.setColumnWidth(columNameVsColumnNumber['ツイートが見られる？'], 130); // is_visible 要チェックボックス挿入 -> 関連して書式設定
-    sheet.setColumnWidth(columNameVsColumnNumber['備考'], 100); // 備考 要折り返し
-    sheet.setColumnWidth(columNameVsColumnNumber['要レビュー？'], 90); // 要レビュー？ 要チェックボックス挿入 -> 関連して書式設定
-    sheet.setColumnWidth(columNameVsColumnNumber['二次チェック済？'], 130); // 二次チェック済み？ 要チェックボックス挿入 -> 関連して書式設定
-    sheet.setColumnWidth(columNameVsColumnNumber['全チェック終了？'], 120); // 全チェック終了？ 要チェックボックス挿入 -> 関連して書式設定
-    sheet.setColumnWidth(columNameVsColumnNumber['集計対象外？'], 90); // 集計対象外？ 要チェックボックス挿入 -> 関連して書式設定
-    sheet.setColumnWidth(columNameVsColumnNumber['ふぁぼ済？'], 90); // ふぁぼ済み？ 要チェックボックス挿入 -> 関連して書式設定
-    sheet.setColumnWidth(columNameVsColumnNumber['別ツイート'], 40); // 別ツイート 見えなくていい
-    sheet.setColumnWidth(columNameVsColumnNumber['内容'], 200); // 内容 要折り返し
-    sheet.setColumnWidth(columNameVsColumnNumber['キャラ1'], 140); // キャラ1 要データの入力規則
-    sheet.setColumnWidth(columNameVsColumnNumber['キャラ2'], 140); // キャラ2 要データの入力規則
-    sheet.setColumnWidth(columNameVsColumnNumber['キャラ3'], 140); // キャラ3 要データの入力規則
+    sheet.setColumnWidth(columNameVsColumnNumber['ID'], 40)
+    sheet.setColumnWidth(columNameVsColumnNumber['screen_name'], 30)
+    sheet.setColumnWidth(columNameVsColumnNumber['tweet_id'], 30)
+    sheet.setColumnWidth(columNameVsColumnNumber['日時'], 30)
+    sheet.setColumnWidth(columNameVsColumnNumber['URL'], 30)
+    sheet.setColumnWidth(columNameVsColumnNumber['ツイートが見られない？'], 155)
+    sheet.setColumnWidth(columNameVsColumnNumber['備考'], 100)
+    sheet.setColumnWidth(columNameVsColumnNumber['要レビュー？'], 90)
+    sheet.setColumnWidth(columNameVsColumnNumber['二次チェック済？'], 130)
+    sheet.setColumnWidth(columNameVsColumnNumber['全チェック終了？'], 120)
+    sheet.setColumnWidth(columNameVsColumnNumber['集計対象外？'], 90)
+    sheet.setColumnWidth(columNameVsColumnNumber['ふぁぼ済？'], 90)
+    sheet.setColumnWidth(columNameVsColumnNumber['別ツイート'], 40)
+    sheet.setColumnWidth(columNameVsColumnNumber['内容'], 200)
+    sheet.setColumnWidth(columNameVsColumnNumber['キャラ1'], 140)
+    sheet.setColumnWidth(columNameVsColumnNumber['キャラ2'], 140)
+    sheet.setColumnWidth(columNameVsColumnNumber['キャラ3'], 140)
   })
 }
 
@@ -118,10 +152,8 @@ const createCheckBoxes = () => {
   sheetNames.forEach(sheetName => {
     const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
 
-    // TODO: 対応表を用いて、列の番号はどこでもいいから変数名で指定できるようにする
     const requiredCheckboxColumnNumbers = [
-      columNameVsColumnNumber['ツイートが見られる？'],
-      columNameVsColumnNumber['全チェック終了？'],
+      columNameVsColumnNumber['ツイートが見られない？'],
       columNameVsColumnNumber['集計対象外？'],
       columNameVsColumnNumber['ふぁぼ済？'],
       columNameVsColumnNumber['二次チェック済？'],
@@ -169,5 +201,138 @@ const setRappings = () => {
 
       ZzzCellOperations.rappingOrikaesu(range)
     })
+  })
+}
+
+// 長すぎるので「列」ごとにうまく分けたい
+const setDefaultConditionalFormats = () => {
+// const setDefaultValuesToSpecificColumns = () => {
+  const sheetNames = ZzzSheetNames.allSheetNames
+  const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
+  const columNameVsColumnNumber = ZzzSheetOperations.columnNameVsColumnNumber(allColumnNames)
+
+  const requiredReviewColumnNumber = columNameVsColumnNumber['要レビュー？']
+  const requiredReviewColumnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(requiredReviewColumnNumber)
+
+  const completedSecondCheckColumnNumber = columNameVsColumnNumber['二次チェック済？']
+  const completedSecondCheckAlphabet = ZzzConverters.convertColumnNumberToAlphabet(completedSecondCheckColumnNumber)
+
+  const formula = `=IF(AND(${requiredReviewColumnAlphabet}2=FALSE,${completedSecondCheckAlphabet}2=TRUE),"🌞","☔")`
+
+  // 「全チェック終了？」列
+  sheetNames.forEach(sheetName => {
+    const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      columNameVsColumnNumber['全チェック終了？'],
+      sheet
+    )
+
+    range.setValue(formula) // 初期値を設定する
+
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      '🌞',
+      '#ccffcc' // Green
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      '☔',
+      '#ffc0cb' // Red
+    )
+  })
+
+  // 「要レビュー？」列
+  sheetNames.forEach(sheetName => {
+    const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      columNameVsColumnNumber['要レビュー？'],
+      sheet
+    )
+
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'TRUE',
+      '#ffc0cb' // Red
+    )
+  })
+
+  // 「二次チェック済？」列
+  sheetNames.forEach(sheetName => {
+    const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      columNameVsColumnNumber['二次チェック済？'],
+      sheet
+    )
+
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'TRUE',
+      '#ccffcc' // Red
+    )
+
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'FALSE',
+      '#ffc0cb' // Red
+    )
+  })
+
+  // 「ふぁぼ済？」列
+  sheetNames.forEach(sheetName => {
+    const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      columNameVsColumnNumber['ふぁぼ済？'],
+      sheet
+    )
+
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'TRUE',
+      '#ccffcc' // Red
+    )
+
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'FALSE',
+      '#ffc0cb' // Red
+    )
+  })
+}
+
+// 実行に数十分以上かかる
+const setGrayBackGroundInSpecificCondition = () => {
+  const sheetNames = ZzzSheetNames.allSheetNames
+  const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
+  const columNameVsColumnNumber = ZzzSheetOperations.columnNameVsColumnNumber(allColumnNames)
+
+  let columnAlphabet: string
+
+  sheetNames.forEach(sheetName => {
+    const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+
+    for (let i = 2; i <= 101; i++) {
+      columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(columNameVsColumnNumber['集計対象外？'])
+
+      ZzzConditionalFormats.setGrayBackgroundToAllRowCellsInSpecificCondition(
+        i,
+        sheet,
+        `=$${columnAlphabet}$${i}=TRUE`
+      )
+
+      columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(columNameVsColumnNumber['ツイートが見られない？'])
+
+      ZzzConditionalFormats.setGrayBackgroundToAllRowCellsInSpecificCondition(
+        i,
+        sheet,
+        `=$${columnAlphabet}$${i}=TRUE`
+      )
+    }
   })
 }
