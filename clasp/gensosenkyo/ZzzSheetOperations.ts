@@ -11,7 +11,7 @@ namespace ZzzSheetOperations {
       }
     }
 
-    console.log('アクティブ化したいシートが見つかりませんでした')
+    console.log('[LOG] アクティブ化したいシートが見つかりませんでした')
 
     return
   }
@@ -23,6 +23,13 @@ namespace ZzzSheetOperations {
       fn,
       sheetNames
     )
+
+    // 使い方
+    // ZzzSheetOperations.applyFunctionToAllCountingSheets(
+    //   (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    //     SpreadsheetApp.getActive().deleteSheet(sheet)
+    //   }
+    // )
   }
 
   export const applyFunctionToSpecificSheetNames = (fn: any, sheetNames: string[]) => {
@@ -31,7 +38,7 @@ namespace ZzzSheetOperations {
 
       fn(sheet)
 
-      console.log(`[LOG] ${sheetName} : ZzzSheetOperations.applyFunctionToSheet`)
+      console.log(`[END] ${sheetName} : ZzzSheetOperations.applyFunctionToSheet`)
     })
   }
 
@@ -50,9 +57,14 @@ namespace ZzzSheetOperations {
   // activeSheetName の後ろに sheetName のシートを作成する（指定がない場合は一番最後に作成する）
   export const createSheet = ({ activeSheetName = null, newSheetName = '' }) => {
     let sheet: GoogleAppsScript.Spreadsheet.Sheet
+    const allSheetNames = ZzzSheetOperations.getAllSheetNames()
+
+    if (allSheetNames.includes(newSheetName)) {
+      console.log(`[LOG] ${newSheetName} : すでに存在するシート名です`)
+      return
+    }
 
     if (activeSheetName === null) {
-      const allSheetNames = ZzzSheetOperations.getAllSheetNames()
       sheet = ZzzSheetOperations.changeActiveSheetTo(allSheetNames[allSheetNames.length - 1])
     } else {
       sheet = ZzzSheetOperations.changeActiveSheetTo(activeSheetName)
@@ -61,15 +73,25 @@ namespace ZzzSheetOperations {
     const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet()
     newSheet.setName(newSheetName)
 
+    console.log(`[END] ${newSheetName} : ZzzSheetOperations.createSheet`)
     return newSheet
   }
 
+  // シートの作成および削除については、引数をシートの「名前」にしている
   export const removeSheet = (sheetName: string) => {
-    const spreadSheet = SpreadsheetApp.getActive();
+    const allSheetNames = ZzzSheetOperations.getAllSheetNames()
 
+    if (!allSheetNames.includes(sheetName)) {
+      console.log(`[LOG] ${sheetName} : 存在しないシート名です`)
+
+      return
+    }
+
+    const spreadSheet = SpreadsheetApp.getActive();
     const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
     spreadSheet.deleteSheet(sheet);
 
+    console.log(`'[END] ${sheetName} : ZzzSheetOperations.removeSheet`)
     return sheetName
   }
 
