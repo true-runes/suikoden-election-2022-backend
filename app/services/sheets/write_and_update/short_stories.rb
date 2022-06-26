@@ -68,6 +68,7 @@ end
 # というか、一般集計は人名関係ないからそもそも入れてなかった
 
 # tweets = Tweet.gensosenkyo_2022_votes
+# each_slice が神
 # tweets.each_slice(100).with_index do |tweets_100, index|
 #   # ここで処理メソッドに tweets_100 と index から導き出されたシート名を渡せば良さそう
 # end

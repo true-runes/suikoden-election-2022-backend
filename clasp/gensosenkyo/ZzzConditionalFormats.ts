@@ -4,20 +4,26 @@
 // https://bamka.info/docs-google-gyo-irokae/
 
 namespace ZzzConditionalFormats {
-  export const setRedBackgroundWhenFalse = () => {
-    const sheet = ZzzSheetOperations.changeActiveSheetTo('ツイート')
-    const range = sheet.getRange(2, 4, 1000, 2) // D2:D1000
+  export const setRedBackgroundWhenTrue = (range: GoogleAppsScript.Spreadsheet.Range, sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'TRUE',
+      '#ffc0cb'
+    )
+  }
 
-    const rule = SpreadsheetApp
+  export const setColorToRangeInSpecificCondition = (range: GoogleAppsScript.Spreadsheet.Range, sheet: GoogleAppsScript.Spreadsheet.Sheet, conditionValue: string, colorCode: string) => {
+    const newRule = SpreadsheetApp
       .newConditionalFormatRule()
-      .whenTextEqualTo('FALSE')
-      .setBackground('#ffc0cb')
+      .whenTextEqualTo(conditionValue)
+      .setBackground(colorCode)
       .setRanges([range])
       .build()
 
     // 既存のルールに追加する
     const rules = sheet.getConditionalFormatRules()
-    rules.push(rule)
+    rules.push(newRule)
 
     sheet.setConditionalFormatRules(rules)
   }

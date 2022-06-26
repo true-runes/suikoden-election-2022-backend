@@ -1,4 +1,17 @@
-namespace ZzzCellsOperations {
+// setValue"s" メソッドの場合には引数は二次元配列になることに注意
+namespace ZzzCellOperations {
+  export const getRangeSpecificColumnRow2ToRow101 = (columnNumber: number, sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    const startRowNumber = 2
+    const endRowNumber = 101
+
+    return sheet.getRange(
+      startRowNumber,
+      columnNumber,
+      endRowNumber - 1, // 自分自身を含めた数になる（何個のセルを埋めるか、ということ）
+      1
+    )
+  }
+
   // 表示 -> 固定
   export const freezeFirstRow = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
     sheet.setFrozenRows(1)
@@ -12,9 +25,20 @@ namespace ZzzCellsOperations {
     return
   }
 
-  // TODO: firstColumn
+  export const freezeFirstColumn = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    sheet.setFrozenColumns(1)
 
-  // これはデータ投入
+    return
+  }
+
+  export const unFreezeFirstColumn = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    sheet.setFrozenColumns(0)
+
+    return
+  }
+
+  // 例外的に Apps Script からデータをシートに書き込んでいる（Ruby に寄せるところを）
+  // 既存データを上書きする破壊的メソッドなので注意する
   export const setFirstRowNames = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
     const names = ZzzColumnNames.columnNamesOnCountingSheet
 
@@ -23,7 +47,8 @@ namespace ZzzCellsOperations {
     }
   }
 
-  // これはデータ投入（削除）
+  // カラム名の削除（例外的に Apps Script での対応）
+  // 既存データを上書きする破壊的メソッドなので注意する
   export const unSetFirstRowNames = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
     const names = ZzzColumnNames.columnNamesOnCountingSheet
 
@@ -32,42 +57,46 @@ namespace ZzzCellsOperations {
     }
   }
 
+  // 102行目 に '@' を番兵として立たせる
+  // 既存データを上書きする破壊的メソッドなので注意する
+  export const setLastRowSymbols = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    // 列の末尾は 200列目 (GR) とする
+    const range = sheet.getRange(102, 1, 1, 200)
+
+    range.setValue('@')
+  }
+
+  // 既存データを上書きする破壊的メソッドなので注意する
+  export const removeLastRowSymbols = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    const range = sheet.getRange(102, 1, 1, 200)
+
+    range.setValue('')
+  }
+
   // 表示形式 -> ラッピング -> 「折り返す」
   export const rappingOrikaesu = (range: GoogleAppsScript.Spreadsheet.Range) => {
-    // 「はみ出す」は OVERFLOW で 「切り詰める」は CLIP
     range.setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP)
   }
 
+  // 表示形式 -> ラッピング -> 「はみ出す」（デフォルト）
+  export const rappingHamidasu = (range: GoogleAppsScript.Spreadsheet.Range) => {
+    range.setWrapStrategy(SpreadsheetApp.WrapStrategy.OVERFLOW)
+  }
+
+  // 表示形式 -> ラッピング -> 「切り詰める」（はみ出した部分は見えない）
+  export const rappingKiritsumeru = (range: GoogleAppsScript.Spreadsheet.Range) => {
+    range.setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP)
+  }
+
   // 挿入 -> チェックボックス
+  // 既存データを上書きする破壊的メソッドなので注意する
   export const createCheckBoxes = (range: GoogleAppsScript.Spreadsheet.Range) => {
     range.insertCheckboxes();
   }
 
-  // 挿入 -> チェックボックス（削除）
+  // チェックボックスを削除する
+  // 既存データを上書きする破壊的メソッドなので注意する
   export const removeCheckBoxes = (range: GoogleAppsScript.Spreadsheet.Range) => {
     range.removeCheckboxes();
   }
-
-  // チェックボックス化する ここから
-  // D, F, G H 列
-  // ハードコーディングにしたくない
-  // const tweetIsVisibleColumnIndex = 4
-  // const reviewIsNeededColumnIndex = 6
-  // const alreadySecondCheckedIndex = 7
-  // const alreadyAllCheckedIndex = 8
-
-  // const targetIndexes = [
-  //   tweetIsVisibleColumnIndex,
-  //   reviewIsNeededColumnIndex,
-  //   alreadySecondCheckedIndex,
-  //   alreadyAllCheckedIndex,
-  // ]
-
-  // for (let i = 0 ; i < targetIndexes.length ; i++) {
-  //   const columnIndex = targetIndexes[i]
-  //   // 上限は一千万行らしい
-  //   const range = sheet.getRange(2, columnIndex, 100, 1)
-  //   ZzzConcerns.createCheckBoxes(range)
-  // }
-  // チェックボックス化する ここまで
 }
