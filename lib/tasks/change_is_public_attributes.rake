@@ -4,7 +4,7 @@ namespace :change_is_public_attributes do
     tweets = Tweet.all
     tweet_id_numbers = tweets.map(&:id_number)
 
-    # app/lib/check_visible_and_invisible_tweet_id_numbers.rb を参照のこと
+    # Twitter の REST API が消費されるので注意する
     visible_and_invisible_tweet_id_numbers = CheckVisibleAndInvisibleTweetIdNumbers.exec(tweet_id_numbers)
 
     visible_tweet_id_numbers = visible_and_invisible_tweet_id_numbers[:visible]
