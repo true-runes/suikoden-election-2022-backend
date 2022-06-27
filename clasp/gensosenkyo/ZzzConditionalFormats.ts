@@ -46,8 +46,8 @@ namespace ZzzConditionalFormats {
     }, '「条件付き書式」をクリアしました')
   }
 
-  export const setInitToIsAllCompletedColumn = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+  export const setInitToIsAllCompletedColumn = (sheet: GoogleAppsScript.Spreadsheet.Sheet, category = '') => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber(category)
 
     const requiredReviewColumnNumber = colNameToNumber['要レビュー？']
     const requiredReviewColumnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(requiredReviewColumnNumber)
@@ -81,8 +81,8 @@ namespace ZzzConditionalFormats {
     )
   }
 
-  export const setInitToIsRequiredReview = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+  export const setInitToIsRequiredReview = (sheet: GoogleAppsScript.Spreadsheet.Sheet, category = '') => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber(category)
 
     const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
       colNameToNumber['要レビュー？'],
@@ -96,8 +96,8 @@ namespace ZzzConditionalFormats {
     )
   }
 
-  export const setInitToIsCompletedSecondCheck = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+  export const setInitToIsCompletedSecondCheck = (sheet: GoogleAppsScript.Spreadsheet.Sheet, category = '') => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber(category)
 
     const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
       colNameToNumber['二次チェック済？'],
@@ -117,11 +117,32 @@ namespace ZzzConditionalFormats {
     )
   }
 
-  export const setInitToIsCompletedFavorite = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+  export const setInitToIsCompletedFavorite = (sheet: GoogleAppsScript.Spreadsheet.Sheet, category = '') => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber(category)
 
     const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-      colNameToNumber['ふぁぼ済？'],
+      colNameToNumber['ふぁぼ済？'], // DMでは'対応済み？'
+      sheet
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'TRUE',
+      '#ccffcc' // Red
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'FALSE',
+      '#ffc0cb' // Red
+    )
+  }
+
+  export const setInitToIsCompletedDMResponse = (sheet: GoogleAppsScript.Spreadsheet.Sheet, category = 'directMessage') => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber(category)
+
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      colNameToNumber['対応済み？'],
       sheet
     )
     ZzzConditionalFormats.setColorToRangeInSpecificCondition(

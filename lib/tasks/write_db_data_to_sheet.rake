@@ -23,4 +23,9 @@ namespace :write_db_data_to_sheet do
   task sosenkyo_campaigns: :environment do
     Sheets::WriteAndUpdate::SosenkyoCampaigns.exec
   end
+
+  desc '[ダイレクトメッセージ] DBのダイレクトメッセージのデータをシートに書き込む'
+  task direct_messages: :environment do
+    Sheets::WriteAndUpdate::DirectMessages.exec
+  end
 end
