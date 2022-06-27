@@ -41,15 +41,15 @@ namespace ZzzCellOperations {
   // 既存データを上書きする破壊的メソッドなので注意する
   export const setFirstRowNames = (
     sheet: GoogleAppsScript.Spreadsheet.Sheet,
-    category = 'mainDivisions'
+    category = 'mainDivision'
   ) => {
     let names: string[]
 
-    if (category === 'mainDivisions') {
+    if (category === 'mainDivision') {
       names = ZzzColumnNames.columnNamesOnCountingSheet
-    } else if (category === 'bonusVotes') {
+    } else if (category === 'bonusVote') {
       names = ZzzColumnNames.columnNamesOnBonusVotesSheet()
-    } else if (category === 'directMessages') {
+    } else if (category === 'directMessage') {
       names = ZzzColumnNames.columnNamesOnDirectMessageSheet
     } else {
       throw new Error('unknown category')

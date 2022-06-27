@@ -5,9 +5,9 @@ const main = () => {
   createTweetCountingSheets.createAllSheets()
 
   ZzzCommonScripts.showStartAndEndLogger(() => {
-    createTweetCountingSheets.setColumnNames()
-    // createTweetCountingSheets.setColumnNames('bonusVotes')
-    // createTweetCountingSheets.setColumnNames('directMessages')
+    // createTweetCountingSheets.setColumnNames('mainDivision')
+    createTweetCountingSheets.setColumnNames('bonusVote')
+    // createTweetCountingSheets.setColumnNames('directMessage')
   }, '列名を入力する')
 
   ZzzCommonScripts.showStartAndEndLogger(() => {
@@ -54,8 +54,7 @@ const main = () => {
   }, '（条件付き書式）特定のセルが条件を満たしたら行を灰色に塗る')
 
   // サジェスト用に「入力規則」を設定する（重い）
-  createTweetCountingSheets.setDataValidationsForSuggestions()
-
-  // オールキャラと協力攻撃では「ふぁぼ済？」は関係ないので TRUE で埋める
-  createTweetCountingSheets.setAllTrueValuesToIsFavoriteColumn()
+  // createTweetCountingSheets.setDataValidationsForSuggestions('mainDivision')
+  createTweetCountingSheets.setDataValidationsForSuggestions('bonusVote')
+  // createTweetCountingSheets.setDataValidationsForSuggestions('directMessage')
 }

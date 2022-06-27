@@ -60,10 +60,22 @@ namespace ZzzColumnNames {
     'キャラ10',
   ]
 
-  export const colNameToNumber = () => {
-    return ZzzSheetOperations
-      .correspondenceObjectAboutColumnNameToColumnNumber(
-        ZzzColumnNames.columnNamesOnCountingSheet
+  export const colNameToNumber = (category = 'mainDivision') => {
+    if (category === 'mainDivision') {
+      return ZzzSheetOperations
+        .correspondenceObjectAboutColumnNameToColumnNumber(
+          ZzzColumnNames.columnNamesOnCountingSheet
+      )
+    } else if (category === 'bonusVote') {
+      return ZzzSheetOperations
+        .correspondenceObjectAboutColumnNameToColumnNumber(
+          ZzzColumnNames.columnNamesOnBonusVotesSheet()
+      )
+    } else if (category === 'directMessage') {
+      return ZzzSheetOperations
+        .correspondenceObjectAboutColumnNameToColumnNumber(
+          ZzzColumnNames.columnNamesOnDirectMessageSheet
       )
     }
+  }
 }
