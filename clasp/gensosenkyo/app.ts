@@ -6,6 +6,8 @@ const main = () => {
 
   ZzzCommonScripts.showStartAndEndLogger(() => {
     createTweetCountingSheets.setColumnNames()
+    // createTweetCountingSheets.setColumnNames('bonusVotes')
+    // createTweetCountingSheets.setColumnNames('directMessages')
   }, '列名を入力する')
 
   ZzzCommonScripts.showStartAndEndLogger(() => {

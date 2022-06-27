@@ -8,10 +8,10 @@
   sheet_header: 英語表記
   column_name: name_en
 -
-  sheet_header: キャラ1
+  sheet_header: キャラ1 # キャラ1 or 作品名
   column_name: chara_1
 -
-  sheet_header: キャラ2
+  sheet_header: キャラ2 # キャラ2 or 協力攻撃名
   column_name: chara_2
 -
   sheet_header: キャラ3
