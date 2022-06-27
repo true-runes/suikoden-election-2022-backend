@@ -1,10 +1,10 @@
 module Sheets
   module WriteAndUpdate
-    class AllCharacters
+    class UniteAttacks
       # 列情報は clasp/gensosenkyo/ZzzColumnNames.ts を参考にする
       def self.exec
         # NOTE: for_api で Tweet を指定すると is_public の値によって冪等性が保証されないのでダメ
-        tweets = Tweet.gensosenkyo_2022_votes.valid_term_votes
+        tweets = Tweet.unite_attacks_votes.valid_term_votes
 
         tweets.each_slice(100).with_index do |tweets_100, index_on_hundred|
           prepared_written_data_by_array_in_hash = []
@@ -25,8 +25,13 @@ module Sheets
             inserted_hash['別ツイ'] = by_user_other_tweets_for_sheet.to_s || ''
             inserted_hash['ふぁぼ済？'] = true # to_s がいるかも
             inserted_hash['内容'] = tweet.full_text
-            # この行のコストが高い
-            inserted_hash['suggested_names'] = NaturalLanguage::SuggestCharacterNames.exec(tweet) # Array
+
+            # 例: {:title=>"幻想水滸伝II", :attack_name=>"美青年攻撃"}
+            unite_attack_title_and_name_ = NaturalLanguage::SuggestUniteAttackNames.exec(tweet)
+            inserted_hash['suggested_names'] = [
+              unite_attack_title_and_name_[:title],
+              unite_attack_title_and_name_[:attack_name],
+            ]
 
             prepared_written_data_by_array_in_hash << inserted_hash
           end
@@ -63,13 +68,13 @@ module Sheets
 
           # suggested_names を最初に全削除する
           SheetData.write_rows(
-            sheet_id: ENV.fetch('COUNTING_ALL_CHARACTERS_SHEET_ID', nil),
+            sheet_id: ENV.fetch('COUNTING_UNITE_ATTACKS_SHEET_ID', nil),
             range: "#{sheet_name}!AX2:GR101",
             values: [[''] * 50] * 100 # 100行分の空文字を入れる
           )
 
           SheetData.write_rows(
-            sheet_id: ENV.fetch('COUNTING_ALL_CHARACTERS_SHEET_ID', nil),
+            sheet_id: ENV.fetch('COUNTING_UNITE_ATTACKS_SHEET_ID', nil),
             range: "#{sheet_name}!A2", # 始点
             values: written_data
           )
