@@ -27,8 +27,7 @@ namespace ZzzDataValidation {
     return sheet.getRange(rowNumber, 50, 1, 151)
   }
 
-  export const setDataValidationDirectMessageTypes = (sheetName: string, columnNumber: number, destroyWord: string = '') => {
-    const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+  export const setDataValidationDirectMessageTypes = (sheet: GoogleAppsScript.Spreadsheet.Sheet, columnNumber: number, destroyWord: string = '') => {
     const startRowNumber = 2
     const endRowNumber = 101
 
@@ -54,6 +53,6 @@ namespace ZzzDataValidation {
     'ボ・開票イラスト',
     'ボ・推し台詞',
     'ボ・選挙運動',
-    'その他',
+    '票に関係ない',
   ]
 }

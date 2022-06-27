@@ -7,6 +7,12 @@ class DirectMessage < ApplicationRecord
 
   validates :id_number, uniqueness: true
 
+  def self.for_spreadsheet
+    to_gensosenkyo
+      .order(messaged_at: :asc)
+      .order(id_number: :asc)
+  end
+
   # self.user と同義
   def sender
     User.find_by(id_number: sender_id_number)
