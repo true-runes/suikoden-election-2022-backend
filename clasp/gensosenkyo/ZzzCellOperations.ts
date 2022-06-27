@@ -39,8 +39,21 @@ namespace ZzzCellOperations {
 
   // 例外的に Apps Script からデータをシートに書き込んでいる（Ruby に寄せるところを）
   // 既存データを上書きする破壊的メソッドなので注意する
-  export const setFirstRowNames = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-    const names = ZzzColumnNames.columnNamesOnCountingSheet
+  export const setFirstRowNames = (
+    sheet: GoogleAppsScript.Spreadsheet.Sheet,
+    category = 'mainDivisions'
+  ) => {
+    let names: string[]
+
+    if (category === 'mainDivisions') {
+      names = ZzzColumnNames.columnNamesOnCountingSheet
+    } else if (category === 'bonusVotes') {
+      names = ZzzColumnNames.columnNamesOnBonusVotesSheet()
+    } else if (category === 'directMessages') {
+      names = ZzzColumnNames.columnNamesOnDirectMessageSheet
+    } else {
+      throw new Error('unknown category')
+    }
 
     for (let i = 0 ; i < names.length ; i++) {
       sheet.getRange(1, i + 1).setValue(names[i])

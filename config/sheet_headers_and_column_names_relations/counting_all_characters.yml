@@ -41,10 +41,10 @@
   sheet_header: 要レビュー？
   column_name: is_review_required
 -
-  sheet_header: キャラ1
+  sheet_header: キャラ1 # キャラ1 or 作品名
   column_name: character_01
 -
-  sheet_header: キャラ2
+  sheet_header: キャラ2 # キャラ2 or 協力攻撃名
   column_name: character_02
 -
   sheet_header: キャラ3

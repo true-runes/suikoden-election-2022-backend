@@ -20,10 +20,10 @@ namespace createTweetCountingSheets {
     return sheetNames
   }
 
-  export const setColumnNames = () => {
+  export const setColumnNames = (category = 'mainDivisions') => {
     ZzzSheetOperations.applyFunctionToAllCountingSheets(
       (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-        ZzzCellOperations.setFirstRowNames(sheet)
+        ZzzCellOperations.setFirstRowNames(sheet, category)
       }, '列名を設定しました'
     )
   }
@@ -56,8 +56,8 @@ namespace createTweetCountingSheets {
         sheet.setColumnWidth(colNameToNumber['内容'], 200)
         sheet.setColumnWidth(colNameToNumber['備考'], 100)
         sheet.setColumnWidth(colNameToNumber['要レビュー？'], 90)
-        sheet.setColumnWidth(colNameToNumber['キャラ1'], 140)
-        sheet.setColumnWidth(colNameToNumber['キャラ2'], 140)
+        sheet.setColumnWidth(colNameToNumber['キャラ1 or 作品名'], 140)
+        sheet.setColumnWidth(colNameToNumber['キャラ2 or 協力攻撃名'], 140)
         sheet.setColumnWidth(colNameToNumber['キャラ3'], 140)
       },
       '列幅を指定しました'
@@ -220,23 +220,27 @@ namespace createTweetCountingSheets {
   // サジェスト用に「入力規則」を設定する（重い）
   export const setDataValidationsForSuggestions = () => {
     const colNameToNumber = ZzzColumnNames.colNameToNumber()
+    const targetColumnNumbers = [
+      colNameToNumber['キャラ1 or 作品名'],
+      colNameToNumber['キャラ2 or 協力攻撃名'],
+      colNameToNumber['キャラ3'],
+      colNameToNumber['キャラ4'],
+      colNameToNumber['キャラ5'],
+      colNameToNumber['キャラ6'],
+      colNameToNumber['キャラ7'],
+      colNameToNumber['キャラ8'],
+      colNameToNumber['キャラ9'],
+      colNameToNumber['キャラ10'],
+    ]
 
     ZzzSheetOperations.applyFunctionToAllCountingSheets(
       (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-        ZzzDataValidation.setDataValidationToCell(
-          sheet,
-          colNameToNumber['キャラ1']
-        )
-
-        ZzzDataValidation.setDataValidationToCell(
-          sheet,
-          colNameToNumber['キャラ2']
-        )
-
-        ZzzDataValidation.setDataValidationToCell(
-          sheet,
-          colNameToNumber['キャラ3']
-        )
+        targetColumnNumbers.forEach(targetColumnNumber => {
+          ZzzDataValidation.setDataValidationToCell(
+            sheet,
+            targetColumnNumber
+          )
+        })
       },
       '「入力規則」を設定する（サジェスト用）'
     )
