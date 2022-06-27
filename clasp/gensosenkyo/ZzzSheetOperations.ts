@@ -28,7 +28,7 @@ namespace ZzzSheetOperations {
     // 使い方
     // ZzzSheetOperations.applyFunctionToAllCountingSheets(
     //   (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-    //     SpreadsheetApp.getActive().deleteSheet(sheet)
+    //     // 全シートに対してやりたいこと
     //   },
     //   'シートごとの実行完了時に表示されるログのテキスト'
     // )
@@ -45,7 +45,7 @@ namespace ZzzSheetOperations {
       fn(sheet)
 
       if (displayLogText) {
-        console.log(`[END] ${sheetName} : ${displayLogText}`)
+        console.log(`[DONE] ${sheetName} : ${displayLogText}`)
       }
     })
   }
@@ -81,7 +81,7 @@ namespace ZzzSheetOperations {
     const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet()
     newSheet.setName(newSheetName)
 
-    console.log(`[END] ${newSheetName} : ZzzSheetOperations.createSheet`)
+    console.log(`[END] ${newSheetName} : シートを作成しました`)
     return newSheet
   }
 
@@ -99,7 +99,7 @@ namespace ZzzSheetOperations {
     const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
     spreadSheet.deleteSheet(sheet);
 
-    console.log(`'[END] ${sheetName} : ZzzSheetOperations.removeSheet`)
+    console.log(`[END] ${sheetName} : シートを削除しました`)
     return sheetName
   }
 
@@ -112,5 +112,36 @@ namespace ZzzSheetOperations {
     })
 
     return correspondenceObject
+  }
+
+  export const removeAllProtectedCellsOnAllSheets = () => {
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        ZzzSheetOperations.removeAllProtectedCells(sheet)
+      },
+      '保護設定の解除'
+    )
+  }
+
+  export const removeAllProtectedCells = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    const protectionsRange = sheet.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+
+    for (let i = 0; i < protectionsRange.length; i++) {
+      let protection = protectionsRange[i];
+
+      if (protection.canEdit()) {
+        protection.remove();
+      }
+    }
+  }
+
+  // ヘッダ行は含まない
+  export const setBackgroundColorToSpecificColumnNumberOnSheet = (colNum: number, sheet: GoogleAppsScript.Spreadsheet.Sheet, color: string) => {
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      colNum,
+      sheet
+    )
+
+    range.setBackground(color)
   }
 }

@@ -2,7 +2,7 @@ namespace createTweetCountingSheets {
   export const createAllSheets = () => {
     const sheetNames = ZzzSheetNames.allSheetNames
 
-    // とてもコストが高い実行内容
+    // とてもコストが高い実行内容（シートを一枚作るために約15秒）
     sheetNames.forEach(sheetName => {
       ZzzSheetOperations.createSheet({newSheetName: sheetName})
     })
@@ -21,13 +21,11 @@ namespace createTweetCountingSheets {
   }
 
   export const setColumnNames = () => {
-    const sheetNames = ZzzSheetNames.forCountingSheetNames
-
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
-
-      ZzzCellOperations.setFirstRowNames(sheet)
-    })
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        ZzzCellOperations.setFirstRowNames(sheet)
+      }, '列名を設定しました'
+    )
   }
 
   export const freezeFirstRowAndFirstColumn = () => {
@@ -40,156 +38,144 @@ namespace createTweetCountingSheets {
   }
 
   export const setColumnWidths = () => {
-    const sheetNames = ZzzSheetNames.forCountingSheetNames
-    const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
-    const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
 
-    // 列幅を指定する
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
-
-      sheet.setColumnWidth(columNameVsColumnNumber['ID'], 40)
-      sheet.setColumnWidth(columNameVsColumnNumber['screen_name'], 30)
-      sheet.setColumnWidth(columNameVsColumnNumber['tweet_id'], 30)
-      sheet.setColumnWidth(columNameVsColumnNumber['日時'], 30)
-      sheet.setColumnWidth(columNameVsColumnNumber['URL'], 30)
-      sheet.setColumnWidth(columNameVsColumnNumber['ツイートが見られない？'], 155)
-      sheet.setColumnWidth(columNameVsColumnNumber['備考'], 100)
-      sheet.setColumnWidth(columNameVsColumnNumber['要レビュー？'], 90)
-      sheet.setColumnWidth(columNameVsColumnNumber['二次チェック済？'], 130)
-      sheet.setColumnWidth(columNameVsColumnNumber['全チェック終了？'], 120)
-      sheet.setColumnWidth(columNameVsColumnNumber['集計対象外？'], 90)
-      sheet.setColumnWidth(columNameVsColumnNumber['ふぁぼ済？'], 90)
-      sheet.setColumnWidth(columNameVsColumnNumber['別ツイート'], 40)
-      sheet.setColumnWidth(columNameVsColumnNumber['内容'], 200)
-      sheet.setColumnWidth(columNameVsColumnNumber['キャラ1'], 140)
-      sheet.setColumnWidth(columNameVsColumnNumber['キャラ2'], 140)
-      sheet.setColumnWidth(columNameVsColumnNumber['キャラ3'], 140)
-    })
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        sheet.setColumnWidth(colNameToNumber['ID'], 40)
+        sheet.setColumnWidth(colNameToNumber['screen_name'], 30)
+        sheet.setColumnWidth(colNameToNumber['tweet_id'], 50)
+        sheet.setColumnWidth(colNameToNumber['日時'], 30)
+        sheet.setColumnWidth(colNameToNumber['URL'], 30)
+        sheet.setColumnWidth(colNameToNumber['別ツイ'], 40)
+        sheet.setColumnWidth(colNameToNumber['全終了？'], 40)
+        sheet.setColumnWidth(colNameToNumber['ツイ見られない？'], 120)
+        sheet.setColumnWidth(colNameToNumber['集計対象外？'], 90)
+        sheet.setColumnWidth(colNameToNumber['ふぁぼ済？'], 90)
+        sheet.setColumnWidth(colNameToNumber['二次チェック済？'], 130)
+        sheet.setColumnWidth(colNameToNumber['内容'], 200)
+        sheet.setColumnWidth(colNameToNumber['備考'], 100)
+        sheet.setColumnWidth(colNameToNumber['要レビュー？'], 90)
+        sheet.setColumnWidth(colNameToNumber['キャラ1'], 140)
+        sheet.setColumnWidth(colNameToNumber['キャラ2'], 140)
+        sheet.setColumnWidth(colNameToNumber['キャラ3'], 140)
+      },
+      '列幅を指定しました'
+    )
   }
 
   // 既存データを上書きする破壊的メソッドなので注意する
   export const setBanpeis = () => {
-    const sheetNames = ZzzSheetNames.forCountingSheetNames
-
-    // 102行目の各セルに '@' を入れる
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
-
-      ZzzCellOperations.setLastRowSymbols(sheet)
-    })
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        ZzzCellOperations.setLastRowSymbols(sheet)
+      },
+      '102行目の各セルに "@" を入れました'
+    )
   }
 
   export const setProtectedCells = () => {
-    const sheetNames = ZzzSheetNames.forCountingSheetNames
-    const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
-    const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
 
-    // シートをゆるく保護する
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        const protectedColumnNumbers = [
+          colNameToNumber['ID'],
+          colNameToNumber['screen_name'],
+          colNameToNumber['tweet_id'],
+          colNameToNumber['日時'],
+          colNameToNumber['URL'],
+          colNameToNumber['全終了？'],
+          colNameToNumber['別ツイ'],
+        ]
 
-      const protectedColumnNumbers = [
-        columNameVsColumnNumber['ID'],
-        columNameVsColumnNumber['screen_name'],
-        columNameVsColumnNumber['tweet_id'],
-        columNameVsColumnNumber['日時'],
-        columNameVsColumnNumber['URL'],
-        columNameVsColumnNumber['全チェック終了？'],
-        columNameVsColumnNumber['別ツイート'],
-      ]
+        protectedColumnNumbers.forEach(protectedColumnNumber => {
+          const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(protectedColumnNumber, sheet)
 
-      protectedColumnNumbers.forEach(protectedColumnNumber => {
-        const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(protectedColumnNumber, sheet)
-
-        range.protect() // デフォルトでは自分と自分のグループのみが編集可能（なので大抵はこれでいい）
-      })
-
-      console.log(`[DONE] ${sheetName} : シート保護設定`)
-    })
+          range.protect() // デフォルトでは自分と自分のグループのみが編集可
+        })
+      },
+      'シートの保護設定をしました'
+    )
   }
 
   // 既存データを上書きする破壊的メソッドなので注意する
   export const createCheckBoxes = () => {
-    const sheetNames = ZzzSheetNames.forCountingSheetNames
-    const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
-    const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
 
-    // チェックボックスを入れる
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        const requiredCheckboxColumnNumbers = [
+          colNameToNumber['ツイ見られない？'],
+          colNameToNumber['集計対象外？'],
+          colNameToNumber['ふぁぼ済？'],
+          colNameToNumber['二次チェック済？'],
+          colNameToNumber['要レビュー？'],
+        ]
 
-      const requiredCheckboxColumnNumbers = [
-        columNameVsColumnNumber['ツイートが見られない？'],
-        columNameVsColumnNumber['集計対象外？'],
-        columNameVsColumnNumber['ふぁぼ済？'],
-        columNameVsColumnNumber['二次チェック済？'],
-        columNameVsColumnNumber['要レビュー？'],
-      ]
+        requiredCheckboxColumnNumbers.forEach(requiredCheckboxColumnNumber => {
+          const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(requiredCheckboxColumnNumber, sheet)
 
-      requiredCheckboxColumnNumbers.forEach(requiredCheckboxColumnNumber => {
-        const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(requiredCheckboxColumnNumber, sheet)
-
-        ZzzCellOperations.createCheckBoxes(range)
-      })
-    })
+          ZzzCellOperations.createCheckBoxes(range)
+        })
+      },
+      'チェックボックスを追加しました'
+    )
   }
 
   // 表示形式 -> ラッピング -> はみ出す | 折り返す | 切り詰める
   export const setRappings = () => {
-    const sheetNames = ZzzSheetNames.forCountingSheetNames
-    const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
-    const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
 
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        const kiritsumeruColumnNumbers = [
+          colNameToNumber['screen_name'],
+          colNameToNumber['tweet_id'],
+          colNameToNumber['日時'],
+          colNameToNumber['URL'],
+          colNameToNumber['別ツイ'],
+        ]
 
-      const kiritsumeruColumnNumbers = [
-        columNameVsColumnNumber['screen_name'],
-        columNameVsColumnNumber['tweet_id'],
-        columNameVsColumnNumber['日時'],
-        columNameVsColumnNumber['URL'],
-        columNameVsColumnNumber['別ツイート'],
-      ]
+        kiritsumeruColumnNumbers.forEach(requiredColumnNumber => {
+          const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(requiredColumnNumber, sheet)
 
-      kiritsumeruColumnNumbers.forEach(requiredColumnNumber => {
-        const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(requiredColumnNumber, sheet)
+          ZzzCellOperations.rappingKiritsumeru(range)
+        })
 
-        ZzzCellOperations.rappingKiritsumeru(range)
-      })
+        const orikaesuColumnNumbers = [
+          colNameToNumber['内容'],
+          colNameToNumber['備考'],
+        ]
 
-      const orikaesuColumnNumbers = [
-        columNameVsColumnNumber['内容'],
-        columNameVsColumnNumber['備考'],
-      ]
+        orikaesuColumnNumbers.forEach(requiredColumnNumber => {
+          const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(requiredColumnNumber, sheet)
 
-      orikaesuColumnNumbers.forEach(requiredColumnNumber => {
-        const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(requiredColumnNumber, sheet)
-
-        ZzzCellOperations.rappingOrikaesu(range)
-      })
-    })
+          ZzzCellOperations.rappingOrikaesu(range)
+        })
+      },
+      '「表示形式 -> ラッピング」の設定が完了'
+    )
   }
 
   // 長すぎるので「列」ごとにうまく分けたい
   export const setDefaultConditionalFormats = () => {
     const sheetNames = ZzzSheetNames.forCountingSheetNames
-    const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
-    const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
 
-    const requiredReviewColumnNumber = columNameVsColumnNumber['要レビュー？']
+    const requiredReviewColumnNumber = colNameToNumber['要レビュー？']
     const requiredReviewColumnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(requiredReviewColumnNumber)
 
-    const completedSecondCheckColumnNumber = columNameVsColumnNumber['二次チェック済？']
+    const completedSecondCheckColumnNumber = colNameToNumber['二次チェック済？']
     const completedSecondCheckAlphabet = ZzzConverters.convertColumnNumberToAlphabet(completedSecondCheckColumnNumber)
 
     const formula = `=IF(AND(${requiredReviewColumnAlphabet}2=FALSE,${completedSecondCheckAlphabet}2=TRUE),"🌞","☔")`
 
-    // 「全チェック終了？」列
+    // 「全終了？」列
     sheetNames.forEach(sheetName => {
       const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
       const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-        columNameVsColumnNumber['全チェック終了？'],
+        colNameToNumber['全終了？'],
         sheet
       )
 
@@ -215,7 +201,7 @@ namespace createTweetCountingSheets {
     sheetNames.forEach(sheetName => {
       const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
       const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-        columNameVsColumnNumber['要レビュー？'],
+        colNameToNumber['要レビュー？'],
         sheet
       )
 
@@ -231,7 +217,7 @@ namespace createTweetCountingSheets {
     sheetNames.forEach(sheetName => {
       const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
       const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-        columNameVsColumnNumber['二次チェック済？'],
+        colNameToNumber['二次チェック済？'],
         sheet
       )
 
@@ -254,7 +240,7 @@ namespace createTweetCountingSheets {
     sheetNames.forEach(sheetName => {
       const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
       const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-        columNameVsColumnNumber['ふぁぼ済？'],
+        colNameToNumber['ふぁぼ済？'],
         sheet
       )
 
@@ -276,8 +262,7 @@ namespace createTweetCountingSheets {
 
   export const setGrayBackGroundInSpecificCondition = () => {
     const sheetNames = ZzzSheetNames.forCountingSheetNames
-    const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
-    const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
 
     let columnAlphabet: string
     let newRule: GoogleAppsScript.Spreadsheet.ConditionalFormatRule
@@ -287,7 +272,7 @@ namespace createTweetCountingSheets {
       const rules = sheet.getConditionalFormatRules()
 
       for (let i = 2; i <= 101; i++) {
-        columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(columNameVsColumnNumber['集計対象外？'])
+        columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(colNameToNumber['集計対象外？'])
 
         newRule = ZzzConditionalFormats.getRuleToSetGrayBackgroundToAllRowCellsInSpecificCondition(
           i,
@@ -297,7 +282,7 @@ namespace createTweetCountingSheets {
         )
         rules.push(newRule)
 
-        columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(columNameVsColumnNumber['ツイートが見られない？'])
+        columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(colNameToNumber['ツイ見られない？'])
 
         newRule = ZzzConditionalFormats.getRuleToSetGrayBackgroundToAllRowCellsInSpecificCondition(
           i,
@@ -310,7 +295,7 @@ namespace createTweetCountingSheets {
 
       sheet.setConditionalFormatRules(rules)
 
-      console.log(`[END] ${sheetName} : setGrayBackGroundInSpecificCondition`)
+      console.log(`[END] ${sheetName} : 特定条件で背景をグレーにする`)
     })
   }
 }
