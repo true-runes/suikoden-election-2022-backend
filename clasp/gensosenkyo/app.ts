@@ -17,35 +17,34 @@ const main = () => {
     createTweetCountingSheets.setBanpeis()
   }, '102行目の各セルに "@" を入れる')
 
-  // シートの保護機能を適用する（重め）
+  // やや重い処理
+  // 注意: 冪等ではない（追記となる）
   ZzzCommonScripts.showStartAndEndLogger(() => {
     createTweetCountingSheets.setProtectedCells()
   }, 'シートの保護機能を適用する')
 
-  // チェックボックスを作成する（重め）
+  // やや重い処理
   ZzzCommonScripts.showStartAndEndLogger(() => {
     createTweetCountingSheets.createCheckBoxes()
   }, 'チェックボックスを作成する')
 
-  // 「ラッピング」の形式を設定する
   ZzzCommonScripts.showStartAndEndLogger(() => {
     createTweetCountingSheets.setRappings()
   }, '「ラッピング」の形式を設定する')
 
-  // // 「条件付き書式」を設定する
-  // console.log('[START] 「条件付き書式」を設定する')
-  // // FIXME: ここが重い（3分ぐらいかかる）
-  // createTweetCountingSheets.setDefaultConditionalFormats()
-  // console.log('[DONE] 「条件付き書式」を設定する')
+  // 注意: 冪等ではない（追記となる）
+  ZzzCommonScripts.showStartAndEndLogger(() => {
+    createTweetCountingSheets.setDefaultConditionalFormats()
+  }, '「条件付き書式」を設定する')
 
-  // // （条件付き書式）特定のセルが条件を満たしたら行を灰色に塗る
-  // console.log('[START] （条件付き書式）特定のセルが条件を満たしたら行を灰色に塗る')
-  // createTweetCountingSheets.setGrayBackGroundInSpecificCondition()
-  // console.log('[DONE] （条件付き書式）特定のセルが条件を満たしたら行を灰色に塗る')
+  // 注意: 冪等ではない（追記となる）
+  ZzzCommonScripts.showStartAndEndLogger(() => {
+    createTweetCountingSheets.setGrayBackGroundInSpecificCondition()
+  }, '（条件付き書式）特定のセルが条件を満たしたら行を灰色に塗る')
 
-  // // FIXME: ここが重い（3分ぐらいかかる）
+  // 「入力規則」を設定する（サジェスト用）
+  // FIXME: ここが重い（3分ぐらいかかる）
   // console.log('[START] 「入力規則」を設定する（サジェスト用）')
-  // // 「入力規則」を設定する（サジェスト用）
   // const sheetNames = ZzzSheetNames.forCountingSheetNames
   // const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
   // const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)

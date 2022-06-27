@@ -33,10 +33,9 @@ namespace createTweetCountingSheets {
   export const freezeFirstRowAndFirstColumn = () => {
     ZzzSheetOperations.applyFunctionToAllCountingSheets(
       (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-        // 一行目 および 一列目 を固定をする
         ZzzCellOperations.freezeFirstRow(sheet)
         ZzzCellOperations.freezeFirstColumn(sheet)
-      }
+      }, '一行目 および 一列目 を固定をする'
     )
   }
 
