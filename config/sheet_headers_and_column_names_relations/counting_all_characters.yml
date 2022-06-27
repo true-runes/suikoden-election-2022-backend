@@ -1,0 +1,51 @@
+- # UNIQUE
+  sheet_header: ID
+  column_name: id_on_sheet
+-
+  sheet_header: screen_name
+  column_name: screen_name
+-
+  sheet_header: tweet_id # name
+  column_name: tweet_id_number
+-
+  sheet_header: 日時
+  column_name: tweeted_at
+-
+  sheet_header: URL
+  column_name: url
+-
+  sheet_header: 別ツイ # カンマ区切りテキスト
+  column_name: other_tweets
+-
+  sheet_header: 全終了？
+  column_name: is_all_completed
+-
+  sheet_header: ツイ見られない？
+  column_name: is_tweet_invisible
+-
+  sheet_header: 集計対象外？
+  column_name: is_not_included_counting
+-
+  sheet_header: ふぁぼ済？
+  column_name: is_already_favorite
+-
+  sheet_header: 二次チェック済？
+  column_name: is_already_second_check
+-
+  sheet_header: 内容
+  column_name: full_text
+-
+  sheet_header: 備考
+  column_name: memo
+-
+  sheet_header: 要レビュー？
+  column_name: is_review_required
+-
+  sheet_header: キャラ1
+  column_name: character_01
+-
+  sheet_header: キャラ2
+  column_name: character_02
+-
+  sheet_header: キャラ3
+  column_name: character_03

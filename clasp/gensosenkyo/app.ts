@@ -1,7 +1,5 @@
 const main = () => {
-  createTweetCountingSheets.destroyAllSheets()
-
-  // シート作成は 1枚 につき 約15秒 かかる
+  // NOTE: 約6分かかる
   createTweetCountingSheets.createAllSheets()
 
   ZzzCommonScripts.showStartAndEndLogger(() => {
@@ -52,26 +50,8 @@ const main = () => {
   }, '（条件付き書式）特定のセルが条件を満たしたら行を灰色に塗る')
 
   // サジェスト用に「入力規則」を設定する（重い）
-  console.log('[START] 「入力規則」を設定する（サジェスト用）')
-  const sheetNames = ZzzSheetNames.forCountingSheetNames
-  const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
-  const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
+  createTweetCountingSheets.setDataValidationsForSuggestions()
 
-  sheetNames.forEach(sheetName => {
-    ZzzDataValidation.setDataValidationToCell(
-      sheetName,
-      columNameVsColumnNumber['キャラ1']
-    )
-
-    ZzzDataValidation.setDataValidationToCell(
-      sheetName,
-      columNameVsColumnNumber['キャラ2']
-    )
-
-    ZzzDataValidation.setDataValidationToCell(
-      sheetName,
-      columNameVsColumnNumber['キャラ3']
-    )
-  })
-  console.log('[DONE] 「入力規則」を設定する（サジェスト用）')
+  // オールキャラと協力攻撃では「ふぁぼ済？」は関係ないので TRUE で埋める
+  createTweetCountingSheets.setAllTrueValuesToIsFavoriteColumn()
 }

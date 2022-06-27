@@ -45,4 +45,96 @@ namespace ZzzConditionalFormats {
       sheet.clearConditionalFormatRules();
     }, '「条件付き書式」をクリアしました')
   }
+
+  export const setInitToIsAllCompletedColumn = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+
+    const requiredReviewColumnNumber = colNameToNumber['要レビュー？']
+    const requiredReviewColumnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(requiredReviewColumnNumber)
+
+    const completedSecondCheckColumnNumber = colNameToNumber['二次チェック済？']
+    const completedSecondCheckAlphabet = ZzzConverters.convertColumnNumberToAlphabet(completedSecondCheckColumnNumber)
+
+    const formula = `=IF(AND(${requiredReviewColumnAlphabet}2=FALSE,${completedSecondCheckAlphabet}2=TRUE),"🌞","☔")`
+
+    // 「全終了？」列
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      colNameToNumber['全終了？'],
+      sheet
+    )
+
+    // '☔' という初期値を設定する
+    range.setValue(formula)
+    range.setHorizontalAlignment('center');
+
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      '🌞',
+      '#ccffcc' // Green
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      '☔',
+      '#ffc0cb' // Red
+    )
+  }
+
+  export const setInitToIsRequiredReview = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      colNameToNumber['要レビュー？'],
+      sheet
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'TRUE',
+      '#ffc0cb' // Red
+    )
+  }
+
+  export const setInitToIsCompletedSecondCheck = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      colNameToNumber['二次チェック済？'],
+      sheet
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'TRUE',
+      '#ccffcc' // Green
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'FALSE',
+      '#ffc0cb' // Red
+    )
+  }
+
+  export const setInitToIsCompletedFavorite = (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      colNameToNumber['ふぁぼ済？'],
+      sheet
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'TRUE',
+      '#ccffcc' // Red
+    )
+    ZzzConditionalFormats.setColorToRangeInSpecificCondition(
+      range,
+      sheet,
+      'FALSE',
+      '#ffc0cb' // Red
+    )
+  }
 }

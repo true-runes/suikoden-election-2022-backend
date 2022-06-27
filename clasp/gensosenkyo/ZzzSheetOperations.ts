@@ -78,8 +78,7 @@ namespace ZzzSheetOperations {
       sheet = ZzzSheetOperations.changeActiveSheetTo(activeSheetName)
     }
 
-    const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet()
-    newSheet.setName(newSheetName)
+    const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(newSheetName)
 
     console.log(`[END] ${newSheetName} : シートを作成しました`)
     return newSheet
