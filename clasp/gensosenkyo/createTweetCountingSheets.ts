@@ -1,8 +1,8 @@
 namespace createTweetCountingSheets {
+  // NOTE: 約6分かかる
   export const createAllSheets = () => {
     const sheetNames = ZzzSheetNames.allSheetNames
 
-    // とてもコストが高い実行内容（シートを一枚作るために約15秒）
     sheetNames.forEach(sheetName => {
       ZzzSheetOperations.createSheet({newSheetName: sheetName})
     })
@@ -158,144 +158,101 @@ namespace createTweetCountingSheets {
     )
   }
 
-  // 長すぎるので「列」ごとにうまく分けたい
   export const setDefaultConditionalFormats = () => {
-    const sheetNames = ZzzSheetNames.forCountingSheetNames
     const colNameToNumber = ZzzColumnNames.colNameToNumber()
 
-    const requiredReviewColumnNumber = colNameToNumber['要レビュー？']
-    const requiredReviewColumnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(requiredReviewColumnNumber)
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        // 「全終了？」列
+        ZzzConditionalFormats.setInitToIsAllCompletedColumn(sheet)
 
-    const completedSecondCheckColumnNumber = colNameToNumber['二次チェック済？']
-    const completedSecondCheckAlphabet = ZzzConverters.convertColumnNumberToAlphabet(completedSecondCheckColumnNumber)
+        // 「要レビュー？」列
+        ZzzConditionalFormats.setInitToIsRequiredReview(sheet)
 
-    const formula = `=IF(AND(${requiredReviewColumnAlphabet}2=FALSE,${completedSecondCheckAlphabet}2=TRUE),"🌞","☔")`
+        // 「二次チェック済？」列
+        ZzzConditionalFormats.setInitToIsCompletedSecondCheck(sheet)
 
-    // 「全終了？」列
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
-      const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-        colNameToNumber['全終了？'],
-        sheet
-      )
-
-      // '☔' という初期値を設定する
-      range.setValue(formula)
-      range.setHorizontalAlignment('center');
-
-      ZzzConditionalFormats.setColorToRangeInSpecificCondition(
-        range,
-        sheet,
-        '🌞',
-        '#ccffcc' // Green
-      )
-      ZzzConditionalFormats.setColorToRangeInSpecificCondition(
-        range,
-        sheet,
-        '☔',
-        '#ffc0cb' // Red
-      )
-    })
-
-    // 「要レビュー？」列
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
-      const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-        colNameToNumber['要レビュー？'],
-        sheet
-      )
-
-      ZzzConditionalFormats.setColorToRangeInSpecificCondition(
-        range,
-        sheet,
-        'TRUE',
-        '#ffc0cb' // Red
-      )
-    })
-
-    // 「二次チェック済？」列
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
-      const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-        colNameToNumber['二次チェック済？'],
-        sheet
-      )
-
-      ZzzConditionalFormats.setColorToRangeInSpecificCondition(
-        range,
-        sheet,
-        'TRUE',
-        '#ccffcc' // Red
-      )
-
-      ZzzConditionalFormats.setColorToRangeInSpecificCondition(
-        range,
-        sheet,
-        'FALSE',
-        '#ffc0cb' // Red
-      )
-    })
-
-    // 「ふぁぼ済？」列
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
-      const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
-        colNameToNumber['ふぁぼ済？'],
-        sheet
-      )
-
-      ZzzConditionalFormats.setColorToRangeInSpecificCondition(
-        range,
-        sheet,
-        'TRUE',
-        '#ccffcc' // Red
-      )
-
-      ZzzConditionalFormats.setColorToRangeInSpecificCondition(
-        range,
-        sheet,
-        'FALSE',
-        '#ffc0cb' // Red
-      )
-    })
+        // 「ふぁぼ済？」列
+        ZzzConditionalFormats.setInitToIsCompletedFavorite(sheet)
+      },
+      '「条件付き書式」の設定'
+    )
   }
 
+  // 特定条件において行全体を灰色の背景にする「条件付き書式」
   export const setGrayBackGroundInSpecificCondition = () => {
-    const sheetNames = ZzzSheetNames.forCountingSheetNames
     const colNameToNumber = ZzzColumnNames.colNameToNumber()
-
     let columnAlphabet: string
     let newRule: GoogleAppsScript.Spreadsheet.ConditionalFormatRule
 
-    sheetNames.forEach(sheetName => {
-      const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
-      const rules = sheet.getConditionalFormatRules()
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        const rules = sheet.getConditionalFormatRules()
 
-      for (let i = 2; i <= 101; i++) {
-        columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(colNameToNumber['集計対象外？'])
+        for (let i = 2; i <= 101; i++) {
+          columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(colNameToNumber['集計対象外？'])
 
-        newRule = ZzzConditionalFormats.getRuleToSetGrayBackgroundToAllRowCellsInSpecificCondition(
-          i,
+          newRule = ZzzConditionalFormats.getRuleToSetGrayBackgroundToAllRowCellsInSpecificCondition(
+            i,
+            sheet,
+            `=$${columnAlphabet}$${i}=TRUE`,
+            sheet.getRange(i, 1, 1, 100)
+          )
+          rules.push(newRule)
+
+          columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(colNameToNumber['ツイ見られない？'])
+
+          newRule = ZzzConditionalFormats.getRuleToSetGrayBackgroundToAllRowCellsInSpecificCondition(
+            i,
+            sheet,
+            `=$${columnAlphabet}$${i}=TRUE`,
+            sheet.getRange(i, 1, 1, 100)
+          )
+          rules.push(newRule)
+        }
+
+        sheet.setConditionalFormatRules(rules)
+      },
+      '特定条件において行全体を灰色の背景にする「条件付き書式」'
+    )
+  }
+
+  // サジェスト用に「入力規則」を設定する（重い）
+  export const setDataValidationsForSuggestions = () => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        ZzzDataValidation.setDataValidationToCell(
           sheet,
-          `=$${columnAlphabet}$${i}=TRUE`,
-          sheet.getRange(i, 1, 1, 100)
+          colNameToNumber['キャラ1']
         )
-        rules.push(newRule)
 
-        columnAlphabet = ZzzConverters.convertColumnNumberToAlphabet(colNameToNumber['ツイ見られない？'])
-
-        newRule = ZzzConditionalFormats.getRuleToSetGrayBackgroundToAllRowCellsInSpecificCondition(
-          i,
+        ZzzDataValidation.setDataValidationToCell(
           sheet,
-          `=$${columnAlphabet}$${i}=TRUE`,
-          sheet.getRange(i, 1, 1, 100)
+          colNameToNumber['キャラ2']
         )
-        rules.push(newRule)
+
+        ZzzDataValidation.setDataValidationToCell(
+          sheet,
+          colNameToNumber['キャラ3']
+        )
+      },
+      '「入力規則」を設定する（サジェスト用）'
+    )
+  }
+
+  export const setAllTrueValuesToIsFavoriteColumn = () => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+
+    ZzzSheetOperations.applyFunctionToAllCountingSheets(
+      (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
+        ZzzSheetOperations.setValueToSpecificColumnNumberOnSheet(
+          colNameToNumber['ふぁぼ済？'],
+          sheet,
+          'TRUE'
+        )
       }
-
-      sheet.setConditionalFormatRules(rules)
-
-      console.log(`[END] ${sheetName} : 特定条件で背景をグレーにする`)
-    })
+    )
   }
 }

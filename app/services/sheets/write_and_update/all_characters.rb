@@ -3,7 +3,8 @@ module Sheets
     class AllCharacters
       # 列情報は clasp/gensosenkyo/ZzzColumnNames.ts を参考にする
       def self.exec
-        # NOTE: for_api だと突然削除や不可視にした人がいたらレコード順がズレて死亡なのでやらないこと
+        # NOTE: for_api で Tweet を指定すると is_public によって冪等性が保証されないので禁止
+        # FIXME: 冪等なのか、改めて厳密に考えよ。キモになるところ
         tweets = Tweet.gensosenkyo_2022_votes.valid_term_votes
 
         tweets.each_slice(100).with_index do |tweets_100, index_on_hundred|

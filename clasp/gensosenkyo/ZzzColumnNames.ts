@@ -1,4 +1,3 @@
-// TODO: 列名は Ruby 側と共有したい
 namespace ZzzColumnNames {
   // ここの命名は変更することがしばしばあり得るから、固定した英数命名に紐づけたい
   export const columnNamesOnCountingSheet: string[] = [
@@ -36,7 +35,7 @@ namespace ZzzColumnNames {
   }
 
   export const columnNamesOnDirectMessageSheet: string[] = [
-    'id',
+    'ID',
     'screen_name',
     'dm_id',
     '日時',

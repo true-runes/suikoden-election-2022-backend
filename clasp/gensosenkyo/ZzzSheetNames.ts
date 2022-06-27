@@ -28,4 +28,16 @@ namespace ZzzSheetNames {
   export const forCountingSheetNames = ZzzSheetNames.allSheetNames.filter((sheetName) => {
     return !(['説明', '集計状況'].includes(sheetName))
   })
+
+  export const sheetFilenames: string[] = [
+    '投票まとめ',
+    '①オールキャラ部門',
+    '②協力攻撃部門',
+    'DM（ダイレクトメッセージ）',
+    'ボーナス票・OP・CLイラスト',
+    'ボーナス票・お題小説',
+    'ボーナス票・開票イラスト',
+    'ボーナス票・推し台詞',
+    'ボーナス票・選挙運動',
+  ]
 }

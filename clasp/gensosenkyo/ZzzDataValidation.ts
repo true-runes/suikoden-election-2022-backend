@@ -1,7 +1,6 @@
 // 「入力規則」
 namespace ZzzDataValidation {
-  export const setDataValidationToCell = (sheetName: string, columnNumber: number, destroyWord: string = '') => {
-    const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
+  export const setDataValidationToCell = (sheet: GoogleAppsScript.Spreadsheet.Sheet, columnNumber: number, destroyWord: string = '') => {
     const startRowNumber = 2
     const endRowNumber = 101
 
