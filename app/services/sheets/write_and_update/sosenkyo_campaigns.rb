@@ -1,10 +1,10 @@
-# ボーナス票・推し台詞
+# ボーナス票・選挙運動
 module Sheets
   module WriteAndUpdate
-    class FavQuotes
+    class SosenkyoCampaigns
       def self.exec
         # NOTE: for_api は中身が動的になってしまうので使ってはいけない
-        tweets = Tweet.fav_quotes
+        tweets = Tweet.sosenkyo_campaigns
 
         tweets.each_slice(100).with_index do |tweets_100, index_on_hundred|
           prepared_written_data_by_array_in_hash = []
@@ -63,13 +63,13 @@ module Sheets
 
           # suggested_names を最初に全削除する
           SheetData.write_rows(
-            sheet_id: ENV.fetch('COUNTING_BONUS_FAV_QUOTES_SHEET_ID', nil),
+            sheet_id: ENV.fetch('COUNTING_BONUS_SOSENKYO_CAMPAIGNS_SHEET_ID', nil),
             range: "#{sheet_name}!AX2:GR101",
             values: [[''] * 50] * 100 # 100行分の空文字を入れる
           )
 
           SheetData.write_rows(
-            sheet_id: ENV.fetch('COUNTING_BONUS_FAV_QUOTES_SHEET_ID', nil),
+            sheet_id: ENV.fetch('COUNTING_BONUS_SOSENKYO_CAMPAIGNS_SHEET_ID', nil),
             range: "#{sheet_name}!A2", # 始点
             values: written_data
           )
