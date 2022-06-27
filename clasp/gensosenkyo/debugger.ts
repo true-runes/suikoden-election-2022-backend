@@ -1,9 +1,17 @@
 const debugFunction = () => {
-  const sheet = ZzzSheetOperations.changeActiveSheetTo('シート288')
+  const colNameToNumber = ZzzColumnNames.colNameToNumber()
+
+  const sheet = ZzzSheetOperations.changeActiveSheetTo('シート123')
 
   ZzzSheetOperations.setBackgroundColorToSpecificColumnNumberOnSheet(
-    3,
+    colNameToNumber['ふぁぼ済？'],
     sheet,
-    'white'
+    'gray'
+  )
+
+  ZzzSheetOperations.setValueToSpecificColumnNumberOnSheet(
+    colNameToNumber['ふぁぼ済？'],
+    sheet,
+    'TRUE'
   )
 }
