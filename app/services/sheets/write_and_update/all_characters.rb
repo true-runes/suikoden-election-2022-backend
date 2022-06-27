@@ -3,8 +3,7 @@ module Sheets
     class AllCharacters
       # 列情報は clasp/gensosenkyo/ZzzColumnNames.ts を参考にする
       def self.exec
-        # NOTE: for_api で Tweet を指定すると is_public によって冪等性が保証されないので禁止
-        # FIXME: 冪等なのか、改めて厳密に考えよ。キモになるところ
+        # NOTE: for_api で Tweet を指定すると is_public の値によって冪等性が保証されないのでダメ
         tweets = Tweet.gensosenkyo_2022_votes.valid_term_votes
 
         tweets.each_slice(100).with_index do |tweets_100, index_on_hundred|
@@ -15,14 +14,15 @@ module Sheets
 
             user = tweet.user
             by_user_other_tweets = tweets.where(user: user).where.not(id: tweet.id)
-            by_user_other_tweets_for_sheet = by_user_other_tweets.map { |t| t.id_number.to_s }.join(',').to_s
+            # カンマ区切りにすると to_s しても数値に変換されてしまう
+            by_user_other_tweets_for_sheet = by_user_other_tweets.map { |t| t.id_number.to_s }.join(' | ').to_s
 
             inserted_hash['screen_name'] = tweet.user.screen_name
             inserted_hash['tweet_id'] = tweet.id_number.to_s
             inserted_hash['日時'] = tweet.tweeted_at.strftime('%Y/%m/%d %H:%M:%S').to_s
             inserted_hash['URL'] = tweet.url
             inserted_hash['ツイ見られない？'] = !tweet.is_public
-            inserted_hash['別ツイ'] = by_user_other_tweets_for_sheet || ''
+            inserted_hash['別ツイ'] = by_user_other_tweets_for_sheet.to_s || ''
             inserted_hash['ふぁぼ済？'] = true # to_s がいるかも
             inserted_hash['内容'] = tweet.full_text
             # この行のコストが高い
@@ -39,15 +39,17 @@ module Sheets
           prepared_written_data_by_array_in_hash.each_with_index do |written_data_hash, index|
             row = []
 
+            # TODO: 取得漏れには 10001 始まりを付与したい
             id_on_sheet = (index_on_hundred * 100) + (index + 1)
 
+            # TODO: ハードコーディングをしたくない
             row[0] = id_on_sheet
             row[1] = written_data_hash['screen_name']
             row[2] = written_data_hash['tweet_id']
             row[3] = written_data_hash['日時']
             row[4] = written_data_hash['URL']
-            row[5] = written_data_hash['ツイ見られない？']
-            row[8] = written_data_hash['別ツイ']
+            row[5] = written_data_hash['別ツイ']
+            row[7] = written_data_hash['ツイ見られない？']
             row[9] = written_data_hash['ふぁぼ済？']
             row[10] = written_data_hash['二次チェック済？']
             row[11] = written_data_hash['内容']
@@ -60,8 +62,8 @@ module Sheets
           end
 
           SheetData.write_rows(
-            sheet_id: ENV.fetch('COUNTING_BONUS_SHORT_STORIES_SHEET_ID', nil),
-            range: "#{sheet_name}!A2", # 始点を A1 形式で入れる（そういう決まり）
+            sheet_id: ENV.fetch('COUNTING_ALL_CHARACTERS_SHEET_ID', nil),
+            range: "#{sheet_name}!A2", # 始点
             values: written_data
           )
         end
@@ -69,13 +71,3 @@ module Sheets
     end
   end
 end
-
-# DM
-# dms = DirectMessage.to_gensosenkyo
-# dm = dms.first
-# dm.messaged_at
-# dm.content_text
-# dm.user.screen_name
-# dm.user.name
-# id（自動）	送信者（自動）	内容（自動）	キャラ1	キャラ2	キャラ3	ツイ見られない？（自動）	備考	要レビュー？	返信 or チェック済み？	全終了？	ドロップダウン用配列（触らない）
-# DM は言語が取得できない
