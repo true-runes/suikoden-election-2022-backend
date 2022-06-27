@@ -13,4 +13,9 @@ namespace :write_db_data_to_sheet do
   task short_stories: :environment do
     Sheets::WriteAndUpdate::ShortStories.exec
   end
+
+  desc '[ボーナス票・推し台詞] DBのデータをシートに書き込む'
+  task fav_quotes: :environment do
+    Sheets::WriteAndUpdate::FavQuotes.exec
+  end
 end

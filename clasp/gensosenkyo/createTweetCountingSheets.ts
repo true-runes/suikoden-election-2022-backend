@@ -20,7 +20,7 @@ namespace createTweetCountingSheets {
     return sheetNames
   }
 
-  export const setColumnNames = (category = 'mainDivisions') => {
+  export const setColumnNames = (category = 'mainDivision') => {
     ZzzSheetOperations.applyFunctionToAllCountingSheets(
       (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
         ZzzCellOperations.setFirstRowNames(sheet, category)
@@ -218,8 +218,11 @@ namespace createTweetCountingSheets {
   }
 
   // サジェスト用に「入力規則」を設定する（重い）
-  export const setDataValidationsForSuggestions = () => {
-    const colNameToNumber = ZzzColumnNames.colNameToNumber()
+  export const setDataValidationsForSuggestions = (
+    category: 'mainDivision' | 'bonusVote' | 'directMessage'
+  ) => {
+    const colNameToNumber = ZzzColumnNames.colNameToNumber(category)
+
     const targetColumnNumbers = [
       colNameToNumber['キャラ1 or 作品名'],
       colNameToNumber['キャラ2 or 協力攻撃名'],
@@ -232,10 +235,11 @@ namespace createTweetCountingSheets {
       colNameToNumber['キャラ9'],
       colNameToNumber['キャラ10'],
     ]
+    const colNumbersWithoutFalsy = targetColumnNumbers.filter(v => v)
 
     ZzzSheetOperations.applyFunctionToAllCountingSheets(
       (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
-        targetColumnNumbers.forEach(targetColumnNumber => {
+        colNumbersWithoutFalsy.forEach(targetColumnNumber => {
           ZzzDataValidation.setDataValidationToCell(
             sheet,
             targetColumnNumber
@@ -246,6 +250,7 @@ namespace createTweetCountingSheets {
     )
   }
 
+  // ここは Ruby 側でデータを入れるときにやればいいので、未使用メソッド
   export const setAllTrueValuesToIsFavoriteColumn = () => {
     const colNameToNumber = ZzzColumnNames.colNameToNumber()
 
