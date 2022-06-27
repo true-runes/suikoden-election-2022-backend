@@ -144,4 +144,14 @@ namespace ZzzSheetOperations {
 
     range.setBackground(color)
   }
+
+  // ヘッダ行は含まない
+  export const setValueToSpecificColumnNumberOnSheet = (colNum: number, sheet: GoogleAppsScript.Spreadsheet.Sheet, value: string) => {
+    const range = ZzzCellOperations.getRangeSpecificColumnRow2ToRow101(
+      colNum,
+      sheet
+    )
+
+    range.setValue(value)
+  }
 }
