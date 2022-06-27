@@ -1,4 +1,5 @@
 namespace ZzzSheetNames {
+  // TODO: 添字は 00 から始めた方が id_on_sheet の番号の直感と一致して良いかも
   export const allSheetNames = [
     '説明',
     '集計状況',

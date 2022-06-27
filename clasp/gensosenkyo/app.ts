@@ -1,4 +1,6 @@
 const main = () => {
+  // createTweetCountingSheets.destroyAllSheets()
+
   // NOTE: 約6分かかる
   createTweetCountingSheets.createAllSheets()
 
