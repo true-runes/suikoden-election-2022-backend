@@ -1,16 +1,17 @@
 // TODO: 列名は Ruby 側と共有したい
 namespace ZzzColumnNames {
+  // ここの命名は変更することがしばしばあり得るから、固定した英数命名に紐づけたい
   export const columnNamesOnCountingSheet: string[] = [
     'ID',
     'screen_name',
     'tweet_id',
     '日時',
     'URL',
-    'ツイートが見られない？',
-    '全チェック終了？',
+    '別ツイ',
+    '全終了？',
+    'ツイ見られない？',
     '集計対象外？',
-    '別ツイート',
-    'ふぁぼ済？', // これは OnCounting では不要だが、冪等性維持のため、データとして全 TRUE を送ることで維持する
+    'ふぁぼ済？', // OnCounting では不要だが、冪等性維持のため含んでいる
     '二次チェック済？',
     '内容',
     '備考',
@@ -44,7 +45,7 @@ namespace ZzzColumnNames {
     '要レビュー？',
     '二次チェック済み？',
     '対応済み？',
-    '全チェック終了？',
+    '全終了？',
     '集計対象外？',
     '内容',
     '種類',
@@ -60,4 +61,11 @@ namespace ZzzColumnNames {
     'キャラ9',
     'キャラ10',
   ]
+
+  export const colNameToNumber = () => {
+    return ZzzSheetOperations
+      .correspondenceObjectAboutColumnNameToColumnNumber(
+        ZzzColumnNames.columnNamesOnCountingSheet
+      )
+    }
 }

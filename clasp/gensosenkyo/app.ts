@@ -1,4 +1,7 @@
 const main = () => {
+  createTweetCountingSheets.destroyAllSheets()
+
+  // シート作成は 1枚 につき 約15秒 かかる
   createTweetCountingSheets.createAllSheets()
 
   ZzzCommonScripts.showStartAndEndLogger(() => {
@@ -17,8 +20,11 @@ const main = () => {
     createTweetCountingSheets.setBanpeis()
   }, '102行目の各セルに "@" を入れる')
 
+  // 保護設定を全削除（やや重い処理）
+  ZzzSheetOperations.removeAllProtectedCellsOnAllSheets()
+
   // やや重い処理
-  // 注意: 冪等ではない（追記となる）
+  // NOTE: 冪等ではない（追記となる）
   ZzzCommonScripts.showStartAndEndLogger(() => {
     createTweetCountingSheets.setProtectedCells()
   }, 'シートの保護機能を適用する')
@@ -32,38 +38,40 @@ const main = () => {
     createTweetCountingSheets.setRappings()
   }, '「ラッピング」の形式を設定する')
 
-  // 注意: 冪等ではない（追記となる）
+  // 「条件付き書式」を全削除
+  ZzzConditionalFormats.clearConditionalFormatsOnAllSheets()
+
+  // NOTE: 冪等ではない（追記となる）
   ZzzCommonScripts.showStartAndEndLogger(() => {
     createTweetCountingSheets.setDefaultConditionalFormats()
   }, '「条件付き書式」を設定する')
 
-  // 注意: 冪等ではない（追記となる）
+  // NOTE: 冪等ではない（追記となる）
   ZzzCommonScripts.showStartAndEndLogger(() => {
     createTweetCountingSheets.setGrayBackGroundInSpecificCondition()
   }, '（条件付き書式）特定のセルが条件を満たしたら行を灰色に塗る')
 
-  // 「入力規則」を設定する（サジェスト用）
-  // FIXME: ここが重い（3分ぐらいかかる）
-  // console.log('[START] 「入力規則」を設定する（サジェスト用）')
-  // const sheetNames = ZzzSheetNames.forCountingSheetNames
-  // const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
-  // const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
+  // サジェスト用に「入力規則」を設定する（重い）
+  console.log('[START] 「入力規則」を設定する（サジェスト用）')
+  const sheetNames = ZzzSheetNames.forCountingSheetNames
+  const allColumnNames = ZzzColumnNames.columnNamesOnCountingSheet
+  const columNameVsColumnNumber = ZzzSheetOperations.correspondenceObjectAboutColumnNameToColumnNumber(allColumnNames)
 
-  // sheetNames.forEach(sheetName => {
-  //   ZzzDataValidation.setDataValidationToCell(
-  //     sheetName,
-  //     columNameVsColumnNumber['キャラ1']
-  //   )
+  sheetNames.forEach(sheetName => {
+    ZzzDataValidation.setDataValidationToCell(
+      sheetName,
+      columNameVsColumnNumber['キャラ1']
+    )
 
-  //   ZzzDataValidation.setDataValidationToCell(
-  //     sheetName,
-  //     columNameVsColumnNumber['キャラ2']
-  //   )
+    ZzzDataValidation.setDataValidationToCell(
+      sheetName,
+      columNameVsColumnNumber['キャラ2']
+    )
 
-  //   ZzzDataValidation.setDataValidationToCell(
-  //     sheetName,
-  //     columNameVsColumnNumber['キャラ3']
-  //   )
-  // })
-  // console.log('[DONE] 「入力規則」を設定する（サジェスト用）')
+    ZzzDataValidation.setDataValidationToCell(
+      sheetName,
+      columNameVsColumnNumber['キャラ3']
+    )
+  })
+  console.log('[DONE] 「入力規則」を設定する（サジェスト用）')
 }

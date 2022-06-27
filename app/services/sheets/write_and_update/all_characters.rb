@@ -20,8 +20,8 @@ module Sheets
             inserted_hash['tweet_id'] = tweet.id_number.to_s
             inserted_hash['日時'] = tweet.tweeted_at.strftime('%Y/%m/%d %H:%M:%S').to_s
             inserted_hash['URL'] = tweet.url
-            inserted_hash['ツイートが見られない？'] = !tweet.is_public
-            inserted_hash['別ツイート'] = by_user_other_tweets_for_sheet || ''
+            inserted_hash['ツイ見られない？'] = !tweet.is_public
+            inserted_hash['別ツイ'] = by_user_other_tweets_for_sheet || ''
             inserted_hash['ふぁぼ済？'] = true # to_s がいるかも
             inserted_hash['内容'] = tweet.full_text
             # この行のコストが高い
@@ -45,8 +45,8 @@ module Sheets
             row[2] = written_data_hash['tweet_id']
             row[3] = written_data_hash['日時']
             row[4] = written_data_hash['URL']
-            row[5] = written_data_hash['ツイートが見られない？']
-            row[8] = written_data_hash['別ツイート']
+            row[5] = written_data_hash['ツイ見られない？']
+            row[8] = written_data_hash['別ツイ']
             row[9] = written_data_hash['ふぁぼ済？']
             row[10] = written_data_hash['二次チェック済？']
             row[11] = written_data_hash['内容']
@@ -76,5 +76,5 @@ end
 # dm.content_text
 # dm.user.screen_name
 # dm.user.name
-# id（自動）	送信者（自動）	内容（自動）	キャラ1	キャラ2	キャラ3	ツイートが見られる？（自動）	備考	要レビュー？	返信 or チェック済み？	全チェック終了？	ドロップダウン用配列（触らない）
+# id（自動）	送信者（自動）	内容（自動）	キャラ1	キャラ2	キャラ3	ツイ見られない？（自動）	備考	要レビュー？	返信 or チェック済み？	全終了？	ドロップダウン用配列（触らない）
 # DM は言語が取得できない

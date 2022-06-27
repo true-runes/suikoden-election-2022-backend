@@ -39,4 +39,10 @@ namespace ZzzConditionalFormats {
 
     return newRule
   }
+
+  export const clearConditionalFormatsOnAllSheets = () => {
+    ZzzSheetOperations.applyFunctionToAllCountingSheets((sheet) => {
+      sheet.clearConditionalFormatRules();
+    }, '「条件付き書式」をクリアしました')
+  }
 }
