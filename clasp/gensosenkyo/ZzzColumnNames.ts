@@ -15,9 +15,9 @@ namespace ZzzColumnNames {
     '内容',
     '備考',
     '要レビュー？',
-    'キャラ1',
-    'キャラ2',
-    'キャラ3',
+    'キャラ1 or 作品名', // 協力攻撃の場合は「作品名」
+    'キャラ2 or 協力攻撃名', // 協力攻撃の場合は「協力攻撃名」
+    'キャラ3', // 協力攻撃の場合は空文字
   ]
 
   export const columnNamesOnBonusVotesSheet = (): string[] => {
