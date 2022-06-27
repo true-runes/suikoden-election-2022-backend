@@ -8,9 +8,9 @@ namespace ZzzCommonScripts {
     return removedAtmarkAndBlankText
   }
 
-  export const showStartAndEndLogger = (fn, displayText = 'showStartAndEndLogger') => {
-    console.log(`[START] ${displayText}`)
+  export const showStartAndEndLogger = (fn, displayLogText = 'showStartAndEndLogger') => {
+    console.log(`[START] ${displayLogText}`)
     fn()
-    console.log(`[END] ${displayText}`)
+    console.log(`[END] ${displayLogText}`)
   }
 }

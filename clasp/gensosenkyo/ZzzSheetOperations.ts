@@ -16,29 +16,37 @@ namespace ZzzSheetOperations {
     return
   }
 
-  export const applyFunctionToAllCountingSheets = (fn: any) => {
+  export const applyFunctionToAllCountingSheets = (fn: any, displayLogText = null) => {
     const sheetNames = ZzzSheetNames.forCountingSheetNames
 
     ZzzSheetOperations.applyFunctionToSpecificSheetNames(
       fn,
-      sheetNames
+      sheetNames,
+      displayLogText
     )
 
     // 使い方
     // ZzzSheetOperations.applyFunctionToAllCountingSheets(
     //   (sheet: GoogleAppsScript.Spreadsheet.Sheet) => {
     //     SpreadsheetApp.getActive().deleteSheet(sheet)
-    //   }
+    //   },
+    //   'シートごとの実行完了時に表示されるログのテキスト'
     // )
   }
 
-  export const applyFunctionToSpecificSheetNames = (fn: any, sheetNames: string[]) => {
+  export const applyFunctionToSpecificSheetNames = (
+    fn: any,
+    sheetNames: string[],
+    displayLogText: string
+  ) => {
     sheetNames.forEach(sheetName => {
       const sheet = ZzzSheetOperations.changeActiveSheetTo(sheetName)
 
       fn(sheet)
 
-      console.log(`[END] ${sheetName} : ZzzSheetOperations.applyFunctionToSheet`)
+      if (displayLogText) {
+        console.log(`[END] ${sheetName} : ${displayLogText}`)
+      }
     })
   }
 
