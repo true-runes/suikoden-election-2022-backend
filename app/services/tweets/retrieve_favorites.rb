@@ -59,7 +59,7 @@ module Tweets
 
         break if fav_tweets.empty?
 
-        next_since_id = fav_tweets.first.id - 1
+        next_since_id = fav_tweets.first.id
         puts "[LOG] next_since_id は #{next_since_id} です。"
 
         sleep 5
