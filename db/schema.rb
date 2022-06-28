@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_24_122242) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_28_131500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -169,6 +169,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_122242) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.json "response_json"
+  end
+
+  create_table "sub_gensosenkyo_favs", force: :cascade do |t|
+    t.bigint "id_number", null: false
+    t.bigint "tweet_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tweet_id"], name: "index_sub_gensosenkyo_favs_on_tweet_id"
   end
 
   create_table "tweets", force: :cascade do |t|
