@@ -1,6 +1,7 @@
 namespace :change_is_public_attributes do
   desc 'ツイートが非公開または削除になっていないかを調べ、変更があれば UPDATE を実行する'
   task all: :environment do
+    # NOTE: この tweets の取り方をしているのでツイートが増えることによる実行タイムアウトに注意する
     tweets = Tweet.all
     tweet_id_numbers = tweets.map(&:id_number)
 
