@@ -18,6 +18,8 @@ module Sheets
             by_user_other_tweets_for_sheet = by_user_other_tweets.map { |t| t.id_number.to_s }.join(' | ').to_s
 
             inserted_hash['screen_name'] = tweet.user.screen_name
+            # to_s しても、たとえば 1540956021363200000 のような値はダメ
+            # セル側の書式を「書式なしテキスト」にする必要がある
             inserted_hash['tweet_id'] = tweet.id_number.to_s
             inserted_hash['日時'] = tweet.tweeted_at.strftime('%Y/%m/%d %H:%M:%S').to_s
             inserted_hash['URL'] = tweet.url
