@@ -1,0 +1,2 @@
+class CountingAllCharacter < ApplicationRecord
+end
