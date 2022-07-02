@@ -51,6 +51,8 @@ module Sheets
             end
           end
         end
+
+        '[DONE] Sheets::Counting::AllCharacters.import'
       end
     end
   end
