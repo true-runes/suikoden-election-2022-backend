@@ -80,7 +80,7 @@ module Sheets
                 input_07: row[19],
                 input_08: row[20],
                 input_09: row[21],
-                input_10: row[22],
+                input_10: row[22]
               }
 
               next if column_vs_value[:category] != '②協力攻撃部門' || column_vs_value[:category] != '両部門'
@@ -111,6 +111,8 @@ module Sheets
 
               CountingUniteAttack.find_or_initialize_by(unique_attrs).update!(mutable_attrs)
             end
+
+            puts "#{sheet_names[i]} is Done." # rubocop:disable Rails/Output
           end
         end
 
