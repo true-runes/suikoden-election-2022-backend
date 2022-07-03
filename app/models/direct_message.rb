@@ -13,6 +13,14 @@ class DirectMessage < ApplicationRecord
       .order(id_number: :asc)
   end
 
+  def self.missing_records
+    where(id_number: 1540436647376031755..1540790299618066435)
+  end
+
+  def is_missing_record?
+    id_number.in?(1540436647376031755..1540790299618066435)
+  end
+
   # self.user と同義
   def sender
     User.find_by(id_number: sender_id_number)

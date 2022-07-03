@@ -9,18 +9,20 @@ module Dm
     INTERVAL_SECONDS = 10
 
     # 最新のものから過去のものに向かって取得していき、取得できなくなったら抜ける
-    def self.exec(twitter_client: nil, number_of_getters: 1)
+    def self.exec(twitter_client: nil, number_of_getters: 1, get_dm_per_request: 50)
       twitter_client = TwitterRestApi.client(account_key: :gensosenkyo) if twitter_client.blank?
 
       next_cursor = nil
       loop_counter = 0
 
       while true
-        # count は 1 にしておくのが望ましい（それでも28とか取ってきちゃうので）
+        # count は ループ段階に入ったら 1 にしておくのが望ましい（それでも28とか取ってきちゃうので）
         if next_cursor.nil?
-          dm_events = twitter_client.direct_messages_events(count: 1)
+          # ここで API リクエスト が発生する
+          dm_events = twitter_client.direct_messages_events(count: get_dm_per_request)
         else
-          dm_events = twitter_client.direct_messages_events(count: 1, cursor: next_cursor)
+          # ここで API リクエスト が発生する
+          dm_events = twitter_client.direct_messages_events(count: get_dm_per_request, cursor: next_cursor)
         end
 
         dm_events = dm_events.to_h
@@ -33,8 +35,6 @@ module Dm
 
             create_user_record(dm, twitter_client)
             create_direct_message_record(dm, event)
-
-            sleep INTERVAL_SECONDS
           end
         end
 
@@ -43,7 +43,8 @@ module Dm
         break if next_cursor.nil?
         break if loop_counter >= number_of_getters
 
-        sleep INTERVAL_SECONDS * 5
+        # ループの最初に API リクエスト が発生したので待つ
+        sleep INTERVAL_SECONDS * 3
       end
 
       "[DONE] Dm::Importer.exec"
@@ -57,7 +58,7 @@ module Dm
         existing_user = User.find_by(id_number: user_id_number)
 
         if existing_user.blank?
-          # Twitter API によりユーザー情報を取得する
+          # Twitter API によりユーザー情報を取得する（API リクエスト が発生する）
           target_user = twitter_client.user(user_id_number)
 
           user = User.new(
@@ -70,6 +71,9 @@ module Dm
           )
 
           user.save!
+
+          # API リクエスト が発生したので待つ
+          sleep INTERVAL_SECONDS
         end
       end
 
