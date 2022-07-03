@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_03_055608) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_03_105847) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -76,6 +76,33 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_03_055608) do
     t.string "chara_1"
     t.string "chara_2"
     t.string "chara_3"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "counting_bonus_votes", force: :cascade do |t|
+    t.integer "id_on_sheet"
+    t.integer "user_id", null: false
+    t.integer "bonus_category", null: false
+    t.integer "vote_method", null: false
+    t.integer "tweet_id"
+    t.integer "direct_message_id"
+    t.string "other_tweet_ids_text"
+    t.boolean "is_invisible"
+    t.boolean "is_out_of_counting"
+    t.boolean "is_recovered"
+    t.string "contents"
+    t.string "memo"
+    t.string "chara_01"
+    t.string "chara_02"
+    t.string "chara_03"
+    t.string "chara_04"
+    t.string "chara_05"
+    t.string "chara_06"
+    t.string "chara_07"
+    t.string "chara_08"
+    t.string "chara_09"
+    t.string "chara_10"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
