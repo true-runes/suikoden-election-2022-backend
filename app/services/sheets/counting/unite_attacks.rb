@@ -101,12 +101,6 @@ module Sheets
                 memo: column_vs_value[:memo]
               }
 
-              product_name = if column_vs_value[:category] == '②協力攻撃部門'
-                column_vs_value[:input_01]
-              else
-                column_vs_value[:input_01]
-              end
-
               # 「両部門の場合は、N列とO列に協力攻撃、P列Q列R列にオールキャラ部門を入力する」という例外規定
               mutable_attrs = {
                 is_invisible: column_vs_value[:is_invisible].to_boolean,
