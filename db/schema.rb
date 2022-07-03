@@ -65,7 +65,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_02_100040) do
   create_table "counting_all_characters", force: :cascade do |t|
     t.integer "id_on_sheet"
     t.integer "user_id", null: false
-    t.integer "tweet_id", null: false
+    t.integer "vote_method", null: false
+    t.integer "tweet_id"
+    t.integer "direct_message_id"
     t.string "other_tweet_ids_text"
     t.boolean "is_invisible"
     t.boolean "is_out_of_counting"

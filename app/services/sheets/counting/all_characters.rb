@@ -32,6 +32,7 @@ module Sheets
               unique_attrs = {
                 id_on_sheet: column_vs_value[:id_on_sheet],
                 user_id: user_id,
+                vote_method: :by_tweet,
                 tweet_id: tweet_id,
                 contents: column_vs_value[:contents],
                 memo: column_vs_value[:memo]
