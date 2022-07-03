@@ -1,4 +1,6 @@
 class CountingAllCharacter < ApplicationRecord
+  include CountingTools
+
   belongs_to :tweet, optional: true
   belongs_to :direct_message, optional: true
   belongs_to :user
