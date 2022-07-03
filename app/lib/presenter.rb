@@ -44,4 +44,10 @@ module Presenter
       screen_name.gsub('@', '')
     end
   end
+
+  class Counting
+    def set_rank_number
+      # 同数の場合には上に寄せる
+    end
+  end
 end
