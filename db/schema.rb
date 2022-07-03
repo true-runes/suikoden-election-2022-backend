@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_28_131500) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_03_055608) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,6 +58,41 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_28_131500) do
   create_table "characters", force: :cascade do |t|
     t.string "name"
     t.string "name_en"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "counting_all_characters", force: :cascade do |t|
+    t.integer "id_on_sheet"
+    t.integer "user_id", null: false
+    t.integer "vote_method", null: false
+    t.integer "tweet_id"
+    t.integer "direct_message_id"
+    t.string "other_tweet_ids_text"
+    t.boolean "is_invisible"
+    t.boolean "is_out_of_counting"
+    t.string "contents"
+    t.string "memo"
+    t.string "chara_1"
+    t.string "chara_2"
+    t.string "chara_3"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "counting_unite_attacks", force: :cascade do |t|
+    t.integer "id_on_sheet"
+    t.integer "user_id", null: false
+    t.integer "vote_method", null: false
+    t.integer "tweet_id"
+    t.integer "direct_message_id"
+    t.string "other_tweet_ids_text"
+    t.boolean "is_invisible"
+    t.boolean "is_out_of_counting"
+    t.string "contents"
+    t.string "memo"
+    t.string "product_name"
+    t.string "unite_attack_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

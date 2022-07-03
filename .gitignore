@@ -6,6 +6,7 @@ vendor/
 .vscode/
 .history/
 .env
+.envrc
 node_modules
 .clasp.*
 .clasprc.json
