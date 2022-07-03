@@ -40,4 +40,34 @@ class CountingAllCharacter < ApplicationRecord
 
     result
   end
+
+  # もとの行の内容が知りたい
+  # どうだったらOKでどうだったらNGなのか？
+  # キャラ計上数が4以上だとNG
+  # other_tweetがvalid_tweetsでないならスルー
+  def self.check_other_tweets
+    result = []
+
+    CountingAllCharacter.valid_tweets.other_tweets_exists.each do |c|
+      c.other_tweets.each do |t|
+        # tweet = Tweet.find_by(id: t.tweet_id)
+
+        # result << tweet if tweet.is_public?
+
+        result << t if !t.is_out_of_counting && !t.is_invisible?
+      end
+    end
+
+    result
+  end
+
+  def other_tweets
+    # CountingAllCharacter.where('other_tweet_ids_text like ?', '%|%')
+    CountingAllCharacter.includes(:tweet).where(
+      tweet:
+        {
+          id_number: other_tweet_ids_text.split(',')
+        }
+    )
+  end
 end
