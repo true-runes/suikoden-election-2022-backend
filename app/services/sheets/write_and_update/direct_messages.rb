@@ -1,13 +1,20 @@
 module Sheets
   module WriteAndUpdate
     class DirectMessages
-      def self.exec
-        direct_messages = DirectMessage.for_spreadsheet
+      # データベースサーバが停止していたため、落ちていた際のレコードは別扱いにする
+      def self.exec(complement_missing_messages: false)
+        direct_messages = if complement_missing_messages
+          DirectMessage.missing_records.for_spreadsheet
+                          else
+          DirectMessage.for_spreadsheet
+                          end
 
         direct_messages.each_slice(100).with_index do |dm_100, index_on_hundred|
           prepared_written_data_by_array_in_hash = []
 
           dm_100.each_with_index do |dm, i|
+            next if complement_missing_messages == false && dm.is_missing_record?
+
             inserted_hash = {}
 
             inserted_hash['screen_name'] = dm.user.screen_name
@@ -20,16 +27,31 @@ module Sheets
             prepared_written_data_by_array_in_hash << inserted_hash
           end
 
-          two_digit_number = format('%02<number>d', number: index_on_hundred + 1)
-          sheet_name = "集計_#{two_digit_number}"
+          two_digit_number = if complement_missing_messages
+            # 取得漏れは '集計_15' から記録する
+            format(
+              '%02<number>d',
+              number: (index_on_hundred + 14) + 1
+            )
+                             else
+            format(
+              '%02<number>d',
+              number: index_on_hundred + 1
+            )
+                             end
 
+          sheet_name = "集計_#{two_digit_number}"
           written_data = []
 
           prepared_written_data_by_array_in_hash.each_with_index do |written_data_hash, index|
             row = []
 
             # TODO: 取得漏れには 10001 始まりを付与したい
-            id_on_sheet = (index_on_hundred * 100) + (index + 1)
+            id_on_sheet = if complement_missing_messages
+              ((index_on_hundred + 14) * 100) + (index + 1)
+                          else
+              (index_on_hundred * 100) + (index + 1)
+                          end
 
             # TODO: ハードコーディングをしたくない
             row[0] = id_on_sheet
