@@ -46,8 +46,31 @@ module Presenter
   end
 
   class Counting
-    def set_rank_number
-      # 同数の場合には上に寄せる
+    # { "key1" => 100, "key2" => 99, "key3" => 99, "key4" => 98 } の入力に対し、
+    # { "key1" => 1, "key2" => 2, "key3" => 2, "key4" => 3 } を返す
+    # 票数の降順でソートしてあることが前提となるので注意する
+    def self.key_to_rank_number_by_sosenkyo_style(hash_records)
+      current_rank = 1
+      key_to_rank_number = {}
+      hash_records_keys = hash_records.keys
+
+      hash_records_keys.each_with_index do |key, index|
+        if index == 0
+          key_to_rank_number[key] = current_rank
+
+          next
+        end
+
+        if hash_records[key] == hash_records[hash_records_keys[index - 1]]
+          key_to_rank_number[key] = key_to_rank_number[hash_records_keys[index - 1]]
+        else
+          current_rank += 1
+
+          key_to_rank_number[key] = current_rank
+        end
+      end
+
+      key_to_rank_number
     end
   end
 end
