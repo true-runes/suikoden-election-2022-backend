@@ -15,7 +15,7 @@ class CountingUniteAttack < ApplicationRecord
       .where.not(unite_attack_name: [nil, ''])
   }
 
-  enum vote_method: { by_tweet: 0, by_direct_message: 1, by_others: 99 }
+  enum vote_method: { by_tweet: 0, by_direct_message: 1, by_others: 99 }, _prefix: true
 
   def self.ranking
     CountingUniteAttack.valid_records.group(:product_name, :unite_attack_name).having('unite_attack_name is not null').order('count_all desc').count
