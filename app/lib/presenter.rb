@@ -43,6 +43,25 @@ module Presenter
       screen_name.gsub!(' ', '')
       screen_name.gsub('@', '')
     end
+
+    def self.formatted_product_names_for_tweet(character_name)
+      products = Character.find_by(name: character_name).products
+
+      product_name_long_to_short = {
+        '幻想水滸伝' => 'I',
+        '幻想水滸伝II' => 'II',
+        '幻想水滸外伝Vol.1' => '外1',
+        '幻想水滸外伝Vol.2' => '外2',
+        '幻想水滸伝III' => 'III',
+        '幻想水滸伝IV' => 'IV',
+        'Rhapsodia' => 'R',
+        '幻想水滸伝V' => 'V',
+        '幻想水滸伝ティアクライス' => 'TK',
+        '幻想水滸伝 紡がれし百年の時' => '紡時'
+      }
+
+      "(#{products.map { |product| product_name_long_to_short[product.name] }.join(',')})"
+    end
   end
 
   class Counting
