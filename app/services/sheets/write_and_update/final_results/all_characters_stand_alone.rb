@@ -29,7 +29,12 @@ module Sheets
             # FIXME: ツイート用に短い表記にする（プレゼンターに書く）
             product_names = is_exists_in_character_db ? Character.find_by(name: character_name).products.pluck(:name).join(',') : ''
 
-            # FIXME: キャラ表記がキャラDBとは異なるので、対応表を作成して修正する
+            # シートのキャラ名表記がキャラDBのキャラ名表記とは異なるので、対応表を作成して対処している
+            on_sheet_name_to_on_db_name = YAML.load_file(
+              Rails.root.join('config/character_names_on_result_illustrations_sheet.yml')
+            )['on_database_character_name_to_on_sheet_character_name']
+            fixed_character_name = on_sheet_name_to_on_db_name[character_name] || character_name
+
             result_illustaration_characters = OnRawSheetResultIllustrationTotalling.pluck(:character_name_for_public)
             is_fav_quotes_exists = character_name.in?(CountingBonusVote.all_fav_quote_character_names_including_duplicated)
 
@@ -37,7 +42,7 @@ module Sheets
             row[@column_name_to_index_hash[:順位]] = key_to_rank_number[character_name]
             row[@column_name_to_index_hash[:キャラ名]] = character_name
             row[@column_name_to_index_hash[:得票数]] = number_of_votes
-            row[@column_name_to_index_hash[:開票イラストがある？]] = character_name.in?(result_illustaration_characters)
+            row[@column_name_to_index_hash[:開票イラストがある？]] = fixed_character_name.in?(result_illustaration_characters)
             row[@column_name_to_index_hash[:推しセリフがある？]] = is_fav_quotes_exists
             row[@column_name_to_index_hash[:登場作品名]] = product_names
             row[@column_name_to_index_hash[:キャラDBに存在する？]] = is_exists_in_character_db
