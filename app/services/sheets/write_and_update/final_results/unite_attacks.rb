@@ -32,12 +32,10 @@ module Sheets
             row[@column_name_to_index_hash[:協力攻撃名]] = attack_name
             row[@column_name_to_index_hash[:全得票数]] = number_of_votes
 
-            # row[@column_name_to_index_hash[:投票方法内訳・ツイート]] = ''
-            # row[@column_name_to_index_hash[:投票方法内訳・DM]] = ''
-
             written_data << row
           end
 
+          delete
           write(written_data)
         end
 
@@ -52,8 +50,8 @@ module Sheets
         def delete
           SheetData.write_rows(
             sheet_id: ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil),
-            range: "#{@sheet_name}!A2:T500",
-            values: [[''] * 20] * 500
+            range: "#{@sheet_name}!A2:E500",
+            values: [[''] * 5] * 500
           )
         end
       end
