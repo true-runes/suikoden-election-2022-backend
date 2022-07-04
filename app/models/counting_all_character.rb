@@ -8,6 +8,8 @@ class CountingAllCharacter < ApplicationRecord
   scope :invisible, -> { where(is_invisible: true) }
   scope :out_of_counting, -> { where(is_out_of_counting: true) }
   scope :valid_records, -> { where(is_out_of_counting: false).where(is_invisible: false) }
+  scope :by_tweet, -> { where(vote_method: :by_tweet) }
+  scope :by_dm, -> { where(vote_method: :by_direct_message) }
 
   enum vote_method: { by_tweet: 0, by_direct_message: 1, by_others: 99 }, _prefix: true
 
