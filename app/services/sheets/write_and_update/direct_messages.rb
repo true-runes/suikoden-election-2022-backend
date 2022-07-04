@@ -6,15 +6,13 @@ module Sheets
         direct_messages = if complement_missing_messages
           DirectMessage.missing_records.for_spreadsheet
                           else
-          DirectMessage.for_spreadsheet
+          DirectMessage.remove_missing_records.for_spreadsheet
                           end
 
         direct_messages.each_slice(100).with_index do |dm_100, index_on_hundred|
           prepared_written_data_by_array_in_hash = []
 
-          dm_100.each_with_index do |dm, i|
-            next if complement_missing_messages == false && dm.is_missing_record?
-
+          dm_100.each do |dm|
             inserted_hash = {}
 
             inserted_hash['screen_name'] = dm.user.screen_name
