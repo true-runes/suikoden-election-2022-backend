@@ -42,7 +42,6 @@ module Sheets
                 vote_method: :by_tweet,
                 tweet_id: tweet_id,
                 contents: column_vs_value[:contents],
-                memo: column_vs_value[:memo]
               }
 
               mutable_attrs = {
@@ -50,6 +49,7 @@ module Sheets
                 other_tweet_ids_text: column_vs_value[:other_tweet_ids_text].split('|').map(&:strip).join(','),
                 is_invisible: column_vs_value[:is_invisible].to_boolean,
                 is_out_of_counting: column_vs_value[:is_out_of_counting].to_boolean,
+                memo: column_vs_value[:memo],
                 product_name: column_vs_value[:product_name],
                 unite_attack_name: column_vs_value[:unite_attack_name]
               }
@@ -109,13 +109,13 @@ module Sheets
                 direct_message_id: dm_id,
                 other_tweet_ids_text: nil,
                 contents: column_vs_value[:contents],
-                memo: column_vs_value[:memo]
               }
 
               # 「両部門の場合は、N列とO列に協力攻撃、P列Q列R列にオールキャラ部門を入力する」という例外規定
               mutable_attrs = {
                 is_invisible: column_vs_value[:is_invisible].to_boolean,
                 is_out_of_counting: column_vs_value[:is_out_of_counting].to_boolean,
+                memo: column_vs_value[:memo],
                 product_name: column_vs_value[:input_01],
                 unite_attack_name: column_vs_value[:input_02]
               }
