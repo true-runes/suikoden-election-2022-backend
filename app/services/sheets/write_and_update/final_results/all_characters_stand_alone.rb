@@ -13,7 +13,8 @@ module Sheets
             開票イラストがある？: 5,
             推しセリフがある？: 6,
             登場作品名: 7,
-            キャラDBに存在する？: 8
+            キャラDBに存在する？: 8,
+            ツイートテンプレ: 10
           }
         end
 
@@ -45,11 +46,26 @@ module Sheets
             row[@column_name_to_index_hash[:推しセリフがある？]] = is_fav_quotes_exists
             row[@column_name_to_index_hash[:登場作品名]] = product_names
             row[@column_name_to_index_hash[:キャラDBに存在する？]] = is_exists_in_character_db
+            row[@column_name_to_index_hash[:ツイートテンプレ]] = tweet_template(
+              rank: key_to_rank_number[character_name],
+              number_of_votes: number_of_votes,
+              character_name: character_name,
+              product_names: product_names
+            )
 
             written_data << row
           end
 
           write(written_data)
+        end
+
+        def tweet_template(rank: nil, number_of_votes: nil, character_name: nil, product_names: nil)
+          <<~TWEET
+            [第#{rank}位] #{number_of_votes}票
+            #{character_name} #{product_names}
+
+            #幻水総選挙開票中
+          TWEET
         end
 
         # TODO: 切り出せそう
