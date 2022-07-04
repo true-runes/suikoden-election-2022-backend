@@ -24,7 +24,6 @@ module Sheets
                   is_recovered: this_is_recovered,
                   tweet_id: tweet_id,
                   contents: column_vs_value[:contents],
-                  memo: column_vs_value[:memo]
                 }
 
                 mutable_attrs = {
@@ -32,6 +31,7 @@ module Sheets
                   other_tweet_ids_text: column_vs_value[:other_tweet_ids_text].split('|').map(&:strip).join(','),
                   is_invisible: column_vs_value[:is_invisible].to_boolean,
                   is_out_of_counting: column_vs_value[:is_out_of_counting].to_boolean,
+                  memo: column_vs_value[:memo],
                   chara_01: column_vs_value[:input_01],
                   chara_02: column_vs_value[:input_02],
                   chara_03: column_vs_value[:input_03],
@@ -76,12 +76,12 @@ module Sheets
                 is_recovered: this_is_recovered,
                 other_tweet_ids_text: nil,
                 contents: dm_column_vs_value[:contents],
-                memo: dm_column_vs_value[:memo]
               }
 
               mutable_attrs = {
                 is_invisible: dm_column_vs_value[:is_invisible].to_boolean,
                 is_out_of_counting: dm_column_vs_value[:is_out_of_counting].to_boolean,
+                memo: dm_column_vs_value[:memo],
                 chara_01: dm_column_vs_value[:input_01],
                 chara_02: dm_column_vs_value[:input_02],
                 chara_03: dm_column_vs_value[:input_03],
