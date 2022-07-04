@@ -17,6 +17,10 @@ class DirectMessage < ApplicationRecord
     where(id_number: 1540436647376031755..1540790299618066435)
   end
 
+  def self.remove_missing_records
+    where.not(id_number: 1540436647376031755..1540790299618066435)
+  end
+
   def is_missing_record?
     id_number.in?(1540436647376031755..1540790299618066435)
   end

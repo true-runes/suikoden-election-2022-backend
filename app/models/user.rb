@@ -38,4 +38,8 @@ class User < ApplicationRecord
   def self.did_vote_without_not_public
     self.select { |user| user.tweets.gensosenkyo_2021_votes.is_public.count > 0 }
   end
+
+  def all_counting_records
+    # TODO: 集計対象となっている全てのレコードを引っ張ってこられる
+  end
 end

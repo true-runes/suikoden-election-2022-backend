@@ -43,5 +43,53 @@ module Presenter
       screen_name.gsub!(' ', '')
       screen_name.gsub('@', '')
     end
+
+    def self.formatted_product_names_for_tweet(character_name)
+      products = Character.find_by(name: character_name).products
+
+      product_name_long_to_short = {
+        '幻想水滸伝' => 'I',
+        '幻想水滸伝II' => 'II',
+        '幻想水滸外伝Vol.1' => '外1',
+        '幻想水滸外伝Vol.2' => '外2',
+        '幻想水滸伝III' => 'III',
+        '幻想水滸伝IV' => 'IV',
+        'Rhapsodia' => 'R',
+        '幻想水滸伝V' => 'V',
+        '幻想水滸伝ティアクライス' => 'TK',
+        '幻想水滸伝 紡がれし百年の時' => '紡時'
+      }
+
+      "(#{products.map { |product| product_name_long_to_short[product.name] }.join(',')})"
+    end
+  end
+
+  class Counting
+    # { "key1" => 100, "key2" => 99, "key3" => 99, "key4" => 98 } の入力に対し、
+    # { "key1" => 1, "key2" => 2, "key3" => 2, "key4" => 3 } を返す
+    # 票数の降順でソートしてあることが前提となるので注意する
+    def self.key_to_rank_number_by_sosenkyo_style(hash_records)
+      current_rank = 1
+      key_to_rank_number = {}
+      hash_records_keys = hash_records.keys
+
+      hash_records_keys.each_with_index do |key, index|
+        if index == 0
+          key_to_rank_number[key] = current_rank
+
+          next
+        end
+
+        if hash_records[key] == hash_records[hash_records_keys[index - 1]]
+          key_to_rank_number[key] = key_to_rank_number[hash_records_keys[index - 1]]
+        else
+          current_rank += 1
+
+          key_to_rank_number[key] = current_rank
+        end
+      end
+
+      key_to_rank_number
+    end
   end
 end
