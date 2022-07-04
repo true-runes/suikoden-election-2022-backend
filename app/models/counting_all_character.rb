@@ -79,20 +79,34 @@ class CountingAllCharacter < ApplicationRecord
     )
   end
 
-  # FIXME: このメソッドは使用していない
-  def self.check_other_tweets
-    result = []
+  def suggestion_result
+    character_names = [chara_1, chara_2, chara_3].compact.reject(&:empty?)
+    suggested_names = NaturalLanguage::SuggestCharacterNames.exec(contents_resource)
 
-    CountingAllCharacter.valid_records.other_tweets_exists.each do |c|
-      c.other_tweets.each do |t|
-        # tweet = Tweet.find_by(id: t.tweet_id)
+    suggestion_success_names = []
+    suggestion_failed_names = []
 
-        # result << tweet if tweet.is_public?
-
-        result << t if !t.is_out_of_counting && !t.is_invisible?
+    character_names.each do |character_name|
+      if character_name.in?(suggested_names)
+        suggestion_success_names << character_name
+      else
+        suggestion_failed_names << character_name
       end
     end
 
-    result
+    {
+      character_names_count: character_names.size,
+      success: suggestion_success_names,
+      failure: suggestion_failed_names
+    }
+  end
+
+  def contents_resource
+    case vote_method
+    when 'by_tweet'
+      tweet
+    when 'by_direct_message'
+      direct_message
+    end
   end
 end
