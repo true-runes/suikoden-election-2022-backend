@@ -9,9 +9,9 @@ module Sheets
             rows = SheetData.get_rows(sheet_id: ENV.fetch('COUNTING_ALL_CHARACTERS_SHEET_ID', nil), range: "#{sheet_names[i]}!A2:Q101")
 
             rows.each do |row|
-              # TODO: 設定ファイルを用いてよりスマートに定義したい
               column_vs_value = {
                 id_on_sheet: row[0],
+                screen_name: row[1],
                 tweet_id_number: row[2],
                 other_tweet_ids_text: row[5],
                 is_invisible: row[7], # "FALSE" のような文字列なので注意
@@ -26,8 +26,10 @@ module Sheets
               next if column_vs_value[:id_on_sheet].blank? || column_vs_value[:tweet_id_number].blank? || column_vs_value[:contents].blank?
 
               tweet = Tweet.find_by(id_number: column_vs_value[:tweet_id_number])
-              tweet_id = tweet.id
-              user_id = tweet.user.id
+              tweet_id = tweet&.id
+
+              user = tweet&.user || create_or_find_by_user(column_vs_value)
+              user_id = user&.id
 
               unique_attrs = {
                 id_on_sheet: column_vs_value[:id_on_sheet],
@@ -50,6 +52,8 @@ module Sheets
 
               CountingAllCharacter.find_or_initialize_by(unique_attrs).update!(mutable_attrs)
             end
+
+            puts "#{sheet_name} is Done." # rubocop:disable Rails/Output
           end
         end
 
@@ -68,6 +72,7 @@ module Sheets
               # TODO: 設定ファイルを用いてスマートに定義したい
               column_vs_value = {
                 id_on_sheet: row[0],
+                screen_name: row[1],
                 dm_id_number: row[2],
                 is_invisible: row[5], # "FALSE" のような文字列なので注意
                 is_out_of_counting: row[6], # "FALSE" のような文字列なので注意
@@ -88,12 +93,15 @@ module Sheets
 
               # DMの書式が自由すぎるので、こちらで条件を吸収する
               next if column_vs_value[:category] != '①オールキャラ部門' && column_vs_value[:category] != '両部門'
-
+              next if column_vs_value[:is_invisible] == 'TRUE' || column_vs_value[:is_out_of_counting] == 'TRUE'
               next if column_vs_value[:id_on_sheet].blank? || column_vs_value[:dm_id_number].blank? || column_vs_value[:contents].blank?
 
               dm = DirectMessage.find_by(id_number: column_vs_value[:dm_id_number])
-              dm_id = dm.id
-              user_id = dm.user.id
+              dm_id = dm&.id
+
+              # NOTE: dm&.user は不要としてもいい
+              user = dm&.user || create_or_find_by_user(column_vs_value)
+              user_id = user&.id
 
               unique_attrs = {
                 id_on_sheet: column_vs_value[:id_on_sheet],
@@ -134,6 +142,34 @@ module Sheets
         # rubocop:enable Metrics/BlockLength
 
         '[DONE] Sheets::Counting::AllCharacters.import_via_dm'
+      end
+
+      # screen_name でユーザーを一意に特定するのははあまり良くない
+      def self.create_or_find_by_user(column_vs_value)
+        existing_user = User.find_by(screen_name: column_vs_value[:screen_name])
+
+        if existing_user.blank?
+          client = TwitterRestApi.client
+          # ここで API を消費する
+          user = client.user(column_vs_value[:screen_name])
+
+          # NOTE: ユーザーが削除されていると User not found. (Twitter::Error::NotFound) が発生する
+          # NOTE: その場合はシートのデータを修正する必要がある
+
+          new_user = User.new(
+            id_number: user.id,
+            name: user.name,
+            screen_name: user.screen_name,
+            profile_image_url_https: user.profile_image_url_https.to_s,
+            is_protected: user.protected?,
+            born_at: user.created_at
+          )
+          new_user.save!
+
+          new_user
+        else
+          existing_user
+        end
       end
     end
   end

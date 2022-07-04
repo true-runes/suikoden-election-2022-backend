@@ -8,4 +8,10 @@ namespace :import_counting_unite_attacks do
   task exec_via_dm: :environment do
     Sheets::Counting::UniteAttacks.import_via_dm
   end
+
+  desc '「協力攻撃部門」のツイートおよびDM投票の両方の開票データをスプレッドシートからインポートする'
+  task exec_all: :environment do
+    Sheets::Counting::UniteAttacks.import_via_tweet
+    Sheets::Counting::UniteAttacks.import_via_dm
+  end
 end

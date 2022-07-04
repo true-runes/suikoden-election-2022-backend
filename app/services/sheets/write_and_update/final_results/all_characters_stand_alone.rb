@@ -11,7 +11,6 @@ module Sheets
             キャラ名: 2,
             得票数: 3,
             開票イラストがある？: 5,
-            # CountingBonusVote.valid_records.where(bonus_category: :fav_quotes).pluck(:chara_01...)
             推しセリフがある？: 6,
             登場作品名: 7,
             キャラDBに存在する？: 8
@@ -27,18 +26,18 @@ module Sheets
             row = []
 
             is_exists_in_character_db = Character.where(name: character_name).present?
+            # FIXME: ツイート用に短い表記にする（プレゼンターに書く）
             product_names = is_exists_in_character_db ? Character.find_by(name: character_name).products.pluck(:name).join(',') : ''
 
+            # FIXME: キャラ表記がキャラDBとは異なるので、対応表を作成して修正する
+            result_illustaration_characters = OnRawSheetResultIllustrationTotalling.pluck(:character_name_for_public)
             is_fav_quotes_exists = character_name.in?(CountingBonusVote.all_fav_quote_character_names_including_duplicated)
-
-            # FIXME: 表記がDBと違うので修正する
-            result_illustaration_characteres = OnRawSheetResultIllustrationTotalling.pluck(:character_name_for_public)
 
             row[@column_name_to_index_hash[:id]] = index + 1
             row[@column_name_to_index_hash[:順位]] = key_to_rank_number[character_name]
             row[@column_name_to_index_hash[:キャラ名]] = character_name
             row[@column_name_to_index_hash[:得票数]] = number_of_votes
-            row[@column_name_to_index_hash[:開票イラストがある？]] = character_name.in?(result_illustaration_characteres)
+            row[@column_name_to_index_hash[:開票イラストがある？]] = character_name.in?(result_illustaration_characters)
             row[@column_name_to_index_hash[:推しセリフがある？]] = is_fav_quotes_exists
             row[@column_name_to_index_hash[:登場作品名]] = product_names
             row[@column_name_to_index_hash[:キャラDBに存在する？]] = is_exists_in_character_db

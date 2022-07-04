@@ -4,7 +4,7 @@ module Sheets
       def self.import_via_tweet
         ActiveRecord::Base.transaction do
           sheet_names.each_with_index do |sheet_name, i|
-            bonus_category_to_sheet_id.each do |category, this_sheet_id|
+            bonus_category_to_sheet_id.each do |bonus_category, this_sheet_id|
               next if this_sheet_id.blank?
 
               rows = SheetData.get_rows(sheet_id: this_sheet_id, range: "#{sheet_names[i]}!A2:Q101")
@@ -20,7 +20,7 @@ module Sheets
                   id_on_sheet: column_vs_value[:id_on_sheet],
                   user_id: user_id,
                   vote_method: :by_tweet,
-                  bonus_category: category,
+                  bonus_category: bonus_category,
                   is_recovered: this_is_recovered,
                   tweet_id: tweet_id,
                   contents: column_vs_value[:contents],

@@ -37,7 +37,7 @@ class CountingAllCharacter < ApplicationRecord
     all_character_names_including_duplicated.tally.sort_by { |_, v| v }.reverse.to_h
   end
 
-  def self.character_names_which_dont_exist_in_character_db
+  def self.character_names_which_not_exist_in_character_db
     result = []
 
     all_character_names_including_duplicated.uniq.each do |character|
