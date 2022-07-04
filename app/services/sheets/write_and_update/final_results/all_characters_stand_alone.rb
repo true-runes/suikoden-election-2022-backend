@@ -26,8 +26,7 @@ module Sheets
             row = []
 
             is_exists_in_character_db = Character.where(name: character_name).present?
-            # FIXME: ツイート用に短い表記にする（プレゼンターに書く）
-            product_names = is_exists_in_character_db ? Character.find_by(name: character_name).products.pluck(:name).join(',') : ''
+            product_names = is_exists_in_character_db ? Presenter::Common.formatted_product_names_for_tweet(character_name) : ''
 
             # シートのキャラ名表記がキャラDBのキャラ名表記とは異なるので、対応表を作成して対処している
             on_sheet_name_to_on_db_name = YAML.load_file(
