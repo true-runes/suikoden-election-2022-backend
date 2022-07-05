@@ -32,6 +32,7 @@ class CountingAllCharacter < ApplicationRecord
     chara_3_column_characters = CountingAllCharacter.valid_records.pluck(:chara_3)
 
     # 空文字は削除する
+    # TODO: compact_blank が使えるはず
     (chara_1_column_characters + chara_2_column_characters + chara_3_column_characters).compact.reject(&:empty?).sort
   end
 
@@ -51,6 +52,7 @@ class CountingAllCharacter < ApplicationRecord
 
   # character_names のうちのどれか一つのキャラ名が含まれているかどうか
   def includes_either_character_name?(*character_names)
+    # TODO: compact_blank が使えるはず
     character_names_on_record = [chara_1, chara_2, chara_3].compact.reject(&:empty?)
 
     return false if character_names_on_record.blank?
@@ -62,6 +64,7 @@ class CountingAllCharacter < ApplicationRecord
 
   # character_names の全てのキャラ名が含まれているかどうか
   def includes_all_character_names?(*character_names)
+    # TODO: compact_blank が使えるはず
     character_names_on_record = [chara_1, chara_2, chara_3].compact.reject(&:empty?)
 
     return false if character_names_on_record.blank?
@@ -80,6 +83,7 @@ class CountingAllCharacter < ApplicationRecord
   end
 
   def suggestion_result
+    # TODO: compact_blank が使えるはず
     character_names = [chara_1, chara_2, chara_3].compact.reject(&:empty?)
     suggested_names = NaturalLanguage::SuggestCharacterNames.exec(contents_resource)
 

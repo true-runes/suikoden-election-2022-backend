@@ -32,6 +32,7 @@ class CountingBonusVote < ApplicationRecord
       character_names += CountingBonusVote.valid_records.where(bonus_category: :fav_quotes).pluck(column)
     end
 
+    # TODO: compact_blank が使えるはず
     character_names.compact.reject(&:empty?).sort
   end
 
