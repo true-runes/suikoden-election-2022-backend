@@ -35,6 +35,7 @@ module Sheets
             )['on_database_character_name_to_on_sheet_character_name']
             fixed_character_name = on_sheet_name_to_on_db_name[character_name] || character_name
 
+            # FIXME: character_name_for_public ではなくcharacter_name_by_sheet_totalling と合致するかを見ないとダメ
             result_illustaration_characters = OnRawSheetResultIllustrationTotalling.pluck(:character_name_for_public)
             is_fav_quotes_exists = character_name.in?(CountingBonusVote.all_fav_quote_character_names_including_duplicated)
 
