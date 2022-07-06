@@ -1,4 +1,3 @@
-# ボーナス票・推し台詞
 module Sheets
   module WriteAndUpdate
     module FinalResults
@@ -16,60 +15,85 @@ module Sheets
             キャラDBに存在する？: 8,
             ツイートテンプレ: 10
           }
+          @each_rank_tweet_templates = []
         end
 
         def exec
-          hash_records = CountingAllCharacter.character_name_to_number_of_votes
-          key_to_rank_number = Presenter::Counting.key_to_rank_number_by_sosenkyo_style(hash_records)
+          ranking = CountingAllCharacter.ranking
           written_data = []
 
-          hash_records.each_with_index do |(character_name, number_of_votes), index|
+          ranking.each_with_index do |rank_item, index|
             row = []
+            character_name = rank_item[:name]
 
             is_exists_in_character_db = Character.where(name: character_name).present?
-            product_names = is_exists_in_character_db ? Presenter::Common.formatted_product_names_for_tweet(character_name) : ''
+            product_names_for_tweet = is_exists_in_character_db ? Presenter::Common.formatted_product_names_for_tweet(character_name) : ''
 
-            # シートのキャラ名表記がキャラDBのキャラ名表記とは異なるので、対応表を作成して対処している
             on_sheet_name_to_on_db_name = YAML.load_file(
               Rails.root.join('config/character_names_on_result_illustrations_sheet.yml')
             )['on_database_character_name_to_on_sheet_character_name']
             fixed_character_name = on_sheet_name_to_on_db_name[character_name] || character_name
 
-            # FIXME: character_name_for_public ではなくcharacter_name_by_sheet_totalling と合致するかを見ないとダメ
-            result_illustaration_characters = OnRawSheetResultIllustrationTotalling.pluck(:character_name_for_public)
+            result_illustaration_characters = OnRawSheetResultIllustrationTotalling.pluck(:character_name_by_sheet_totalling).reject { |cell| cell.start_with?('TEMP_') }
             is_fav_quotes_exists = character_name.in?(CountingBonusVote.all_fav_quote_character_names_including_duplicated)
 
             row[@column_name_to_index_hash[:id]] = index + 1
-            row[@column_name_to_index_hash[:順位]] = key_to_rank_number[character_name]
+            row[@column_name_to_index_hash[:順位]] = rank_item[:rank]
             row[@column_name_to_index_hash[:キャラ名]] = character_name
-            row[@column_name_to_index_hash[:得票数]] = number_of_votes
+            row[@column_name_to_index_hash[:得票数]] = rank_item[:number_of_votes]
             row[@column_name_to_index_hash[:開票イラストがある？]] = fixed_character_name.in?(result_illustaration_characters)
             row[@column_name_to_index_hash[:推しセリフがある？]] = is_fav_quotes_exists
-            row[@column_name_to_index_hash[:登場作品名]] = product_names
+            row[@column_name_to_index_hash[:登場作品名]] = product_names_for_tweet
             row[@column_name_to_index_hash[:キャラDBに存在する？]] = is_exists_in_character_db
-            row[@column_name_to_index_hash[:ツイートテンプレ]] = tweet_template(
-              rank: key_to_rank_number[character_name],
-              number_of_votes: number_of_votes,
-              character_name: character_name,
-              product_names: product_names
-            )
+            row[@column_name_to_index_hash[:ツイートテンプレ]] = tweet_template(rank_item, ranking)
 
             written_data << row
+
+            Rails.logger.debug { "index: #{index} / #{rank_item[:rank]}位 #{character_name} #{rank_item[:number_of_votes]}票" }
           end
 
+          delete
           write(written_data)
         end
 
-        def tweet_template(rank: nil, number_of_votes: nil, character_name: nil, product_names: nil)
-          <<~TWEET
-            [第#{rank}位] #{number_of_votes}票
-            #{character_name} #{product_names}
+        def tweet_template(rank_item, ranking)
+          rank = rank_item[:rank]
 
-            #幻水総選挙開票中
+          memo = @each_rank_tweet_templates.find { |template| template[:rank] == rank }
+          return memo[:text] if memo.present?
+
+          number_of_votes = rank_item[:number_of_votes]
+          exist_same_rank = rank_item[:exist_same_rank]
+          names_on_the_same_rank = ranking.find_all { |item| item[:rank] == rank }.pluck(:name)
+
+          text_rank_and_votes = "[第#{rank}位] #{number_of_votes}票"
+          text_exist_same_rank = exist_same_rank ? "※同率順位あり" : ''
+          text_hashtags = "#幻水総選挙開票中\n#幻水総選挙2022"
+
+          text_names_and_products = ''
+          names_on_the_same_rank.each do |character_name|
+            product_names_for_tweet = ''
+            product_names_for_tweet = Presenter::Common.formatted_product_names_for_tweet(character_name) if Character.where(name: character_name).present?
+
+            text_names_and_products += "#{character_name} #{product_names_for_tweet}\n"
+          end
+          text_names_and_products.chomp!
+
+          inserted_hash = {}
+          inserted_hash[:rank] = rank
+          inserted_hash[:text] = <<~TWEET
+            #{text_rank_and_votes}
+            #{text_names_and_products}
+            #{text_exist_same_rank}
+            #{text_hashtags}
           TWEET
+          inserted_hash[:text].chomp!
+
+          @each_rank_tweet_templates << inserted_hash
+
+          inserted_hash[:text]
         end
 
-        # TODO: 切り出せそう
         def write(written_data)
           SheetData.write_rows(
             sheet_id: ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil),
@@ -78,12 +102,11 @@ module Sheets
           )
         end
 
-        # TODO: 切り出せそう
         def delete
           SheetData.write_rows(
             sheet_id: ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil),
-            range: "#{@sheet_name}!A2:T500",
-            values: [[''] * 20] * 500
+            range: "#{@sheet_name}!A2:K501",
+            values: [[''] * 11] * 500 # A列からK列までの 11列 x 500行 を空文字で埋める
           )
         end
       end

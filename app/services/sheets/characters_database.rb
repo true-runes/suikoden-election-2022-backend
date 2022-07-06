@@ -7,7 +7,7 @@ module Sheets
         range: "登場作品一覧!A2:P"
       )
 
-      pp rows
+      Rails.logger.debug rows
     end
   end
 end

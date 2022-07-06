@@ -76,15 +76,16 @@ module Sheets
       end
 
       # シートから持ってきたレコードのうち、無効なレコードを除外する
-      valid_rows = []
+      valid_character_name_for_public_rows = []
       rows.each_with_index do |row, i|
         next if i == 0 || row[cloumn_names_and_sheet_index_number['character_name_for_public']].blank?
 
-        valid_rows << row
+        valid_character_name_for_public_rows << row
       end
+      valid_character_name_by_sheet_totalling_rows = rows.map.with_index { |row, index| row[7] unless index.zero? }.compact_blank
 
       # 更新がなければメソッドを抜ける
-      return '[NOT MODIFIED] Sheets::ResultIllustrationApplications.import_totallings_data_to_database' if valid_rows.count == OnRawSheetResultIllustrationTotalling.count
+      return '[NOT MODIFIED] Sheets::ResultIllustrationApplications.import_totallings_data_to_database' if valid_character_name_for_public_rows.count == OnRawSheetResultIllustrationTotalling.count && valid_character_name_by_sheet_totalling_rows.count == OnRawSheetResultIllustrationTotalling.pluck(:character_name_by_sheet_totalling).reject { |cell| cell.start_with?('TEMP_') }.count
 
       ActiveRecord::Base.transaction do
         # 主キーがないから問答無用で全削除して入れ直す
