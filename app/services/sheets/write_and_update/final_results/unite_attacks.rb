@@ -50,8 +50,8 @@ module Sheets
         def delete
           SheetData.write_rows(
             sheet_id: ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil),
-            range: "#{@sheet_name}!A2:E500",
-            values: [[''] * 5] * 500
+            range: "#{@sheet_name}!A2:E501",
+            values: [[''] * 5] * 500 # A列からE列までの 5列 x 500行 を空文字で埋める
           )
         end
       end
