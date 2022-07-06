@@ -3,6 +3,9 @@ class User < ApplicationRecord
 
   has_many :tweets, dependent: :destroy
   has_many :direct_messages, dependent: :destroy
+  has_many :counting_all_characters
+  has_many :counting_unite_attacks
+  has_many :counting_bonus_votes
 
   validates :id_number, uniqueness: true
 
@@ -41,5 +44,18 @@ class User < ApplicationRecord
 
   def all_counting_records
     # TODO: 集計対象となっている全てのレコードを引っ張ってこられる
+  end
+
+  def on_all_character_division_all_character_names
+    # TODO: compact_blank が使えるはず
+    counting_all_characters.map(&:three_chara_names).flatten.compact.reject(&:empty?)
+  end
+
+  def on_all_character_division_voting_over_three?
+    on_all_character_division_all_character_names.size > 3
+  end
+
+  def on_all_character_division_voting_to_the_same_characters?
+    on_all_character_division_all_character_names.size != on_all_character_division_all_character_names.uniq.size
   end
 end

@@ -1,4 +1,3 @@
-# ボーナス票・推し台詞
 module Sheets
   module WriteAndUpdate
     module FinalResults
@@ -32,13 +31,13 @@ module Sheets
             row[@column_name_to_index_hash[:協力攻撃名]] = attack_name
             row[@column_name_to_index_hash[:全得票数]] = number_of_votes
 
-            # row[@column_name_to_index_hash[:投票方法内訳・ツイート]] = ''
-            # row[@column_name_to_index_hash[:投票方法内訳・DM]] = ''
-
             written_data << row
           end
 
-          write(written_data)
+          delete
+
+          # TODO: 「ふりがな」を使いたい
+          write(written_data.sort_by { |row| [row[1], row[3], row[2]] })
         end
 
         def write(written_data)
@@ -52,8 +51,8 @@ module Sheets
         def delete
           SheetData.write_rows(
             sheet_id: ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil),
-            range: "#{@sheet_name}!A2:T500",
-            values: [[''] * 20] * 500
+            range: "#{@sheet_name}!A2:E501",
+            values: [[''] * 5] * 500 # A列からE列までの 5列 x 500行 を空文字で埋める
           )
         end
       end
