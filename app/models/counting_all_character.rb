@@ -82,7 +82,7 @@ class CountingAllCharacter < ApplicationRecord
       rank_item[:products] = Character.find_by(name: rank_item[:name])&.products
     end
 
-    ranking
+    ranking.sort_by { |element| [element[:rank], element[:name]] }
   end
 
   def self.character_names_which_not_exist_in_character_db
