@@ -6,7 +6,7 @@ module Sheets
         range: "お題小説!A2:H"
       )
 
-      pp rows
+      Rails.logger.debug rows
     end
   end
 end

@@ -36,7 +36,7 @@ module Sheets
                 user_id: user_id,
                 vote_method: :by_tweet,
                 tweet_id: tweet_id,
-                contents: column_vs_value[:contents],
+                contents: column_vs_value[:contents]
               }
 
               mutable_attrs = {
@@ -109,7 +109,7 @@ module Sheets
                 vote_method: :by_direct_message,
                 direct_message_id: dm_id,
                 other_tweet_ids_text: nil,
-                contents: column_vs_value[:contents],
+                contents: column_vs_value[:contents]
               }
 
               # 「両部門の場合は、N列とO列に協力攻撃、P列Q列R列にオールキャラ部門を入力する」という例外規定

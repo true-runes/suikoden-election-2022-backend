@@ -23,7 +23,7 @@ module Sheets
                   bonus_category: bonus_category,
                   is_recovered: this_is_recovered,
                   tweet_id: tweet_id,
-                  contents: column_vs_value[:contents],
+                  contents: column_vs_value[:contents]
                 }
 
                 mutable_attrs = {
@@ -75,7 +75,7 @@ module Sheets
                 direct_message_id: dm_id,
                 is_recovered: this_is_recovered,
                 other_tweet_ids_text: nil,
-                contents: dm_column_vs_value[:contents],
+                contents: dm_column_vs_value[:contents]
               }
 
               mutable_attrs = {
