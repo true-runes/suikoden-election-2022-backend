@@ -26,18 +26,63 @@ class CountingAllCharacter < ApplicationRecord
     result
   end
 
+  # キャラの数え上げには SQL を使わずに個数を愚直に数える方法を採る
   def self.all_character_names_including_duplicated
     chara_1_column_characters = CountingAllCharacter.valid_records.pluck(:chara_1)
     chara_2_column_characters = CountingAllCharacter.valid_records.pluck(:chara_2)
     chara_3_column_characters = CountingAllCharacter.valid_records.pluck(:chara_3)
 
-    # 空文字は削除する
-    # TODO: compact_blank が使えるはず
-    (chara_1_column_characters + chara_2_column_characters + chara_3_column_characters).compact.reject(&:empty?).sort
+    (chara_1_column_characters + chara_2_column_characters + chara_3_column_characters).compact_blank.sort
   end
 
-  def self.character_name_to_number_of_votes
-    all_character_names_including_duplicated.tally.sort_by { |_, v| v }.reverse.to_h
+  def self.ranking
+    # Enumerable#tally は、配列の要素をキーとして、その要素の個数を値としてハッシュに格納する
+    base_ranking = all_character_names_including_duplicated.tally.sort_by { |_, v| v }.reverse.to_h
+
+    ranking_to_array = base_ranking.to_a
+    current_rank = 1
+    ranking = []
+
+    ranking_to_array.each_with_index do |(name, number_of_votes), index|
+      tmp_hash = {}
+      tmp_hash[:name] = name
+      tmp_hash[:number_of_votes] = number_of_votes
+
+      if index == 0
+        tmp_hash[:rank] = current_rank
+      else
+        previous_number_of_votes = ranking_to_array[index - 1][1]
+
+        if number_of_votes == previous_number_of_votes
+          tmp_hash[:rank] = current_rank
+        else
+          tmp_hash[:rank] = current_rank + 1
+
+          current_rank += 1
+        end
+      end
+
+      ranking << tmp_hash
+    end
+
+    # exist_same_rank キーとその値 (Boolean) を追加する
+    ranking.each_with_index do |rank_item, index|
+      rank_item[:exist_same_rank] = case index
+                                    when 0
+        rank_item[:rank] == ranking[index + 1][:rank]
+                                    when ranking.size - 1
+        rank_item[:rank] == ranking[index - 1][:rank]
+                                    else
+        rank_item[:rank] == ranking[index - 1][:rank] || rank_item[:rank] == ranking[index + 1][:rank]
+                            end
+    end
+
+    # products キーとその値を追加する
+    ranking.each do |rank_item|
+      rank_item[:products] = Character.find_by(name: rank_item[:name])&.products
+    end
+
+    ranking
   end
 
   def self.character_names_which_not_exist_in_character_db
@@ -50,10 +95,9 @@ class CountingAllCharacter < ApplicationRecord
     result
   end
 
-  # character_names のうちのどれか一つのキャラ名が含まれているかどうか
+  # 引数の character_names のうちのどれか一つのキャラ名がそのレコードに含まれているかどうか
   def includes_either_character_name?(*character_names)
-    # TODO: compact_blank が使えるはず
-    character_names_on_record = [chara_1, chara_2, chara_3].compact.reject(&:empty?)
+    character_names_on_record = three_chara_names.compact_blank
 
     return false if character_names_on_record.blank?
 
@@ -62,10 +106,9 @@ class CountingAllCharacter < ApplicationRecord
     end
   end
 
-  # character_names の全てのキャラ名が含まれているかどうか
+  # 引数の character_names の全てのキャラ名がそのレコードに含まれているかどうか
   def includes_all_character_names?(*character_names)
-    # TODO: compact_blank が使えるはず
-    character_names_on_record = [chara_1, chara_2, chara_3].compact.reject(&:empty?)
+    character_names_on_record = three_chara_names.compact_blank
 
     return false if character_names_on_record.blank?
 
@@ -82,9 +125,9 @@ class CountingAllCharacter < ApplicationRecord
     )
   end
 
+  # 「AI のサジェスト」と「開票のキャラ名」の一致結果がどうだったかのデータを返す
   def suggestion_result
-    # TODO: compact_blank が使えるはず
-    character_names = [chara_1, chara_2, chara_3].compact.reject(&:empty?)
+    character_names = three_chara_names.compact_blank
     suggested_names = NaturalLanguage::SuggestCharacterNames.exec(contents_resource)
 
     suggestion_success_names = []
@@ -101,7 +144,8 @@ class CountingAllCharacter < ApplicationRecord
     {
       character_names_count: character_names.size,
       success: suggestion_success_names,
-      failure: suggestion_failed_names
+      failure: suggestion_failed_names,
+      is_all_success: suggestion_success_names.size == character_names.size && character_names.size.positive?
     }
   end
 
