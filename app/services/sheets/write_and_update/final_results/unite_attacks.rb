@@ -1,4 +1,3 @@
-# ボーナス票・推し台詞
 module Sheets
   module WriteAndUpdate
     module FinalResults
@@ -36,7 +35,9 @@ module Sheets
           end
 
           delete
-          write(written_data)
+
+          # TODO: 「ふりがな」を使いたい
+          write(written_data.sort_by { |row| [row[1], row[3], row[2]] })
         end
 
         def write(written_data)

@@ -67,7 +67,7 @@ module Sheets
           names_on_the_same_rank = ranking.find_all { |item| item[:rank] == rank }.pluck(:name)
 
           text_rank_and_votes = "[第#{rank}位] #{number_of_votes}票"
-          text_exist_same_rank = exist_same_rank ? "※同率順位あり" : ''
+          text_exist_same_rank = exist_same_rank ? "※同率順位あり\n" : ''
           text_hashtags = "#幻水総選挙開票中\n#幻水総選挙2022"
 
           text_names_and_products = ''
