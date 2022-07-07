@@ -47,6 +47,8 @@ module Presenter
     def self.formatted_product_names_for_tweet(character_name)
       products = Character.find_by(name: character_name).products
 
+      return '' if products.blank?
+
       product_name_long_to_short = {
         '幻想水滸伝' => 'I',
         '幻想水滸伝II' => 'II',

@@ -58,4 +58,18 @@ class User < ApplicationRecord
   def on_all_character_division_voting_to_the_same_characters?
     on_all_character_division_all_character_names.size != on_all_character_division_all_character_names.uniq.size
   end
+
+  def all_tweets_and_dms
+    all_characters_tweets = counting_all_characters.valid_records
+    unite_attacks_tweets = counting_unite_attacks.valid_records
+    bonus_votes_tweets = counting_bonus_votes.valid_records
+    dms = direct_messages # DM の性質上、valid_records のスコープは無い
+
+    {
+      all_characters_tweets: all_characters_tweets,
+      unite_attacks_tweets: unite_attacks_tweets,
+      bonus_votes_tweets: bonus_votes_tweets,
+      dms: dms
+    }
+  end
 end
