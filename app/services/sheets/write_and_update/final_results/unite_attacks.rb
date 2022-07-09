@@ -16,7 +16,7 @@ module Sheets
         end
 
         def exec
-          hash_records = CountingUniteAttack.valid_records.full_ranking
+          hash_records = CountingUniteAttack.valid_records.ranking
           key_to_rank_number = Presenter::Counting.key_to_rank_number_by_sosenkyo_style(hash_records)
           written_data = []
 
