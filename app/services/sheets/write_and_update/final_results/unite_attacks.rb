@@ -22,18 +22,20 @@ module Sheets
 
           hash_records.each_with_index do |(product_name_and_attack_name_and_kana, number_of_votes), index|
             row = []
+
+            rank_number = key_to_rank_number[product_name_and_attack_name_and_kana]
             product_name = product_name_and_attack_name_and_kana[0]
             attack_name = product_name_and_attack_name_and_kana[1]
             kana = product_name_and_attack_name_and_kana[2]
-            # tweet_template = tweet_template(key_to_rank_number[index], hash_records)
+            tweet_template = tweet_template(rank_number, number_of_votes, product_name, attack_name)
 
             row[@column_name_to_index_hash[:id]] = index + 1
-            row[@column_name_to_index_hash[:順位]] = key_to_rank_number[product_name_and_attack_name_and_kana]
+            row[@column_name_to_index_hash[:順位]] = rank_number
             row[@column_name_to_index_hash[:作品名]] = product_name
             row[@column_name_to_index_hash[:協力攻撃名]] = attack_name
             row[@column_name_to_index_hash[:全得票数]] = number_of_votes
             row[@column_name_to_index_hash[:フリガナ]] = kana
-            # row[@column_name_to_index_hash[:ツイートテンプレ]] = kana
+            row[@column_name_to_index_hash[:ツイートテンプレ]] = tweet_template
 
             written_data << row
           end
@@ -41,6 +43,53 @@ module Sheets
           delete
 
           write(written_data.sort_by { |row| [row[1], row[5]] })
+        end
+
+        def tweet_template(rank_number, number_of_votes, product_name, attack_name)
+          rank = rank_number
+          text_rank_and_votes = "[第#{rank}位] #{number_of_votes}票"
+          text_hashtags = "#幻水総選挙開票中\n#幻水総選挙2022"
+
+          product_name_to_sheet_name = {
+            '幻想水滸伝' => '幻水I',
+            '幻想水滸伝II' => '幻水II',
+            '幻想水滸伝III' => '幻水III',
+            '幻想水滸伝IV' => '幻水IV',
+            'ラプソディア' => 'Rhapsodia',
+            '幻想水滸伝V' => '幻水V',
+            '幻想水滸伝ティアクライス' => 'TK',
+            '幻想水滸伝 紡がれし百年の時' => '紡時'
+          }
+
+          origin_record = if product_name == 'ラプソディア' && attack_name == 'Wリーダー攻撃'
+            # 特例（スプレッドシートからのデータは厳密にスクリーニングをしておくべき）
+            OnRawSheetUniteAttack.find_by(
+              sheet_name: product_name_to_sheet_name[product_name],
+              name: 'Ｗリーダー攻撃'
+            )
+                          else
+            OnRawSheetUniteAttack.find_by(
+              sheet_name: product_name_to_sheet_name[product_name],
+              name: attack_name
+            )
+          end
+
+          character_names = Presenter::UniteAttacks.character_names(origin_record)
+          annotation = origin_record.page_annotation.present? ? "※#{origin_record.page_annotation}\n" : ''
+
+          inserted_hash = {}
+          inserted_hash[:rank] = rank
+          inserted_hash[:text] = <<~TWEET
+            #{text_rank_and_votes}
+            #{product_name}
+            #{attack_name}
+            （#{character_names}）
+            #{annotation}
+            #{text_hashtags}
+          TWEET
+          inserted_hash[:text].chomp!
+
+          inserted_hash[:text]
         end
 
         def write(written_data)
@@ -57,44 +106,6 @@ module Sheets
             range: "#{@sheet_name}!A2:G501",
             values: [[''] * 7] * 500 # A列からG列までの列の 500行 を空文字で埋める
           )
-        end
-
-        def tweet_template(rank_item, ranking)
-          rank = rank_item[:rank]
-
-          memo = @each_rank_tweet_templates.find { |template| template[:rank] == rank }
-          return memo[:text] if memo.present?
-
-          number_of_votes = rank_item[:number_of_votes]
-          exist_same_rank = rank_item[:exist_same_rank]
-          names_on_the_same_rank = ranking.find_all { |item| item[:rank] == rank }.pluck(:name)
-
-          text_rank_and_votes = "[第#{rank}位] #{number_of_votes}票"
-          text_exist_same_rank = exist_same_rank ? "※同率順位あり\n" : ''
-          text_hashtags = "#幻水総選挙開票中\n#幻水総選挙2022"
-
-          text_names_and_products = ''
-          names_on_the_same_rank.each do |character_name|
-            product_names_for_tweet = ''
-            product_names_for_tweet = Presenter::Common.formatted_product_names_for_tweet(character_name) if Character.where(name: character_name).present?
-
-            text_names_and_products += "#{character_name} #{product_names_for_tweet}\n"
-          end
-          text_names_and_products.chomp!
-
-          inserted_hash = {}
-          inserted_hash[:rank] = rank
-          inserted_hash[:text] = <<~TWEET
-            #{text_rank_and_votes}
-            #{text_names_and_products}
-            #{text_exist_same_rank}
-            #{text_hashtags}
-          TWEET
-          inserted_hash[:text].chomp!
-
-          @each_rank_tweet_templates << inserted_hash
-
-          inserted_hash[:text]
         end
       end
     end
