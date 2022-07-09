@@ -16,18 +16,10 @@ namespace :update_kana_column_on_counting_all_atacks do
       CountingUniteAttack.all.each do |record|
         next if record.is_invisible || record.is_out_of_counting || record.product_name.blank? || record.unite_attack_name.blank?
 
-        origin_records = if record.product_name == 'ラプソディア' && record.unite_attack_name == 'Wリーダー攻撃'
-          # 特例（スプレッドシートからのデータは厳密にスクリーニングをしておくべき）
-          OnRawSheetUniteAttack.where(
-            sheet_name: product_name_to_sheet_name[record.product_name],
-            name: 'Ｗリーダー攻撃'
-          )
-                         else
-          OnRawSheetUniteAttack.where(
-            sheet_name: product_name_to_sheet_name[record.product_name],
-            name: record.unite_attack_name
-          )
-                         end
+        origin_records = OnRawSheetUniteAttack.where(
+          sheet_name: product_name_to_sheet_name[record.product_name],
+          name: record.unite_attack_name
+        )
 
         raise if origin_records.size != 1
 

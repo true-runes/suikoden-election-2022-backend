@@ -61,18 +61,10 @@ module Sheets
             '幻想水滸伝 紡がれし百年の時' => '紡時'
           }
 
-          origin_record = if product_name == 'ラプソディア' && attack_name == 'Wリーダー攻撃'
-            # 特例（スプレッドシートからのデータは厳密にスクリーニングをしておくべき）
-            OnRawSheetUniteAttack.find_by(
-              sheet_name: product_name_to_sheet_name[product_name],
-              name: 'Ｗリーダー攻撃'
-            )
-                          else
-            OnRawSheetUniteAttack.find_by(
-              sheet_name: product_name_to_sheet_name[product_name],
-              name: attack_name
-            )
-          end
+          origin_record = OnRawSheetUniteAttack.find_by(
+            sheet_name: product_name_to_sheet_name[product_name],
+            name: attack_name
+          )
 
           character_names = Presenter::UniteAttacks.character_names(origin_record)
           annotation = origin_record.page_annotation.present? ? "※#{origin_record.page_annotation}\n" : ''
