@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_03_105847) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_09_075058) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -122,6 +122,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_03_105847) do
     t.string "unite_attack_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "kana"
   end
 
   create_table "direct_messages", force: :cascade do |t|
