@@ -60,7 +60,7 @@ module Sheets
         '[DONE] Sheets::Counting::AllCharacters.import_via_tweet'
       end
 
-      def self.import_via_dm
+      def self.import_via_dm # rubocop:disable Metrics/MethodLength
         sheet_names = YAML.load_file(Rails.root.join('config/counting_sheet_names.yml'))['names']
 
         # rubocop:disable Metrics/BlockLength
@@ -91,28 +91,29 @@ module Sheets
                 input_10: row[22]
               }
 
-              # DMの書式が自由すぎるので、こちらで条件を吸収する
-              next if column_vs_value[:category] != '①オールキャラ部門' && column_vs_value[:category] != '両部門'
+              next unless column_vs_value[:category].in?(['①オールキャラ部門', '両部門', 'ボ・OP・CLイラスト'])
               next if column_vs_value[:is_invisible] == 'TRUE' || column_vs_value[:is_out_of_counting] == 'TRUE'
               next if column_vs_value[:id_on_sheet].blank? || column_vs_value[:dm_id_number].blank? || column_vs_value[:contents].blank?
 
               dm = DirectMessage.find_by(id_number: column_vs_value[:dm_id_number])
               dm_id = dm&.id
 
-              # NOTE: dm&.user は不要としてもいい
+              # NOTE: dm&.user は実質不要っぽい
               user = dm&.user || create_or_find_by_user(column_vs_value)
               user_id = user&.id
+
+              this_vote_method = column_vs_value[:category] == 'ボ・OP・CLイラスト' ? :op_cl_illustrations_bonus : :by_direct_message
 
               unique_attrs = {
                 id_on_sheet: column_vs_value[:id_on_sheet],
                 user_id: user_id,
-                vote_method: :by_direct_message,
+                vote_method: this_vote_method,
                 direct_message_id: dm_id,
                 other_tweet_ids_text: nil,
                 contents: column_vs_value[:contents]
               }
 
-              # 「両部門の場合は、N列とO列に協力攻撃、P列Q列R列にオールキャラ部門を入力する」という例外規定
+              # カテゴリごとにキャラ名が入っている列が異なる（もっときれいに書きたい）
               case column_vs_value[:category]
               when '①オールキャラ部門'
                 chara_1 = column_vs_value[:input_01]
@@ -122,6 +123,8 @@ module Sheets
                 chara_1 = column_vs_value[:input_03]
                 chara_2 = column_vs_value[:input_04]
                 chara_3 = column_vs_value[:input_05]
+              when 'ボ・OP・CLイラスト'
+                chara_1 = column_vs_value[:input_03]
               end
 
               mutable_attrs = {

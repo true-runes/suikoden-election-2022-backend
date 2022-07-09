@@ -17,9 +17,9 @@ class CountingUniteAttack < ApplicationRecord
   scope :by_tweet, -> { where(vote_method: :by_tweet) }
   scope :by_dm, -> { where(vote_method: :by_direct_message) }
 
-  enum vote_method: { by_tweet: 0, by_direct_message: 1, by_others: 99 }, _prefix: true
+  enum vote_method: { by_tweet: 0, by_direct_message: 1, op_cl_illustrations_bonus: 2, by_others: 99 }, _prefix: true
 
-  def self.full_ranking
+  def self.ranking
     group(:product_name, :unite_attack_name).having('unite_attack_name is not null').order('count_all desc').count
   end
 
