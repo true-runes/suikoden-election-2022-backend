@@ -20,7 +20,7 @@ class CountingUniteAttack < ApplicationRecord
   enum vote_method: { by_tweet: 0, by_direct_message: 1, op_cl_illustrations_bonus: 2, by_others: 99 }, _prefix: true
 
   def self.ranking
-    group(:product_name, :unite_attack_name).having('unite_attack_name is not null').order('count_all desc').count
+    group(:product_name, :unite_attack_name, :kana).having('unite_attack_name is not null').order('count_all desc').count
   end
 
   def self.product_name_ranking
