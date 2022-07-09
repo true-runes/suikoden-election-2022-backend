@@ -47,8 +47,7 @@ class User < ApplicationRecord
   end
 
   def on_all_character_division_all_character_names
-    # TODO: compact_blank が使えるはず
-    counting_all_characters.map(&:three_chara_names).flatten.compact.reject(&:empty?)
+    counting_all_characters.map(&:three_chara_names).flatten.compact_blank
   end
 
   def on_all_character_division_voting_over_three?

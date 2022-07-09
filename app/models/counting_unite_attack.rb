@@ -42,8 +42,7 @@ class CountingUniteAttack < ApplicationRecord
 
   # 不正レコードのチェッカ
   def self.invalid_records_whose_attack_name_is_incorrect
-    # TODO: compact_blank が使えるはず
-    correct_attack_names = OnRawSheetUniteAttack.pluck(:name, :name_en).flatten.reject(&:empty?)
+    correct_attack_names = OnRawSheetUniteAttack.pluck(:name, :name_en).flatten.compact_blank
 
     invalid_records = []
 
