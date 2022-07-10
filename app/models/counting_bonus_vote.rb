@@ -61,15 +61,27 @@ class CountingBonusVote < ApplicationRecord
     end
 
     if written_sheet_name.in?(['ボ・推し台詞'])
+      base_records = CountingBonusVote.valid_records.where(bonus_category: :fav_quotes)
       chara_columns = %i[chara_01 chara_02 chara_03 chara_04 chara_05 chara_06 chara_07 chara_08 chara_09 chara_10]
-      character_names = []
+      ret_array = []
 
-      # FIXME: 複数人いた場合の処理
-      chara_columns.each do |column|
-        character_names += CountingBonusVote.valid_records.where(bonus_category: :fav_quotes).pluck(column)
+      base_records.each do |record|
+        character_names = chara_columns.map { |c| record[c] }
+        character_names = character_names.compact_blank.reject { |el| el == "FALSE"}
+
+        # キャラが複数いる場合には分割する（一キャラ一台詞一レコード）
+        # この分割の結果、ツイート人数（DM人数）とキャラレコード数が一致しなくなることに注意する
+        character_names.each do |character_name|
+          inserted_hash = {}
+
+          inserted_hash[:vote_method] = record.vote_method
+          inserted_hash[:character_name] = character_name
+
+          ret_array << inserted_hash
+        end
       end
 
-      return character_names.compact_blank.sort.reject { |el| el == "FALSE"}
+      return ret_array
     end
 
     if written_sheet_name.in?(['ボ・開票イラスト'])
@@ -164,5 +176,14 @@ class CountingBonusVote < ApplicationRecord
     {
       'その他' => 'フリー'
     }[this_theme] || this_theme
+  end
+
+  def contents_resource
+    case vote_method
+    when 'by_tweet'
+      tweet
+    when 'by_direct_message'
+      direct_message
+    end
   end
 end
