@@ -54,7 +54,6 @@ class CountingBonusVote < ApplicationRecord
         chara_names << record.chara_09
         chara_names << record.chara_10
 
-        # FIXME: 複数人いた場合の処理
         ret_array << { theme: theme, chara_names: chara_names.compact_blank.sort.reject { |el| el == "FALSE"} }
       end
 
