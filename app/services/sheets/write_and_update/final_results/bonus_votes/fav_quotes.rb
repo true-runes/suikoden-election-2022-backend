@@ -14,7 +14,7 @@ module Sheets
 
               row[@column_name_to_index_hash[:id]] = index + 1
               row[@column_name_to_index_hash[:キャラ名]] = character_name
-              row[@column_name_to_index_hash[:生得票数]] = number_of_votes
+              row[@column_name_to_index_hash[:投稿数]] = number_of_votes
               row[@column_name_to_index_hash[:最終集計得票数]] = 1
 
               rows << row
@@ -50,7 +50,7 @@ module Sheets
             {
               id: 0,
               キャラ名: 1,
-              生得票数: 2,
+              投稿数: 2,
               最終集計得票数: 3
             }
           end
