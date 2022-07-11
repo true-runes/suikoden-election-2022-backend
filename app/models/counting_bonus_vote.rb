@@ -64,18 +64,22 @@ class CountingBonusVote < ApplicationRecord
     ranking_records = []
 
     base_records.each do |record|
-      character_names = chara_columns.map { |c| record[c] }
-      character_names = character_names.compact_blank.reject { |el| el == "FALSE"}
+      id_on_sheet = record.id_on_sheet
+      url = record.tweet.blank? ? '' : record.tweet.url
+      vote_method = record.vote_method
+      contents = record.contents
+      character_names = chara_columns.map { |c| record[c] }.compact_blank.reject { |el| el == "FALSE"}
 
       # キャラが複数いる場合には分割する（一キャラ一台詞一レコード）
       # この分割の結果、ツイート人数（DM人数）とキャラレコード数が一致しなくなることに注意する
       character_names.each do |character_name|
-        inserted_hash = {}
-
-        inserted_hash[:vote_method] = record.vote_method
-        inserted_hash[:character_name] = character_name
-
-        ranking_records << inserted_hash
+        ranking_records << {
+          id_on_sheet: id_on_sheet,
+          url: url,
+          vote_method: vote_method,
+          contents: contents,
+          character_name: character_name
+        }
       end
     end
 
