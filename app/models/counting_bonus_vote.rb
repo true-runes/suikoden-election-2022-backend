@@ -20,10 +20,148 @@ class CountingBonusVote < ApplicationRecord
     sosenkyo_campaigns: 4
   }, _prefix: true
 
+  def self.ranking_short_stories
+    base_records = CountingBonusVote.valid_records.where(bonus_category: :short_stories)
+
+    ranking_records = []
+
+    base_records.each do |record|
+      url = record.tweet.blank? ? '' : record.tweet.url
+      id_on_sheet = record.id_on_sheet
+      vote_method = record.vote_method
+      theme = record.short_stories_theme
+      contents = record.contents
+      chara_names = [
+        record.chara_01, record.chara_02, record.chara_03, record.chara_04,
+        record.chara_05, record.chara_06, record.chara_07, record.chara_08,
+        record.chara_09, record.chara_10
+      ].compact_blank.sort.reject { |el| el == "FALSE"}
+
+      chara_names.each do |chara_name|
+        ranking_records << {
+          url: url,
+          id_on_sheet: id_on_sheet,
+          vote_method: vote_method,
+          theme: theme,
+          contents: contents,
+          character_name: chara_name
+        }
+      end
+    end
+
+    ranking_records.sort_by do |element|
+      [element[:character_name]]
+    end
+  end
+
+  def self.ranking_fav_quotes
+    base_records = CountingBonusVote.valid_records.where(bonus_category: :fav_quotes)
+    chara_columns = %i[
+      chara_01 chara_02 chara_03 chara_04 chara_05
+      chara_06 chara_07 chara_08 chara_09 chara_10
+    ]
+
+    ranking_records = []
+
+    base_records.each do |record|
+      character_names = chara_columns.map { |c| record[c] }
+      character_names = character_names.compact_blank.reject { |el| el == "FALSE"}
+
+      # キャラが複数いる場合には分割する（一キャラ一台詞一レコード）
+      # この分割の結果、ツイート人数（DM人数）とキャラレコード数が一致しなくなることに注意する
+      character_names.each do |character_name|
+        inserted_hash = {}
+
+        inserted_hash[:vote_method] = record.vote_method
+        inserted_hash[:character_name] = character_name
+
+        ranking_records << inserted_hash
+      end
+    end
+
+    ranking_records.sort_by do |element|
+      [element[:character_name]]
+    end
+  end
+
+  def self.ranking_result_illustrations
+    base_records = OnRawSheetResultIllustrationTotalling.all.reject do |record|
+      record.character_name_by_sheet_totalling.start_with?('TEMP_')
+    end
+
+    ranking_records = []
+
+    base_records.each do |record|
+      ranking_records << {
+        name: record.character_name_by_sheet_totalling,
+        number_of_applications: record.number_of_applications
+      }
+    end
+
+    ranking_records.sort_by do |element|
+      [
+        element[:name], element[:number_of_applications]
+      ]
+    end
+  end
+
+  def self.ranking_op_cl_illustrations
+    all_characters_base_records = CountingAllCharacter.where(vote_method: :op_cl_illustrations_bonus)
+    all_characters_ranking_records = []
+    all_characters_base_records.each do |record|
+      result_array_all_characters << {
+        chara_1: record.chara_1
+      }
+    end
+
+    unite_attacks_ranking_records = []
+    unite_attacks_base_records = CountingUniteAttack.where(vote_method: :op_cl_illustrations_bonus)
+    unite_attacks_base_records.each do |record|
+      result_array_unite_attacks << {
+        product_name: record.product_name,
+        unite_attack_name: record.unite_attack_name
+      }
+    end
+
+    {
+      all_characters: all_characters_ranking_records,
+      unite_attacks: unite_attacks_ranking_records
+    }
+  end
+
+  def self.ranking_sosenkyo_campaigns
+    base_records = CountingBonusVote.valid_records.where(bonus_category: :sosenkyo_campaigns)
+
+    chara_columns = %i[
+      chara_01 chara_02 chara_03 chara_04 chara_05
+      chara_06 chara_07 chara_08 chara_09 chara_10
+    ]
+    ranking_records = []
+
+    base_records.each do |record|
+      character_names = chara_columns.map { |c| record[c] }
+      character_names = character_names.compact_blank.reject { |el| el == "FALSE"}
+
+      # キャラが複数いる場合には分割する（一キャラ一台詞一レコード）
+      # この分割の結果、ツイート人数（DM人数）とキャラレコード数が一致しなくなることに注意する
+      character_names.each do |character_name|
+        ranking_records << {
+          vote_method: record.vote_method,
+          character_name: character_name,
+          contents: record.contents
+        }
+      end
+    end
+
+    ranking_records.sort_by do |element|
+      [element[:character_name]]
+    end
+  end
+
   # category_name は書き込み対象のシートを指している（名前が良くないので変えるべき）
   # 書き込み対象のシートによって何を書き込むかが異なるので、base_records がいろいろ変わる
   # base_records のソースが必ずしも CountingBonusVote のレコードであるとは限らない
-  def self.ranking(written_sheet_name) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def self.ranking(written_sheet_name)
     return unless written_sheet_name.in?(
       [
         'ボ・お題小説',
@@ -33,32 +171,6 @@ class CountingBonusVote < ApplicationRecord
         'ボ・OP・CLイラスト（オールキャラ）',
       ]
     )
-
-    if written_sheet_name.in?(['ボ・お題小説'])
-      base_records = CountingBonusVote.valid_records.where(bonus_category: :short_stories)
-
-      ret_array = []
-
-      base_records.each do |record|
-        theme = record.short_stories_theme
-
-        chara_names = []
-        chara_names << record.chara_01
-        chara_names << record.chara_02
-        chara_names << record.chara_03
-        chara_names << record.chara_04
-        chara_names << record.chara_05
-        chara_names << record.chara_06
-        chara_names << record.chara_07
-        chara_names << record.chara_08
-        chara_names << record.chara_09
-        chara_names << record.chara_10
-
-        ret_array << { theme: theme, chara_names: chara_names.compact_blank.sort.reject { |el| el == "FALSE"} }
-      end
-
-      return ret_array
-    end
 
     if written_sheet_name.in?(['ボ・推し台詞'])
       base_records = CountingBonusVote.valid_records.where(bonus_category: :fav_quotes)
@@ -82,61 +194,6 @@ class CountingBonusVote < ApplicationRecord
       end
 
       return ret_array
-    end
-
-    if written_sheet_name.in?(['ボ・開票イラスト'])
-      result_array = []
-      records = OnRawSheetResultIllustrationTotalling.all.reject { |record| record.character_name_by_sheet_totalling.start_with?('TEMP_') }
-
-      records.each do |record|
-        temp_hash = {}
-
-        temp_hash[:name] = record.character_name_by_sheet_totalling
-        temp_hash[:number_of_applications] = record.number_of_applications
-
-        result_array << temp_hash
-      end
-
-      return result_array.sort_by { |element| [element[:name], element[:number_of_applications]] }
-    end
-
-    if written_sheet_name.in?(['ボ・選挙運動'])
-      chara_columns = %i[chara_01 chara_02 chara_03 chara_04 chara_05 chara_06 chara_07 chara_08 chara_09 chara_10]
-      character_names = []
-
-      chara_columns.each do |column|
-        character_names += CountingBonusVote.valid_records.where(bonus_category: :sosenkyo_campaigns).pluck(column)
-      end
-
-      return character_names.compact_blank.sort.reject { |el| el == "FALSE"}
-    end
-
-    if written_sheet_name.in?(['ボ・OP・CLイラスト（オールキャラ）'])
-      result_array_all_characters = []
-      records = CountingAllCharacter.where(vote_method: :op_cl_illustrations_bonus)
-      records.each do |record|
-        temp_hash = {}
-
-        temp_hash[:chara_1] = record.chara_1
-
-        result_array_all_characters << temp_hash
-      end
-
-      result_array_unite_attacks = []
-      records = CountingUniteAttack.where(vote_method: :op_cl_illustrations_bonus)
-      records.each do |record|
-        temp_hash = {}
-
-        temp_hash[:product_name] = record.product_name
-        temp_hash[:unite_attack_name] = record.unite_attack_name
-
-        result_array_unite_attacks << temp_hash
-      end
-
-      {
-        all_characters: result_array_all_characters,
-        unite_attacks: result_array_unite_attacks
-      }
     end
   end
 
