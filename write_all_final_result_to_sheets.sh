@@ -20,5 +20,6 @@ bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::BonusVotes::SosenkyoCamp
 bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::BonusVotes::OpClIllustrations.new.exec'
 
 # 最終・①オールキャラ部門
+bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::AllCharactersUnited.new.exec'
 
 exit 0
