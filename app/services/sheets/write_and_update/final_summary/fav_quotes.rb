@@ -18,7 +18,6 @@ module Sheets
           }
         end
 
-        # o = Sheets::WriteAndUpdate::FinalSummary::FavQuotes.new
         def exec
           base_records = CountingBonusVote.valid_records.where(bonus_category: :fav_quotes)
           chara_columns = %i[chara_01 chara_02 chara_03 chara_04 chara_05 chara_06 chara_07 chara_08 chara_09 chara_10]
