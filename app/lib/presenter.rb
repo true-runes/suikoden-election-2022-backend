@@ -45,6 +45,8 @@ module Presenter
     end
 
     def self.formatted_product_names_for_tweet(character_name)
+      return '' if Character.find_by(name: character_name).blank?
+
       products = Character.find_by(name: character_name).products
 
       return '' if products.blank?
