@@ -7,7 +7,7 @@ module Sheets
             bonus_category_to_sheet_id.each do |bonus_category, this_sheet_id|
               next if this_sheet_id.blank?
 
-              rows = SheetData.get_rows(sheet_id: this_sheet_id, range: "#{sheet_names[i]}!A2:Q101")
+              rows = SheetData.get_rows(sheet_id: this_sheet_id, range: "#{sheet_names[i]}!A2:Z101")
 
               rows.each do |row|
                 column_vs_value = column_vs_value(row)
@@ -41,7 +41,9 @@ module Sheets
                   chara_07: column_vs_value[:input_07],
                   chara_08: column_vs_value[:input_08],
                   chara_09: column_vs_value[:input_09],
-                  chara_10: column_vs_value[:input_10]
+                  chara_10: column_vs_value[:input_10],
+                  chara_11: column_vs_value[:input_11],
+                  chara_12: column_vs_value[:input_12]
                 }
 
                 CountingBonusVote.find_or_initialize_by(unique_attrs).update!(mutable_attrs)
@@ -56,7 +58,7 @@ module Sheets
       def self.import_via_dm
         ActiveRecord::Base.transaction do
           sheet_names.each_with_index do |sheet_name, i|
-            rows = SheetData.get_rows(sheet_id: ENV.fetch('COUNTING_DIRECT_MESSAGES_SHEET_ID', nil), range: "#{sheet_names[i]}!A2:Q101")
+            rows = SheetData.get_rows(sheet_id: ENV.fetch('COUNTING_DIRECT_MESSAGES_SHEET_ID', nil), range: "#{sheet_names[i]}!A2:Z101")
 
             rows.each do |row|
               dm_column_vs_value = dm_column_vs_value(row)
@@ -185,7 +187,9 @@ module Sheets
           input_07: row[20],
           input_08: row[21],
           input_09: row[22],
-          input_10: row[23]
+          input_10: row[23],
+          input_11: row[24],
+          input_12: row[25]
         }
       end
 

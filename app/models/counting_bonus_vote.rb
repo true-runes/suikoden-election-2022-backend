@@ -139,6 +139,7 @@ class CountingBonusVote < ApplicationRecord
     chara_columns = %i[
       chara_01 chara_02 chara_03 chara_04 chara_05
       chara_06 chara_07 chara_08 chara_09 chara_10
+      chara_11 chara_12
     ]
     ranking_records = []
 
