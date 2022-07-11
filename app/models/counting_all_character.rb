@@ -11,7 +11,7 @@ class CountingAllCharacter < ApplicationRecord
   scope :by_tweet, -> { where(vote_method: :by_tweet) }
   scope :by_dm, -> { where(vote_method: :by_direct_message) }
 
-  enum vote_method: { by_tweet: 0, by_direct_message: 1, by_others: 99 }, _prefix: true
+  enum vote_method: { by_tweet: 0, by_direct_message: 1, op_cl_illustrations_bonus: 2, by_others: 99 }, _prefix: true
 
   def self.tweets_whose_invisible_status_is_different_between_sheet_and_database
     sheet_invisible_tweet_ids = CountingAllCharacter.invisible.pluck(:tweet_id)
@@ -28,9 +28,10 @@ class CountingAllCharacter < ApplicationRecord
 
   # キャラの数え上げには SQL を使わずに個数を愚直に数える方法を採る
   def self.all_character_names_including_duplicated
-    chara_1_column_characters = CountingAllCharacter.valid_records.pluck(:chara_1)
-    chara_2_column_characters = CountingAllCharacter.valid_records.pluck(:chara_2)
-    chara_3_column_characters = CountingAllCharacter.valid_records.pluck(:chara_3)
+    # オールキャラではさらに統合集計が必要なので「ボ・OP・CLイラスト（協力攻撃）」は除外している
+    chara_1_column_characters = CountingAllCharacter.valid_records.where.not(vote_method: :op_cl_illustrations_bonus).pluck(:chara_1)
+    chara_2_column_characters = CountingAllCharacter.valid_records.where.not(vote_method: :op_cl_illustrations_bonus).pluck(:chara_2)
+    chara_3_column_characters = CountingAllCharacter.valid_records.where.not(vote_method: :op_cl_illustrations_bonus).pluck(:chara_3)
 
     (chara_1_column_characters + chara_2_column_characters + chara_3_column_characters).compact_blank.sort
   end
