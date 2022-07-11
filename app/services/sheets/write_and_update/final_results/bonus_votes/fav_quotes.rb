@@ -3,6 +3,8 @@ module Sheets
     module FinalResults
       module BonusVotes
         class FavQuotes < Sheets::WriteAndUpdate::FinalResults::BonusVotes::Base
+          NUMBER_OF_BONUS_VOTES = 1
+
           def exec
             records = CountingBonusVote.ranking_fav_quotes
             tally_by_character = records.pluck(:character_name).tally
@@ -15,7 +17,7 @@ module Sheets
               row[@column_name_to_index_hash[:id]] = index + 1
               row[@column_name_to_index_hash[:キャラ名]] = character_name
               row[@column_name_to_index_hash[:投稿数]] = number_of_votes
-              row[@column_name_to_index_hash[:最終集計得票数]] = 1
+              row[@column_name_to_index_hash[:最終集計得票数]] = NUMBER_OF_BONUS_VOTES
 
               rows << row
             end

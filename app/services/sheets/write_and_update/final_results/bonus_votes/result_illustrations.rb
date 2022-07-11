@@ -3,6 +3,8 @@ module Sheets
     module FinalResults
       module BonusVotes
         class ResultIllustrations < Sheets::WriteAndUpdate::FinalResults::BonusVotes::Base
+          NUMBER_OF_BONUS_VOTES = 1
+
           def exec
             records = CountingBonusVote.ranking_result_illustrations
 
@@ -17,7 +19,7 @@ module Sheets
               row[@column_name_to_index_hash[:id]] = index + 1
               row[@column_name_to_index_hash[:キャラ名]] = character_name
               row[@column_name_to_index_hash[:投稿数]] = number_of_applications
-              row[@column_name_to_index_hash[:最終集計得票数]] = 1
+              row[@column_name_to_index_hash[:最終集計得票数]] = NUMBER_OF_BONUS_VOTES
 
               rows << row
             end
