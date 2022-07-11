@@ -113,7 +113,7 @@ class CountingBonusVote < ApplicationRecord
     all_characters_base_records = CountingAllCharacter.where(vote_method: :op_cl_illustrations_bonus)
     all_characters_ranking_records = []
     all_characters_base_records.each do |record|
-      result_array_all_characters << {
+      all_characters_ranking_records << {
         chara_1: record.chara_1
       }
     end
@@ -121,7 +121,7 @@ class CountingBonusVote < ApplicationRecord
     unite_attacks_ranking_records = []
     unite_attacks_base_records = CountingUniteAttack.where(vote_method: :op_cl_illustrations_bonus)
     unite_attacks_base_records.each do |record|
-      result_array_unite_attacks << {
+      unite_attacks_ranking_records << {
         product_name: record.product_name,
         unite_attack_name: record.unite_attack_name
       }
