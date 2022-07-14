@@ -42,16 +42,15 @@ class User < ApplicationRecord
     self.select { |user| user.tweets.gensosenkyo_2021_votes.is_public.count > 0 }
   end
 
-  def all_counting_records
-    # TODO: 集計対象となっている全てのレコードを引っ張ってこられる
-  end
-
   def on_all_character_division_all_character_names
     counting_all_characters.map(&:three_chara_names).flatten.compact_blank
   end
 
   def on_all_character_division_voting_over_three?
-    on_all_character_division_all_character_names.size > 3
+    op_cl_illustrator_screen_names = Rails.application.credentials.op_cl_illustrator_screen_names
+    limit_number_of_votes = screen_name.in?(op_cl_illustrator_screen_names) ? 4 : 3
+
+    on_all_character_division_all_character_names.size > limit_number_of_votes
   end
 
   def on_all_character_division_voting_to_the_same_characters?

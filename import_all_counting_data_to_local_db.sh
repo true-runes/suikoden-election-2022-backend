@@ -3,6 +3,7 @@
 bin/rails runner 'CountingAllCharacter.destroy_all'
 bin/rails import_counting_all_characters:exec_all
 
+# 協力攻撃部門
 # bin/rails runner 'CountingUniteAttack.destroy_all'
 # bin/rails import_counting_unite_attacks:exec_all
 

@@ -1,4 +1,7 @@
 -
+  sheet_header: キャラ
+  column_name: raw_character_name_by_hand
+-
   sheet_header: キャラ（集計）
   column_name: character_name_for_sheet_totalling
 -
