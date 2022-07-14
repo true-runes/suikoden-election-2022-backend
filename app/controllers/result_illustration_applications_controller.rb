@@ -1,6 +1,6 @@
 class ResultIllustrationApplicationsController < ApplicationController
   def index
-    @application_character_names = OnRawSheetResultIllustrationTotalling.order(character_name_for_public: :asc).pluck(:character_name_for_public)
+    @application_character_names = OnRawSheetResultIllustrationTotalling.order(character_name_for_public: :asc).pluck(:character_name_for_public).reject { |name| name.start_with?('TEMP_') }
 
     # まずはざっくりでいいので created_at を取る
     last_created_at = OnRawSheetResultIllustrationTotalling.first.created_at
