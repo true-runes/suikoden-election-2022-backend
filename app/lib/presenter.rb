@@ -18,6 +18,22 @@ module Presenter
     end
   end
 
+  class ResultIllustrations
+    def self.convert_character_name_in_sheet_to_character_name_in_db(character_name_in_sheet)
+      in_db_to_in_sheet = YAML.load_file(
+        Rails.root.join('config/character_names_on_result_illustrations_sheet.yml')
+      )['on_database_character_name_to_on_sheet_character_name']
+      in_sheet_to_in_db = in_db_to_in_sheet.invert
+
+      in_sheet_to_in_db.each do |in_sheet_names, in_db_name|
+        return in_db_name if character_name_in_sheet.in?(in_sheet_names)
+      end
+
+      # このメソッドはあくまで辞書に載っているものだけを対象にした変換メソッドで、辞書に載っていない場合は nil が返る
+      nil
+    end
+  end
+
   class Common
     def self.japanese_date_strftime(time, with_day_of_the_week: false)
       days_of_the_week = ['日', '月', '火', '水', '木', '金', '土']

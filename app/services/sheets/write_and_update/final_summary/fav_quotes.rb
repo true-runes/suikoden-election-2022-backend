@@ -3,7 +3,7 @@ module Sheets
     module FinalSummary
       class FavQuotes
         def initialize
-          @sheet_name = 'まとめ'
+          @sheet_name = '最終まとめ'
           @column_name_to_index_hash = {
             id: 0,
             シートid: 1,
