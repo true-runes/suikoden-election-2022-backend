@@ -129,7 +129,7 @@ module Sheets
             )
             new_user.save!
 
-            user_id = user.id
+            user_id = new_user.id
           else
             user_id = existing_user.id
           end
