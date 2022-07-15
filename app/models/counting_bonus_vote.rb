@@ -202,7 +202,7 @@ class CountingBonusVote < ApplicationRecord
         end
       end
 
-      return ret_array
+      ret_array
     end
   end
 
