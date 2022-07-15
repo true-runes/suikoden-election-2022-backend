@@ -54,7 +54,7 @@ module Sheets
     end
 
     # API のレスポンスの元となるデータ
-    def self.import_totallings_data_to_database
+    def self.import_totallings_data_to_database(force: false) # rubocop:disable Metrics/CyclomaticComplexity
       rows = SheetData.get_rows(
         sheet_id: ENV.fetch('RESULTS_ILLUSTRATIONS_APPLICATION_STATUS_SHEET_ID'),
         range: "開票イラスト!A1:P"
@@ -85,7 +85,7 @@ module Sheets
       valid_character_name_by_sheet_totalling_rows = rows.map.with_index { |row, index| row[7] unless index.zero? }.compact_blank
 
       # 更新がなければメソッドを抜ける
-      return '[NOT MODIFIED] Sheets::ResultIllustrationApplications.import_totallings_data_to_database' if not_modified?(
+      return '[NOT MODIFIED] Sheets::ResultIllustrationApplications.import_totallings_data_to_database' if !force && not_modified?(
         valid_character_name_for_public_rows,
         valid_character_name_by_sheet_totalling_rows
       )

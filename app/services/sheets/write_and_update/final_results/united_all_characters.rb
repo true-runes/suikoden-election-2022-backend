@@ -2,6 +2,8 @@ module Sheets
   module WriteAndUpdate
     module FinalResults
       class UnitedAllCharacters
+        attr_reader :united_rows
+
         def initialize
           puts '[LOG] FinalResults::UnitedAllCharacters.initialize 開始' # rubocop:disable Rails/Output
 
@@ -52,7 +54,7 @@ module Sheets
             this_exist_in_character_db = Character.exists?(name: character_name)
 
             @united_rows << {
-              character_name: character_name,
+              character_name: fixed_character_name(character_name),
               number_of_division_votes: this_number_of_division_votes,
               number_of_bonus_votes: this_character_number_of_bonus_votes,
               united_number_of_votes: this_number_of_division_votes + this_character_number_of_bonus_votes.values.sum,
@@ -75,6 +77,8 @@ module Sheets
 
           @memoized_tweet_templates = []
           @united_rows = set_tweet_template(@united_rows)
+
+          puts '[LOG] 全シートを結合したデータの生成完了' # rubocop:disable Rails/Output
         end
 
         def exec
@@ -120,66 +124,6 @@ module Sheets
             range: "#{@sheet_name}!A2:Q501",
             values: [[''] * 17] * 500 # A列からQ列までの 17列 x 500行 を空文字で埋める
           )
-        end
-
-        private
-
-        def set_tweet_template(united_rows)
-          with_tweet_template_united_rows = []
-
-          united_rows.each do |united_row|
-            rank = united_row[:rank]
-            memo = @memoized_tweet_templates.find { |template| template[:rank] == rank }
-
-            if memo.present?
-              with_tweet_template_united_rows << {
-                tweet_template: memo[:tweet_template]
-              }.merge(united_row)
-
-              next
-            end
-
-            number_of_votes = united_row[:united_number_of_votes]
-            exist_same_rank = united_row[:exist_same_rank]
-
-            names_on_the_same_rank = united_rows.find_all { |u_row| u_row[:rank] == rank }.pluck(:character_name)
-
-            text_rank_and_votes = "[第#{rank}位] #{number_of_votes}票"
-            text_exist_same_rank = exist_same_rank ? "※同率順位あり\n" : ''
-            text_hashtags = "#幻水総選挙開票中\n#幻水総選挙2022"
-
-            text_names_and_products = ''
-            names_on_the_same_rank.each do |character_name|
-              product_names_for_tweet = ''
-              product_names_for_tweet = Presenter::Common.formatted_product_names_for_tweet(character_name) if Character.where(name: character_name).present?
-
-              text_names_and_products += "#{character_name} #{product_names_for_tweet}\n"
-            end
-            text_names_and_products.chomp!
-
-            tmp_hash = {}
-            tmp_hash[:tweet_template] = <<~TWEET
-              #{text_rank_and_votes}
-              #{text_names_and_products}
-              #{text_exist_same_rank}
-              #{text_hashtags}
-            TWEET
-            tmp_hash[:tweet_template].chomp!
-
-            # メモ化
-            @memoized_tweet_templates << {
-              rank: rank,
-              tweet_template: tmp_hash[:tweet_template]
-            }
-
-            with_tweet_template_united_rows << tmp_hash.merge(united_row)
-          end
-
-          with_tweet_template_united_rows
-        end
-
-        def final_results_sheet_id
-          ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil)
         end
 
         # 単体・①オールキャラ部門
@@ -282,6 +226,74 @@ module Sheets
           end
 
           bonus_op_cl_rows
+        end
+
+        private
+
+        def fixed_character_name(character_name)
+          {
+            'ザジ・キュイロス' => 'ザジ・キュイロス（サナトス・クロフォード）',
+            'ジョウイ・アトレイド（ブライト）' => 'ジョウイ・アトレイド（ジョウイ・ブライト）',
+            'ナッシュ・ラトキエ（クロービス）' => 'ナッシュ・ラトキエ（ナッシュ・クロービス）'
+          }[character_name] || character_name
+        end
+
+        def set_tweet_template(united_rows)
+          with_tweet_template_united_rows = []
+
+          united_rows.each do |united_row|
+            rank = united_row[:rank]
+            memo = @memoized_tweet_templates.find { |template| template[:rank] == rank }
+
+            if memo.present?
+              with_tweet_template_united_rows << {
+                tweet_template: memo[:tweet_template]
+              }.merge(united_row)
+
+              next
+            end
+
+            number_of_votes = united_row[:united_number_of_votes]
+            exist_same_rank = united_row[:exist_same_rank]
+
+            names_on_the_same_rank = united_rows.find_all { |u_row| u_row[:rank] == rank }.pluck(:character_name)
+
+            text_rank_and_votes = "[第#{rank}位] #{number_of_votes}票"
+            text_exist_same_rank = exist_same_rank ? "※同率順位あり\n" : ''
+            text_hashtags = "#幻水総選挙開票中\n#幻水総選挙2022"
+
+            text_names_and_products = ''
+            names_on_the_same_rank.each do |character_name|
+              product_names_for_tweet = ''
+              product_names_for_tweet = Presenter::Common.formatted_product_names_for_tweet(character_name) if Character.where(name: character_name).present?
+
+              text_names_and_products += "#{character_name} #{product_names_for_tweet}\n"
+            end
+            text_names_and_products.chomp!
+
+            tmp_hash = {}
+            tmp_hash[:tweet_template] = <<~TWEET
+              #{text_rank_and_votes}
+              #{text_names_and_products}
+              #{text_exist_same_rank}
+              #{text_hashtags}
+            TWEET
+            tmp_hash[:tweet_template].chomp!
+
+            # メモ化
+            @memoized_tweet_templates << {
+              rank: rank,
+              tweet_template: tmp_hash[:tweet_template]
+            }
+
+            with_tweet_template_united_rows << tmp_hash.merge(united_row)
+          end
+
+          with_tweet_template_united_rows
+        end
+
+        def final_results_sheet_id
+          ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil)
         end
 
         # united_rows は票数の降順でソートされているものとする

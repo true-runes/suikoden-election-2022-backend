@@ -2,6 +2,8 @@
 
 # 単体・①オールキャラ部門
 bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::AllCharactersStandAlone.new.exec'
+
+# ②協力攻撃部門
 # bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::UniteAttacks.new.exec'
 
 # ボ・お題小説
@@ -20,6 +22,6 @@ bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::BonusVotes::SosenkyoCamp
 bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::BonusVotes::OpClIllustrations.new.exec'
 
 # 最終・①オールキャラ部門
-bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::AllCharactersUnited.new.exec'
+bin/rails runner 'Sheets::WriteAndUpdate::FinalResults::UnitedAllCharacters.new.exec'
 
 exit 0
