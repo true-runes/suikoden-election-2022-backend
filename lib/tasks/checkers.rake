@@ -110,25 +110,41 @@ namespace :checkers do
     end
     puts '[LOG] 「単体・①オールキャラ部門」のチェックが終了しました。'
 
-    # さらに、OPCLイラストあるなし、選挙運動あるなし
     # 最終・①オールキャラ部門
     sheet_name = '最終・①オールキャラ部門'
-    final_result_rows = SheetData.get_rows(sheet_id: ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil), range: "#{sheet_name}!B2:S501")
+    final_result_rows = SheetData.get_rows(sheet_id: ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil), range: "#{sheet_name}!B2:T501")
 
+    # row[1] はキャラ名である
     final_result_rows.each do |row|
+      row_content_to_number = {
+        キャラ名: 1,
+        ボ・OP・CLイラストの加算得票数: 5,
+        ボ・選挙運動の加算得票数: 9,
+        推しセリフがある？: 12,
+        推し台詞がある場合、第一候補の台詞内容: 18
+      }
+
       # OPCLイラストのあるなしチェック
-      bonus_op_cl = bonus_op_cl_rows.find { |r| r[:character_name] == row[1] }
+      bonus_op_cl = bonus_op_cl_rows.find { |r| r[:character_name] == row[row_content_to_number[:キャラ名]] }
 
       # row[5] は「ボ・OP・CLイラスト」の加算得票数
-      raise StandardError, "最終・①オールキャラ部門: #{row[1]} のOP・CLイラストのステータスがおかしいです。" if row[5] == 1 && bonus_op_cl.blank?
-      raise StandardError, "最終・①オールキャラ部門: #{row[1]} のOP・CLイラストのステータスがおかしいです。" if row[5] == 0 && bonus_op_cl.present?
+      op_cl_number_of_votes = row[row_content_to_number[:ボ・OP・CLイラストの加算得票数]]
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} のOP・CLイラストのステータスがおかしいです。" if op_cl_number_of_votes == 1 && bonus_op_cl.blank?
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} のOP・CLイラストのステータスがおかしいです。" if op_cl_number_of_votes == 0 && bonus_op_cl.present?
 
       # 選挙運動のあるなしチェック
-      bonus_campaign = bonus_campaigns_rows.find { |r| r[:character_name] == row[1] }
+      bonus_campaign = bonus_campaigns_rows.find { |r| r[:character_name] == row[row_content_to_number[:キャラ名]] }
 
       # row[9] は「ボ・選挙運動」の加算得票数
-      raise StandardError, "最終・①オールキャラ部門: #{row[1]} の選挙運動のステータスがおかしいです。" if row[9] == 2 && bonus_campaign.blank?
-      raise StandardError, "最終・①オールキャラ部門: #{row[1]} の選挙運動のステータスがおかしいです。" if row[9] == 0 && bonus_campaign.present?
+      campaigns_number_of_votes = row[row_content_to_number[:ボ・選挙運動の加算得票数]]
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} の選挙運動のステータスがおかしいです。" if campaigns_number_of_votes == 2 && bonus_campaign.blank?
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} の選挙運動のステータスがおかしいです。" if campaigns_number_of_votes == 0 && bonus_campaign.present?
+
+      # 推し台詞がある場合に台詞抽出がされているか、推し台詞がない場合には誤って抽出されてしまっていないか、のチェック
+      fav_quote_exist = row[row_content_to_number[:推しセリフがある？]]
+      fav_quote_contents = row[row_content_to_number[:推し台詞がある場合、第一候補の台詞内容]]
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} の推し台詞と台詞抽出の内容がおかしいです。" if fav_quote_exist == 'TRUE' && fav_quote_contents.blank?
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} の推し台詞と台詞抽出の内容がおかしいです。" if fav_quote_exist == 'FALSE' && fav_quote_contents.present?
     end
     puts '[LOG] 「最終・①オールキャラ部門」のチェックが終了しました。'
   end

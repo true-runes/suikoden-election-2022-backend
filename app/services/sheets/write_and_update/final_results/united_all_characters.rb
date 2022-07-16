@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/MethodLength
 module Sheets
   module WriteAndUpdate
     module FinalResults
@@ -27,7 +28,8 @@ module Sheets
             キャラDBに存在する？: 15,
             ツイートテンプレート: 16,
             開票イラスト枚数: 17,
-            開票イラスト枚数は4の倍数の何倍で収まるか: 18
+            開票イラスト枚数は4の倍数の何倍で収まるか: 18,
+            推し台詞がある場合、第一候補の台詞内容: 19
           }
           @all_characters_rows = all_characters_rows
           @bonus_short_stories_rows = bonus_short_stories_rows
@@ -35,6 +37,7 @@ module Sheets
           @bonus_result_illustrations_rows = bonus_result_illustrations_rows
           @bonus_campaigns_rows = bonus_campaigns_rows
           @bonus_op_cl_rows = bonus_op_cl_rows
+          @final_summary_fav_quotes_rows = final_summary_fav_quotes_rows
 
           puts '[LOG] シート別インスタンス変数の生成完了' # rubocop:disable Rails/Output
 
@@ -53,6 +56,7 @@ module Sheets
             quotient = result_illustration_number_of_applications / 4
             remainder = result_illustration_number_of_applications % 4
             necessary_tweet_number_based_on_illustrations = quotient + (remainder > 0 ? 1 : 0)
+            first_choice_fav_quote = set_first_choice_fav_quote(character_name)
 
             this_character_number_of_bonus_votes = set_this_character_number_of_bonus_votes(character_name)
             this_number_of_division_votes = character_in_all_characters_rows.blank? ? 0 : character_in_all_characters_rows[:number_of_votes]
@@ -71,14 +75,16 @@ module Sheets
               necessary_tweet_number_based_on_illustrations: necessary_tweet_number_based_on_illustrations,
               fav_quotes_exist: this_fav_quotes_exist.to_s.upcase,
               product_names: this_product_names,
-              exist_in_character_db: this_exist_in_character_db.to_s.upcase
+              exist_in_character_db: this_exist_in_character_db.to_s.upcase,
+              first_choice_fav_quote: first_choice_fav_quote
             }
           end
 
           @united_rows.sort_by! do |row|
             # 票数の降順でソートする
+            # 推し台詞が存在する場合は上位にソートする（'TRUE' > 'FALSE' となるように）
             [
-              -row[:united_number_of_votes], row[:character_name]
+              -row[:united_number_of_votes], (row[:fav_quotes_exist] == 'TRUE' ? 0 : 10000), row[:character_name]
             ]
           end
 
@@ -114,6 +120,7 @@ module Sheets
             row[@column_name_to_index_hash[:ツイートテンプレート]] = united_row[:tweet_template]
             row[@column_name_to_index_hash[:開票イラスト枚数]] = united_row[:result_illustration_number_of_applications]
             row[@column_name_to_index_hash[:開票イラスト枚数は4の倍数の何倍で収まるか]] = united_row[:necessary_tweet_number_based_on_illustrations]
+            row[@column_name_to_index_hash[:推し台詞がある場合、第一候補の台詞内容]] = united_row[:first_choice_fav_quote]
 
             rows << row
           end
@@ -133,8 +140,8 @@ module Sheets
         def delete
           SheetData.write_rows(
             sheet_id: final_results_sheet_id,
-            range: "#{@sheet_name}!A2:S501",
-            values: [[''] * 19] * 500 # A列起点で空文字で埋める
+            range: "#{@sheet_name}!A2:T501",
+            values: [[''] * 20] * 500 # A列起点で空文字で埋める
           )
         end
 
@@ -244,7 +251,38 @@ module Sheets
           bonus_op_cl_rows
         end
 
+        # 第二部開票用・推し台詞まとめ
+        def final_summary_fav_quotes_rows
+          sheet_name = '最終まとめ'
+          rows = SheetData.get_rows(sheet_id: ENV.fetch('FINAL_SUMMARY_FAV_QUOTES_SHEET_ID', nil), range: "#{sheet_name}!B2:J301")
+          final_summary_fav_quotes_rows = []
+
+          rows.each do |row|
+            final_summary_fav_quotes_rows << {
+              character_name: row[3],
+              fav_quote: row[4],
+              is_first_choice: row[6],
+              is_second_choise: row[7],
+              number_of_letters: row[8].to_i
+            }
+          end
+
+          final_summary_fav_quotes_rows
+        end
+
         private
+
+        def set_first_choice_fav_quote(character_name)
+          bonus_fav_quotes_row = @bonus_fav_quotes_rows.find { |row| row[:character_name] == character_name }
+
+          return '' if bonus_fav_quotes_row.blank?
+
+          @final_summary_fav_quotes_rows.each do |final_summary_fav_quotes_row|
+            next unless final_summary_fav_quotes_row[:character_name] == character_name
+
+            return final_summary_fav_quotes_row[:fav_quote] if (bonus_fav_quotes_row[:number_of_applications] > 1 && final_summary_fav_quotes_row[:is_first_choice] == 'TRUE') || bonus_fav_quotes_row[:number_of_applications] == 1
+          end
+        end
 
         def fixed_character_name(character_name)
           {
@@ -391,3 +429,4 @@ module Sheets
     end
   end
 end
+# rubocop:enable Metrics/MethodLength
