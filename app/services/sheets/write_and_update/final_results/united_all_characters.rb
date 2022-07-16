@@ -25,7 +25,9 @@ module Sheets
             推しセリフがある？: 13,
             登場作品名: 14,
             キャラDBに存在する？: 15,
-            ツイートテンプレート: 16
+            ツイートテンプレート: 16,
+            開票イラスト枚数: 17,
+            開票イラスト枚数は4の倍数の何倍で収まるか: 18
           }
           @all_characters_rows = all_characters_rows
           @bonus_short_stories_rows = bonus_short_stories_rows
@@ -45,6 +47,12 @@ module Sheets
 
           all_character_names.each do |character_name|
             character_in_all_characters_rows = @all_characters_rows.find { |row| row[:character_name] == character_name }
+            bonus_result_illustrations_row = @bonus_result_illustrations_rows.find { |row| row[:character_name] == character_name }
+
+            result_illustration_number_of_applications = bonus_result_illustrations_row.present? ? bonus_result_illustrations_row[:number_of_applications] : 0
+            quotient = result_illustration_number_of_applications / 4
+            remainder = result_illustration_number_of_applications % 4
+            necessary_tweet_number_based_on_illustrations = quotient + (remainder > 0 ? 1 : 0)
 
             this_character_number_of_bonus_votes = set_this_character_number_of_bonus_votes(character_name)
             this_number_of_division_votes = character_in_all_characters_rows.blank? ? 0 : character_in_all_characters_rows[:number_of_votes]
@@ -59,6 +67,8 @@ module Sheets
               number_of_bonus_votes: this_character_number_of_bonus_votes,
               united_number_of_votes: this_number_of_division_votes + this_character_number_of_bonus_votes.values.sum,
               result_illustration_exist: this_result_illustration_exist.to_s.upcase,
+              result_illustration_number_of_applications: result_illustration_number_of_applications,
+              necessary_tweet_number_based_on_illustrations: necessary_tweet_number_based_on_illustrations,
               fav_quotes_exist: this_fav_quotes_exist.to_s.upcase,
               product_names: this_product_names,
               exist_in_character_db: this_exist_in_character_db.to_s.upcase
@@ -102,6 +112,8 @@ module Sheets
             row[@column_name_to_index_hash[:登場作品名]] = united_row[:product_names]
             row[@column_name_to_index_hash[:キャラDBに存在する？]] = united_row[:exist_in_character_db]
             row[@column_name_to_index_hash[:ツイートテンプレート]] = united_row[:tweet_template]
+            row[@column_name_to_index_hash[:開票イラスト枚数]] = united_row[:result_illustration_number_of_applications]
+            row[@column_name_to_index_hash[:開票イラスト枚数は4の倍数の何倍で収まるか]] = united_row[:necessary_tweet_number_based_on_illustrations]
 
             rows << row
           end
@@ -121,8 +133,8 @@ module Sheets
         def delete
           SheetData.write_rows(
             sheet_id: final_results_sheet_id,
-            range: "#{@sheet_name}!A2:Q501",
-            values: [[''] * 17] * 500 # A列からQ列までの 17列 x 500行 を空文字で埋める
+            range: "#{@sheet_name}!A2:S501",
+            values: [[''] * 19] * 500 # A列起点で空文字で埋める
           )
         end
 
@@ -173,6 +185,7 @@ module Sheets
           rows.each do |row|
             bonus_fav_quotes_rows << {
               character_name: row[0],
+              number_of_applications: row[1].to_i,
               number_of_votes: row[2].to_i
             }
           end
@@ -189,6 +202,7 @@ module Sheets
           rows.each do |row|
             bonus_result_illustrations_rows << {
               character_name: row[0],
+              number_of_applications: row[1].to_i,
               number_of_votes: row[2].to_i
             }
           end
@@ -205,6 +219,7 @@ module Sheets
           rows.each do |row|
             bonus_campaigns_rows << {
               character_name: row[0],
+              number_of_applications: row[1].to_i,
               number_of_votes: row[2].to_i
             }
           end
@@ -221,6 +236,7 @@ module Sheets
           rows.each do |row|
             bonus_op_cl_rows << {
               character_name: row[0],
+              number_of_applications: row[1].to_i,
               number_of_votes: row[1].to_i
             }
           end
