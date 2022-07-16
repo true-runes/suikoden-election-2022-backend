@@ -108,20 +108,29 @@ namespace :checkers do
 
       raise StandardError, "単体・①オールキャラ部門: #{row[:character_name]} の推し台詞の「あるなし」のステータスがおかしいです。" if row[:fav_quotes_exist] == 'FALSE' && bonus_fav_quote.present?
     end
+    puts '[LOG] 「単体・①オールキャラ部門」のチェックが終了しました。'
 
     # さらに、OPCLイラストあるなし、選挙運動あるなし
     # 最終・①オールキャラ部門
-    # sheet_name = '最終・①オールキャラ部門'
-    # rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:Q501")
-    # bonus_campaigns_rows = []
+    sheet_name = '最終・①オールキャラ部門'
+    final_result_rows = SheetData.get_rows(sheet_id: ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil), range: "#{sheet_name}!B2:S501")
 
-    # rows.each do |row|
-    #   bonus_campaigns_rows << {
-    #     character_name: row[1]
-    #   }
-    # end
+    final_result_rows.each do |row|
+      # OPCLイラストのあるなしチェック
+      bonus_op_cl = bonus_op_cl_rows.find { |r| r[:character_name] == row[1] }
 
-    # bonus_campaigns_rows
+      # row[5] は「ボ・OP・CLイラスト」の加算得票数
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} のOP・CLイラストのステータスがおかしいです。" if row[5] == 1 && bonus_op_cl.blank?
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} のOP・CLイラストのステータスがおかしいです。" if row[5] == 0 && bonus_op_cl.present?
+
+      # 選挙運動のあるなしチェック
+      bonus_campaign = bonus_campaigns_rows.find { |r| r[:character_name] == row[1] }
+
+      # row[9] は「ボ・選挙運動」の加算得票数
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} の選挙運動のステータスがおかしいです。" if row[9] == 2 && bonus_campaign.blank?
+      raise StandardError, "最終・①オールキャラ部門: #{row[1]} の選挙運動のステータスがおかしいです。" if row[9] == 0 && bonus_campaign.present?
+    end
+    puts '[LOG] 「最終・①オールキャラ部門」のチェックが終了しました。'
   end
 end
 # rubocop:enable Metrics/BlockLength
