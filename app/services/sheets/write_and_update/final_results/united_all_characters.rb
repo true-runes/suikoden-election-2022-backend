@@ -1,7 +1,10 @@
+# rubocop:disable Metrics/MethodLength
 module Sheets
   module WriteAndUpdate
     module FinalResults
       class UnitedAllCharacters
+        attr_reader :united_rows
+
         def initialize
           puts '[LOG] FinalResults::UnitedAllCharacters.initialize 開始' # rubocop:disable Rails/Output
 
@@ -23,7 +26,10 @@ module Sheets
             推しセリフがある？: 13,
             登場作品名: 14,
             キャラDBに存在する？: 15,
-            ツイートテンプレート: 16
+            ツイートテンプレート: 16,
+            開票イラスト枚数: 17,
+            開票イラスト枚数は4の倍数の何倍で収まるか: 18,
+            推し台詞がある場合、第一候補の台詞内容: 19
           }
           @all_characters_rows = all_characters_rows
           @bonus_short_stories_rows = bonus_short_stories_rows
@@ -31,6 +37,7 @@ module Sheets
           @bonus_result_illustrations_rows = bonus_result_illustrations_rows
           @bonus_campaigns_rows = bonus_campaigns_rows
           @bonus_op_cl_rows = bonus_op_cl_rows
+          @final_summary_fav_quotes_rows = final_summary_fav_quotes_rows
 
           puts '[LOG] シート別インスタンス変数の生成完了' # rubocop:disable Rails/Output
 
@@ -43,6 +50,13 @@ module Sheets
 
           all_character_names.each do |character_name|
             character_in_all_characters_rows = @all_characters_rows.find { |row| row[:character_name] == character_name }
+            bonus_result_illustrations_row = @bonus_result_illustrations_rows.find { |row| row[:character_name] == character_name }
+
+            result_illustration_number_of_applications = bonus_result_illustrations_row.present? ? bonus_result_illustrations_row[:number_of_applications] : 0
+            quotient = result_illustration_number_of_applications / 4
+            remainder = result_illustration_number_of_applications % 4
+            necessary_tweet_number_based_on_illustrations = quotient + (remainder > 0 ? 1 : 0)
+            first_choice_fav_quote = set_first_choice_fav_quote(character_name)
 
             this_character_number_of_bonus_votes = set_this_character_number_of_bonus_votes(character_name)
             this_number_of_division_votes = character_in_all_characters_rows.blank? ? 0 : character_in_all_characters_rows[:number_of_votes]
@@ -52,21 +66,25 @@ module Sheets
             this_exist_in_character_db = Character.exists?(name: character_name)
 
             @united_rows << {
-              character_name: character_name,
+              character_name: fixed_character_name(character_name),
               number_of_division_votes: this_number_of_division_votes,
               number_of_bonus_votes: this_character_number_of_bonus_votes,
               united_number_of_votes: this_number_of_division_votes + this_character_number_of_bonus_votes.values.sum,
               result_illustration_exist: this_result_illustration_exist.to_s.upcase,
+              result_illustration_number_of_applications: result_illustration_number_of_applications,
+              necessary_tweet_number_based_on_illustrations: necessary_tweet_number_based_on_illustrations,
               fav_quotes_exist: this_fav_quotes_exist.to_s.upcase,
               product_names: this_product_names,
-              exist_in_character_db: this_exist_in_character_db.to_s.upcase
+              exist_in_character_db: this_exist_in_character_db.to_s.upcase,
+              first_choice_fav_quote: first_choice_fav_quote
             }
           end
 
           @united_rows.sort_by! do |row|
             # 票数の降順でソートする
+            # 推し台詞が存在する場合は上位にソートする（'TRUE' > 'FALSE' となるように）
             [
-              -row[:united_number_of_votes], row[:character_name]
+              -row[:united_number_of_votes], (row[:fav_quotes_exist] == 'TRUE' ? 0 : 10000), row[:character_name]
             ]
           end
 
@@ -75,6 +93,8 @@ module Sheets
 
           @memoized_tweet_templates = []
           @united_rows = set_tweet_template(@united_rows)
+
+          puts '[LOG] 全シートを結合したデータの生成完了' # rubocop:disable Rails/Output
         end
 
         def exec
@@ -98,6 +118,9 @@ module Sheets
             row[@column_name_to_index_hash[:登場作品名]] = united_row[:product_names]
             row[@column_name_to_index_hash[:キャラDBに存在する？]] = united_row[:exist_in_character_db]
             row[@column_name_to_index_hash[:ツイートテンプレート]] = united_row[:tweet_template]
+            row[@column_name_to_index_hash[:開票イラスト枚数]] = united_row[:result_illustration_number_of_applications]
+            row[@column_name_to_index_hash[:開票イラスト枚数は4の倍数の何倍で収まるか]] = united_row[:necessary_tweet_number_based_on_illustrations]
+            row[@column_name_to_index_hash[:推し台詞がある場合、第一候補の台詞内容]] = united_row[:first_choice_fav_quote]
 
             rows << row
           end
@@ -117,12 +140,157 @@ module Sheets
         def delete
           SheetData.write_rows(
             sheet_id: final_results_sheet_id,
-            range: "#{@sheet_name}!A2:Q501",
-            values: [[''] * 17] * 500 # A列からQ列までの 17列 x 500行 を空文字で埋める
+            range: "#{@sheet_name}!A2:T501",
+            values: [[''] * 20] * 500 # A列起点で空文字で埋める
           )
         end
 
+        # 単体・①オールキャラ部門
+        def all_characters_rows
+          sheet_name = '単体・①オールキャラ部門'
+          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
+          all_characters_rows = []
+
+          rows.each do |row|
+            all_characters_rows << {
+              rank: row[0],
+              character_name: row[1],
+              number_of_votes: row[2].to_i,
+              result_illustration_exist: row[4],
+              fav_quotes_exist: row[5],
+              product_names: row[6],
+              exist_in_character_db: row[7],
+              tweet_template: row[9]
+            }
+          end
+
+          all_characters_rows
+        end
+
+        # ボ・お題小説
+        def bonus_short_stories_rows
+          sheet_name = 'ボ・お題小説'
+          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
+          bonus_short_stories_rows = []
+
+          rows.each do |row|
+            bonus_short_stories_rows << {
+              character_name: row[0],
+              number_of_votes: row[2].to_i
+            }
+          end
+
+          bonus_short_stories_rows
+        end
+
+        # ボ・推し台詞
+        def bonus_fav_quotes_rows
+          sheet_name = 'ボ・推し台詞'
+          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
+          bonus_fav_quotes_rows = []
+
+          rows.each do |row|
+            bonus_fav_quotes_rows << {
+              character_name: row[0],
+              number_of_applications: row[1].to_i,
+              number_of_votes: row[2].to_i
+            }
+          end
+
+          bonus_fav_quotes_rows
+        end
+
+        # ボ・開票イラスト
+        def bonus_result_illustrations_rows
+          sheet_name = 'ボ・開票イラスト'
+          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
+          bonus_result_illustrations_rows = []
+
+          rows.each do |row|
+            bonus_result_illustrations_rows << {
+              character_name: row[0],
+              number_of_applications: row[1].to_i,
+              number_of_votes: row[2].to_i
+            }
+          end
+
+          bonus_result_illustrations_rows
+        end
+
+        # ボ・選挙運動
+        def bonus_campaigns_rows
+          sheet_name = 'ボ・選挙運動'
+          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
+          bonus_campaigns_rows = []
+
+          rows.each do |row|
+            bonus_campaigns_rows << {
+              character_name: row[0],
+              number_of_applications: row[1].to_i,
+              number_of_votes: row[2].to_i
+            }
+          end
+
+          bonus_campaigns_rows
+        end
+
+        # ボ・OP・CLイラスト（オールキャラ）
+        def bonus_op_cl_rows
+          sheet_name = 'ボ・OP・CLイラスト（オールキャラ）'
+          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
+          bonus_op_cl_rows = []
+
+          rows.each do |row|
+            bonus_op_cl_rows << {
+              character_name: row[0],
+              number_of_applications: row[1].to_i,
+              number_of_votes: row[1].to_i
+            }
+          end
+
+          bonus_op_cl_rows
+        end
+
+        # 第二部開票用・推し台詞まとめ
+        def final_summary_fav_quotes_rows
+          sheet_name = '最終まとめ'
+          rows = SheetData.get_rows(sheet_id: ENV.fetch('FINAL_SUMMARY_FAV_QUOTES_SHEET_ID', nil), range: "#{sheet_name}!B2:J301")
+          final_summary_fav_quotes_rows = []
+
+          rows.each do |row|
+            final_summary_fav_quotes_rows << {
+              character_name: row[3],
+              fav_quote: row[4],
+              is_first_choice: row[6],
+              is_second_choise: row[7],
+              number_of_letters: row[8].to_i
+            }
+          end
+
+          final_summary_fav_quotes_rows
+        end
+
         private
+
+        def set_first_choice_fav_quote(character_name)
+          bonus_fav_quotes_row = @bonus_fav_quotes_rows.find { |row| row[:character_name] == character_name }
+
+          return '' if bonus_fav_quotes_row.blank?
+
+          @final_summary_fav_quotes_rows.each do |final_summary_fav_quotes_row|
+            next unless final_summary_fav_quotes_row[:character_name] == character_name
+
+            return final_summary_fav_quotes_row[:fav_quote] if (bonus_fav_quotes_row[:number_of_applications] > 1 && final_summary_fav_quotes_row[:is_first_choice] == 'TRUE') || bonus_fav_quotes_row[:number_of_applications] == 1
+          end
+        end
+
+        def fixed_character_name(character_name)
+          {
+            'ザジ・キュイロス' => 'ザジ・キュイロス（サナトス・クロフォード）',
+            'ジョウイ・アトレイド（ブライト）' => 'ジョウイ・アトレイド（ジョウイ・ブライト）',
+            'ナッシュ・ラトキエ（クロービス）' => 'ナッシュ・ラトキエ（ナッシュ・クロービス）'
+          }[character_name] || character_name
+        end
 
         def set_tweet_template(united_rows)
           with_tweet_template_united_rows = []
@@ -180,108 +348,6 @@ module Sheets
 
         def final_results_sheet_id
           ENV.fetch('COUNTING_FINAL_RESULTS_SHEET_ID', nil)
-        end
-
-        # 単体・①オールキャラ部門
-        def all_characters_rows
-          sheet_name = '単体・①オールキャラ部門'
-          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
-          all_characters_rows = []
-
-          rows.each do |row|
-            all_characters_rows << {
-              rank: row[0],
-              character_name: row[1],
-              number_of_votes: row[2].to_i,
-              result_illustration_exist: row[4],
-              fav_quotes_exist: row[5],
-              product_names: row[6],
-              exist_in_character_db: row[7],
-              tweet_template: row[9]
-            }
-          end
-
-          all_characters_rows
-        end
-
-        # ボ・お題小説
-        def bonus_short_stories_rows
-          sheet_name = 'ボ・お題小説'
-          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
-          bonus_short_stories_rows = []
-
-          rows.each do |row|
-            bonus_short_stories_rows << {
-              character_name: row[0],
-              number_of_votes: row[2].to_i
-            }
-          end
-
-          bonus_short_stories_rows
-        end
-
-        # ボ・推し台詞
-        def bonus_fav_quotes_rows
-          sheet_name = 'ボ・推し台詞'
-          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
-          bonus_fav_quotes_rows = []
-
-          rows.each do |row|
-            bonus_fav_quotes_rows << {
-              character_name: row[0],
-              number_of_votes: row[2].to_i
-            }
-          end
-
-          bonus_fav_quotes_rows
-        end
-
-        # ボ・開票イラスト
-        def bonus_result_illustrations_rows
-          sheet_name = 'ボ・開票イラスト'
-          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
-          bonus_result_illustrations_rows = []
-
-          rows.each do |row|
-            bonus_result_illustrations_rows << {
-              character_name: row[0],
-              number_of_votes: row[2].to_i
-            }
-          end
-
-          bonus_result_illustrations_rows
-        end
-
-        # ボ・選挙運動
-        def bonus_campaigns_rows
-          sheet_name = 'ボ・選挙運動'
-          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
-          bonus_campaigns_rows = []
-
-          rows.each do |row|
-            bonus_campaigns_rows << {
-              character_name: row[0],
-              number_of_votes: row[2].to_i
-            }
-          end
-
-          bonus_campaigns_rows
-        end
-
-        # ボ・OP・CLイラスト（オールキャラ）
-        def bonus_op_cl_rows
-          sheet_name = 'ボ・OP・CLイラスト（オールキャラ）'
-          rows = SheetData.get_rows(sheet_id: final_results_sheet_id, range: "#{sheet_name}!B2:L501")
-          bonus_op_cl_rows = []
-
-          rows.each do |row|
-            bonus_op_cl_rows << {
-              character_name: row[0],
-              number_of_votes: row[1].to_i
-            }
-          end
-
-          bonus_op_cl_rows
         end
 
         # united_rows は票数の降順でソートされているものとする
@@ -363,3 +429,4 @@ module Sheets
     end
   end
 end
+# rubocop:enable Metrics/MethodLength

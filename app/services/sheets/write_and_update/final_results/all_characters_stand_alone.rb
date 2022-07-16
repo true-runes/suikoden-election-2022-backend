@@ -29,11 +29,6 @@ module Sheets
             is_exists_in_character_db = Character.where(name: character_name).present?
             product_names_for_tweet = is_exists_in_character_db ? Presenter::Common.formatted_product_names_for_tweet(character_name) : ''
 
-            on_sheet_name_to_on_db_name = YAML.load_file(
-              Rails.root.join('config/character_names_on_result_illustrations_sheet.yml')
-            )['on_database_character_name_to_on_sheet_character_name']
-            fixed_character_name = on_sheet_name_to_on_db_name[character_name] || character_name
-
             result_illustaration_characters = OnRawSheetResultIllustrationTotalling.pluck(:character_name_by_sheet_totalling).reject { |cell| cell.start_with?('TEMP_') }
             is_fav_quotes_exists = character_name.in?(CountingBonusVote.all_fav_quote_character_names_including_duplicated)
 
@@ -41,7 +36,7 @@ module Sheets
             row[@column_name_to_index_hash[:順位]] = rank_item[:rank]
             row[@column_name_to_index_hash[:キャラ名]] = character_name
             row[@column_name_to_index_hash[:得票数]] = rank_item[:number_of_votes]
-            row[@column_name_to_index_hash[:開票イラストがある？]] = fixed_character_name.in?(result_illustaration_characters)
+            row[@column_name_to_index_hash[:開票イラストがある？]] = character_name.in?(result_illustaration_characters)
             row[@column_name_to_index_hash[:推しセリフがある？]] = is_fav_quotes_exists
             row[@column_name_to_index_hash[:登場作品名]] = product_names_for_tweet
             row[@column_name_to_index_hash[:キャラDBに存在する？]] = is_exists_in_character_db
