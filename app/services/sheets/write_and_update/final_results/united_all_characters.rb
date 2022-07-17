@@ -137,6 +137,17 @@ module Sheets
           )
         end
 
+        # API の消費が激しく、書き込み時間もかかるので、主にデバッグ用途で使用する
+        def write_one_by_one(written_data)
+          written_data.each_with_index do |row, index|
+            SheetData.write_rows(
+              sheet_id: final_results_sheet_id,
+              range: "#{@sheet_name}!A#{2 + index}", # 始点
+              values: [row]
+            )
+          end
+        end
+
         def delete
           SheetData.write_rows(
             sheet_id: final_results_sheet_id,
@@ -277,6 +288,7 @@ module Sheets
 
           return '' if bonus_fav_quotes_row.blank?
 
+          # NOTE: 同名キャラが存在することが大前提
           @final_summary_fav_quotes_rows.each do |final_summary_fav_quotes_row|
             next unless final_summary_fav_quotes_row[:character_name] == character_name
 
