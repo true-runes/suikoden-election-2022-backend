@@ -2,7 +2,7 @@
   "name": "suikoden-election-2022-clasp",
   "version": "1.0.0",
   "devDependencies": {
-    "@google/clasp": "2.4.1",
+    "@google/clasp": "2.4.2",
     "@types/google-apps-script": "1.0.53"
   },
   "license": "MIT",
