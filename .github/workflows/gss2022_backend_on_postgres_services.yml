@@ -1,4 +1,4 @@
-name: 幻水総選挙2022 バックエンド
+name: 幻水総選挙2022 バックエンド（サービスpg）
 
 on:
   workflow_dispatch:
