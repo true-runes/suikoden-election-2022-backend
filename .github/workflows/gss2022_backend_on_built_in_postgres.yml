@@ -33,6 +33,10 @@ jobs:
 
         echo 'PostgreSQL の起動が確認できました'
     - name: PostgreSQL のユーザー（ロール）のセットアップを行う
+      env:
+        major_version_number: 14
+        username: postgres_user
+        password: postgres_password
       # NOTE: バージョン番号が埋め込みになっているのが良くない
       run: |
         sudo bash -c "echo \"local all all md5\" >> /etc/postgresql/$major_version_number/main/pg_hba.conf"
@@ -40,10 +44,6 @@ jobs:
         sudo su postgres -c "psql postgres -c 'create role $username;'"
         sudo su postgres -c "psql postgres -c \"alter role $username with login password '$password';\""
         sudo su postgres -c "psql postgres -c \"alter role $username with superuser\""
-      env:
-        major_version_number: 14
-        username: postgres_user
-        password: postgres_password
     - name: コードをチェックアウトする
       uses: actions/checkout@v3
     - name: Ruby のセットアップを行う
