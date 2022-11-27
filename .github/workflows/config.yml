@@ -16,7 +16,7 @@ env:
 
 jobs:
   on-success:
-    if: ${{ github.ref_name == 'main' }}
+    # if: ${{ github.ref_name == 'main' }}
     # name: Cloud Run に production デプロイする
     runs-on: ubuntu-latest
     steps:
