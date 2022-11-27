@@ -1,4 +1,4 @@
-name: 幻水総選挙2022 バックエンド（ビルトインpg）
+name: 幻水総選挙2022 バックエンド (Built-In PostgreSQL)
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   gss2022_backend:
-    name: (pg on built-in) 継続的インテグレーション
+    name: 幻水総選挙2022 バックエンド (Built-In PostgreSQL)
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -58,13 +58,6 @@ jobs:
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-gem-
-    - name: （予定地）Node.js のセットアップを行う
-      run: |
-        echo 'Node.js を使うことがあれば "actions/setup-node" を用いる'
-        echo 'uses: actions/setup-node@v3'
-        echo 'with:'
-        echo 'node-version: ${{ matrix.node-version }}'
-        echo 'cache: "yarn"'
     - name: データベースをセットアップする
       run: |
         bin/rails db:prepare

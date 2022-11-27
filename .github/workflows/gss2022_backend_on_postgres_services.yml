@@ -1,4 +1,4 @@
-name: 幻水総選挙2022 バックエンド（サービスpg）
+name: 幻水総選挙2022 バックエンド (Docker PostgreSQL)
 
 on:
   workflow_dispatch:
@@ -8,9 +8,16 @@ on:
     tags-ignore:
       - 'v*.*.*'
 
+env:
+  # TODO: Git のタグを取得して、イメージのタグにする
+  DOCKER_IMAGE: asia-northeast1-docker.pkg.dev/${{ secrets.CLOUD_RUN_PROJECT }}/cloud-run-source-deploy/gensosenkyo-2019
+  GCP_REGION: ${{ secrets.CLOUD_RUN_REGION }}
+  GCP_AUTH_HOST: asia-northeast1-docker.pkg.dev
+  CLOUD_RUN_SERVICE_NAME: gensosenkyo-2019
+
 jobs:
   gss2022_backend:
-    name: (pg on services) 継続的インテグレーション
+    name: 幻水総選挙2022 バックエンド (Docker PostgreSQL)
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -57,3 +64,31 @@ jobs:
     - name: RSpec を実行する
       run: |
         bundle exec rspec
+
+  deploy_to_cloud_run:
+    needs: gss2022_backend
+    if: ${{ github.ref_name == 'main' }}
+    name: Cloud Run に production デプロイする
+    runs-on: ubuntu-latest
+    steps:
+      - name: ソースコードをチェックアウトする
+        uses: actions/checkout@v3
+      - name: GCP の認証を行う
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_CREDENTIALS }}
+      - name: GCP の CLI の認証を行う
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_AUTH_HOST }}
+      - name: Docker イメージ をビルドする
+        run: |
+          docker build -t ${{ env.DOCKER_IMAGE }} .
+      - name: Docker イメージ をプッシュする
+        run: |
+          docker push ${{ env.DOCKER_IMAGE }}
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: ${{ env.CLOUD_RUN_SERVICE_NAME }}
+          image: ${{ env.DOCKER_IMAGE }}
+          region: ${{ env.GCP_REGION }}
