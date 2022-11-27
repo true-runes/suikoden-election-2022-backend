@@ -34,8 +34,6 @@ test:
   username: <%= ENV['POSTGRES_USERNAME_TEST'] || 'root' %>
   password: <%= ENV['POSTGRES_PASSWORD_TEST'] || 'postgres' %>
   template: template0
-  collation: ja_JP.UTF-8
-  ctype: ja_JP.UTF-8
   sslmode: disable
 
 # 外部のデータベース
