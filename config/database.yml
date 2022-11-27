@@ -5,27 +5,36 @@ default: &default
 
 production:
   <<: *default
-  database: suikoden_election_2022_production
+  database: gss2022_production
   host: <%= ENV['POSTGRES_HOST_PRODUCTION'] || 'localhost' %>
   port: <%= ENV['POSTGRES_PORT_PRODUCTION'] || 5432 %>
   username: <%= ENV['POSTGRES_USERNAME_PRODUCTION'] %>
   password: <%= ENV['POSTGRES_PASSWORD_PRODUCTION'] %>
+  template: template0
+  collation: ja_JP.UTF-8
+  ctype: ja_JP.UTF-8
 
 development:
   <<: *default
-  database: suikoden_election_2022_development
+  database: gss2022_development
   host: <%= ENV['POSTGRES_HOST_DEVELOPMENT'] || 'localhost' %>
   port: <%= ENV['POSTGRES_PORT_DEVELOPMENT'] || 5432 %>
   username: <%= ENV['POSTGRES_USERNAME_DEVELOPMENT'] || 'root' %>
   password: <%= ENV['POSTGRES_PASSWORD_DEVELOPMENT'] || 'postgres' %>
+  template: template0
+  collation: ja_JP.UTF-8
+  ctype: ja_JP.UTF-8
+  sslmode: disable
 
 test:
   <<: *default
-  database: suikoden_election_2022_test
+  database: gss2022_test
   host: <%= ENV['POSTGRES_HOST_TEST'] || 'localhost' %>
   port: <%= ENV['POSTGRES_PORT_TEST'] || 5432 %>
   username: <%= ENV['POSTGRES_USERNAME_TEST'] || 'root' %>
   password: <%= ENV['POSTGRES_PASSWORD_TEST'] || 'postgres' %>
+  template: template0
+  sslmode: disable
 
 # 外部のデータベース
 tweet_storage:
