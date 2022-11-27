@@ -1,4 +1,4 @@
-name: 幻水総選挙2022 バックエンド
+name: Cloud Run に production デプロイする
 
 on:
   workflow_run:
@@ -17,7 +17,7 @@ env:
 jobs:
   on-success:
     if: ${{ github.ref_name == 'main' }}
-    name: Cloud Run に production デプロイする
+    # name: Cloud Run に production デプロイする
     runs-on: ubuntu-latest
     steps:
       - name: ソースコードをチェックアウトする
