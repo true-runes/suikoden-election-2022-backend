@@ -32,10 +32,10 @@ jobs:
     env:
       CI: true
       RAILS_ENV: test
-      POSTGRES_HOST_TEST: localhost
-      POSTGRES_PORT_TEST: 5432
-      POSTGRES_USERNAME_TEST: postgres_user
-      POSTGRES_PASSWORD_TEST: postgres_password
+      PG_HOST_TEST: localhost
+      PG_PORT_TEST: 5432
+      PG_USERNAME_TEST: postgres_user
+      PG_PASSWORD_TEST: postgres_password
     steps:
     - name: コードをチェックアウトする
       uses: actions/checkout@v3

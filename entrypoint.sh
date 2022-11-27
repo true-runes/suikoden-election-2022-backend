@@ -6,7 +6,7 @@ if [ -n "$PORT" ]; then
   RAILS_PORT=$PORT
 fi
 
-bin/rails assets:precompile
+# bin/rails assets:precompile
 bin/rails db:create
 bin/rails db:migrate
 bin/rails db:seed
