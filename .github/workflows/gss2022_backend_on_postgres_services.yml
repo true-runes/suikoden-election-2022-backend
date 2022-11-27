@@ -10,10 +10,10 @@ on:
 
 env:
   # TODO: Git のタグを取得して、イメージのタグにする
-  DOCKER_IMAGE: asia-northeast1-docker.pkg.dev/${{ secrets.CLOUD_RUN_PROJECT }}/cloud-run-source-deploy/gensosenkyo-2022
+  DOCKER_IMAGE: asia-northeast1-docker.pkg.dev/${{ secrets.CLOUD_RUN_PROJECT }}/cloud-run-source-deploy/gensosenkyo-2022-backend
   GCP_REGION: ${{ secrets.CLOUD_RUN_REGION }}
   GCP_AUTH_HOST: asia-northeast1-docker.pkg.dev
-  CLOUD_RUN_SERVICE_NAME: gensosenkyo-2022
+  CLOUD_RUN_SERVICE_NAME: gensosenkyo-2022-backend
 
 jobs:
   gss2022_backend:
