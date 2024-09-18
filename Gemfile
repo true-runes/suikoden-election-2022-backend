@@ -6,7 +6,7 @@ ruby '3.1.3'
 gem 'bootsnap', require: false
 gem 'bugsnag'
 gem 'dotenv-rails'
-gem 'faraday', '1.10.2' # 'google-cloud-language' が使えるように
+gem 'faraday', '2.12.0' # 'google-cloud-language' が使えるように
 gem 'google-api-client'
 gem 'google-cloud-language'
 gem 'jbuilder'
