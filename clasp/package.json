@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "devDependencies": {
     "@google/clasp": "2.4.2",
-    "@types/google-apps-script": "1.0.56"
+    "@types/google-apps-script": "1.0.84"
   },
   "license": "MIT",
   "main": "index.js"
